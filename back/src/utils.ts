@@ -1,18 +1,14 @@
-import { DataSource } from "typeorm";
-import { Grade } from "./entity/Grade";
-import { Skill } from "./entity/Skill";
-import { Wilder } from "./entity/Wilder";
-import { User } from "./entity/User";
+import { DataSource } from 'typeorm';
 
 const dataSource = new DataSource({
-  type: "postgres",
-  host: "db",
-  port: 5432,
-  username: "postgres",
-  password: "example",
-  database: "postgres",
-  synchronize: true,
-  entities: [Wilder, Skill, Grade, User],
+    type: 'postgres',
+    host: 'db',
+    port: 5432,
+    username: 'postgres',
+    password: 'example',
+    database: 'postgres',
+    synchronize: true,
+    entities: [],
 });
 
 export default dataSource;

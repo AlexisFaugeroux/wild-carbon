@@ -1,1 +1,14 @@
-node_modules
+#vscode
+.vscode/
+
+#node_modules
+back/node_modules/
+front/node_modules/
+
+#prettier
+.prettierignore
+.prettierrc.yml
+
+#eslint
+back/.eslintrc.json
+front/.eslintrc.json
