@@ -5,7 +5,6 @@ import { Item } from "./Item";
 @ObjectType()
 @Entity()
 export class Category {
-
   @Field()
   @PrimaryColumn('uuid')
   id: string;
