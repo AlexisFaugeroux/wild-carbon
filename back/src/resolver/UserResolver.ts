@@ -14,7 +14,7 @@ class UserResolver {
   ): Promise<String> {
     const user = new User();
     user.email = email;
-    user.hashedPassword = await argon2.hash(password);
+    user.password = await argon2.hash(password);
     await dataSource.getRepository(User).save(user);
     return 'user created';
   }
@@ -29,7 +29,7 @@ class UserResolver {
       .findOneByOrFail({ email });
 
     try {
-      if (await argon2.verify(user.hashedPassword, password)) {
+      if (await argon2.verify(user.password, password)) {
         const token = jwt.sign({ email }, 'supersecretkey');
         return token;
       } else {
