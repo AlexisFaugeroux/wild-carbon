@@ -66,16 +66,14 @@ class UserResolver {
     }
   }
 
-  @Mutation(() => User)
-  async deleteUser(@Arg('userId') id: string): Promise<User> {
+  @Mutation(() => String)
+  async deleteUser(@Arg('userId') id: string): Promise<String> {
     const targetedUser = await dataSource
       .getRepository(User)
       .findOneByOrFail({ id });
 
-    const deletedUser = await dataSource
-      .getRepository(User)
-      .remove(targetedUser);
-    return deletedUser;
+    await dataSource.getRepository(User).remove(targetedUser);
+    return 'User deleted';
   }
 
   @Query(() => User)

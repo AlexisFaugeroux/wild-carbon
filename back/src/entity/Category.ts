@@ -1,12 +1,12 @@
-import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
-import { Field, ObjectType } from "type-graphql";
-import { Item } from "./Item";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Field, ObjectType } from 'type-graphql';
+import { Item } from './Item';
 
 @ObjectType()
 @Entity()
 export class Category {
   @Field()
-  @PrimaryColumn('uuid')
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Field()
@@ -14,6 +14,6 @@ export class Category {
   name: string;
 
   @Field(() => Item)
-  @OneToMany(() => Item , (item) => item.category)
-  items: Item[]
+  @OneToMany(() => Item, (item) => item.category)
+  items: Item[];
 }
