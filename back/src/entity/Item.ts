@@ -15,7 +15,7 @@ enum UnitEnum{
 export class Item {
 
   @Field()
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Field()

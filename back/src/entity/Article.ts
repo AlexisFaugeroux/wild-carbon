@@ -7,8 +7,8 @@ import { User } from './User';
 export class Article {
 
     @Field()
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
     @Field()
     @Column()

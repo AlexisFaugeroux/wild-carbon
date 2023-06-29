@@ -5,10 +5,9 @@ import { Item } from "./Item";
 @ObjectType()
 @Entity()
 export class Category {
-
   @Field()
-  @PrimaryColumn()
-  id: number;
+  @PrimaryColumn('uuid')
+  id: string;
 
   @Field()
   @Column()

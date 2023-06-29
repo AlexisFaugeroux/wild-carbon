@@ -8,7 +8,7 @@ import { Item } from "./Item";
 export class Expense {
 
   @Field()
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Field()
