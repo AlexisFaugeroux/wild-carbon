@@ -56,7 +56,7 @@ class ArticleResolver {
             targetedArticle.title = title;
             targetedArticle.description = description;
             targetedArticle.url = url;
-            targetedArticle.createdAt = new Date();
+            targetedArticle.updatedAt = new Date();
 
             const updateArticle = await dataSource
             .getRepository(Article)
