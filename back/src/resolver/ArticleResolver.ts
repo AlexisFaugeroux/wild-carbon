@@ -1,9 +1,7 @@
 import { Arg, Mutation, Query, Resolver } from 'type-graphql';
 import dataSource from '../utils';
 import { Article } from '../entity/Article';
-import { UUIDVersion } from 'class-validator';
 import { EntityNotFoundError } from 'typeorm';
-import { User } from '../entity/User';
 
 @Resolver()
 class ArticleResolver {
