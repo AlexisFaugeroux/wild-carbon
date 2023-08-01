@@ -40,12 +40,19 @@ class ArticleResolver {
         @Arg('description') description: string,
         @Arg('url') url: string,
         @Arg('articleId') id: string,
+        @Arg('userId') userId: string
         ): Promise<Article> {
         try {
             const targetedArticle = await dataSource
             .getRepository(Article)
             .findOneByOrFail({ id });
 
+            if(targetedArticle.user.id !== userId){
+                throw new Error(
+                    'your not a owner to this artcile'
+                );
+            }
+            
             targetedArticle.title = title;
             targetedArticle.description = description;
             targetedArticle.url = url;
@@ -54,7 +61,6 @@ class ArticleResolver {
             const updateArticle = await dataSource
             .getRepository(Article)
             .save(targetedArticle);
-
             return updateArticle;
         } catch (error) {
             if (error instanceof EntityNotFoundError) {
