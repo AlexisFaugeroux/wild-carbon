@@ -49,7 +49,7 @@ class ArticleResolver {
 
             if(targetedArticle.user.id !== userId){
                 throw new Error(
-                    'your not a owner to this artcile'
+                    'your not a owner to this article'
                 );
             }
             
