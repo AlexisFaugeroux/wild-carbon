@@ -11,6 +11,20 @@ declare module '@mui/material/styles' {
   }
 }
 
+declare module '@mui/material/styles' {
+  interface Theme {
+    input: {
+      primary: string;
+    };
+  }
+  // allow configuration using `createTheme`
+  interface ThemeOptions {
+    input?: {
+      primary?: string;
+    };
+  }
+}
+
 const theme = createTheme({
   palette: {
     primary: {

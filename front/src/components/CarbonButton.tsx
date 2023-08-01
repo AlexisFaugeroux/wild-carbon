@@ -1,5 +1,6 @@
 import { FC } from "react"
 import { Button, ButtonProps } from "@mui/material";
+import theme from "../theme";
 
 type CarbonButtonProps = ButtonProps & {
     children: React.ReactNode;
@@ -7,7 +8,13 @@ type CarbonButtonProps = ButtonProps & {
 
 const CarbonButton: FC<CarbonButtonProps> = ({children, ...buttonProps}) => {
     return (
-        <Button {...buttonProps}>{children}</Button>
+        <Button 
+            {...buttonProps}
+            sx={{
+                border: "solid",
+                borderWidth: "1px",
+            }}
+        >{children}</Button>
     )
 };
 
