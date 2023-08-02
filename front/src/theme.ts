@@ -3,11 +3,15 @@ import { createTheme } from '@mui/material/styles';
 // Needed to add variables to theme
 declare module '@mui/material/styles' {
   interface Theme {
-    styleInputBase: {};
+    styleInputBase: {
+      [key: string]: string | number;
+    };
   }
   // allow configuration using `createTheme`
   interface ThemeOptions {
-    styleInputBase?: {};
+    styleInputBase?: {
+      [key: string]: string | number;
+    };
   }
 }
 
