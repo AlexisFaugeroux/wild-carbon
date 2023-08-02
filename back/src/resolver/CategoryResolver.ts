@@ -48,7 +48,7 @@ class CategoryResolver {
   }
 
   @Mutation(() => String)
-  async deleteCategory(@Arg('categoryId') id: string): Promise<String> {
+  async deleteCategory(@Arg('categoryId') id: string): Promise<string> {
     const targetedCategory = await dataSource
       .getRepository(Category)
       .findOneByOrFail({ id });
@@ -72,6 +72,7 @@ class CategoryResolver {
       const categories = await dataSource.getRepository(Category).find();
       return categories;
     } catch (error) {
+      console.error(error);
       throw error;
     }
   }
