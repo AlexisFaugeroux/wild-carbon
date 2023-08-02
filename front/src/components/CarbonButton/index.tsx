@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Button, ButtonProps } from '@mui/material';
-import theme from '../../theme';
+import { grey } from '@mui/material/colors';
 
 type CarbonButtonProps = ButtonProps & {
   children: React.ReactNode;
@@ -8,7 +8,7 @@ type CarbonButtonProps = ButtonProps & {
 
 const CarbonButton: FC<CarbonButtonProps> = ({ children, ...buttonProps }) => {
   return (
-    <Button {...buttonProps} variant="contained">
+    <Button {...buttonProps} sx={{ color: grey[50] }} variant="contained">
       {children}
     </Button>
   );

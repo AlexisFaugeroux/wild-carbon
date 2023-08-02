@@ -1,4 +1,4 @@
-import { createTheme } from '@mui/material';
+import { createTheme } from '@mui/material/styles';
 
 // Needed to add variables to theme
 declare module '@mui/material/styles' {

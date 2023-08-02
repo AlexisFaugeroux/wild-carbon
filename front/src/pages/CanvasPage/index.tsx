@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import CarbonCard from '../../components/CarbonCard';
 import { Box, Typography } from '@mui/material';
-import CarbonButton from '../../components/CarbonButton/CarbonButton';
+import CarbonButton from '../../components/CarbonButton';
 import CarbonIconButton from '../../components/CarbonIconButton';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 
