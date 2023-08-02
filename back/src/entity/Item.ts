@@ -1,14 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToMany, JoinTable, ManyToOne, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from "typeorm";
 import { Field, ObjectType } from "type-graphql";
 import { Expense } from "./Expense";
 import { Category } from "./Category";
-import { User } from "./User";
-
-enum UnitEnum{
-  KG = "kg",
-  KM = "km",
-  L = "l"
-}
+import UnitEnum from "../enum/unitEnum";
 
 @ObjectType()
 @Entity()
@@ -23,8 +17,8 @@ export class Item {
   label: string;
 
   @Field()
-  @Column()
-  emissionFactor: string;
+  @Column('numeric', { precision: 8, scale: 2 }) 
+  emissionFactor: number;
 
   @Field()
   @Column()
