@@ -9,7 +9,3 @@ front/node_modules/
 #prettier
 .prettierignore
 .prettierrc.yml
-
-#eslint
-back/.eslintrc.json
-front/.eslintrc.json
