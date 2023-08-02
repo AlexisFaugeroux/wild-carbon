@@ -8,12 +8,23 @@ import CategoryResolver from './resolver/CategoryResolver';
 import ArticleResolver from './resolver/ArticleResolver';
 import ExpenseResolver from './resolver/ExpenseResolver';
 import ItemResolver from './resolver/ItemResolver';
+import { User } from './entity/User';
+
+export interface Context {
+  jwtPayload: User;
+}
 
 const start = async (): Promise<void> => {
   await dataSource.initialize();
 
   const typeGraphQLgeneratedSchema = await buildSchema({
-    resolvers: [UserResolver, CategoryResolver, ArticleResolver , ExpenseResolver , ItemResolver],
+    resolvers: [
+      UserResolver,
+      CategoryResolver,
+      ArticleResolver,
+      ExpenseResolver,
+      ItemResolver,
+    ],
     authChecker: ({ context }) => {
       console.log('context from authchecker', context);
       if (context.email !== undefined) {
@@ -26,18 +37,18 @@ const start = async (): Promise<void> => {
 
   const server = new ApolloServer({
     schema: typeGraphQLgeneratedSchema,
-    context: ({ req }) => {
+    context: async ({ req }) => {
       if (
-        req.headers.authorization !== undefined &&
-        req.headers.authorization !== ''
-      ) {
-        const payload = jwt.verify(
-          req.headers.authorization.split('Bearer ')[1],
-          'supersecretkey',
-        );
-        return payload;
-      }
-      return {};
+        req.headers.authorization === undefined ||
+        req.headers.authorization === ''
+      )
+        throw new Error('Authorization headers not set');
+
+      const payload = jwt.verify(
+        req.headers.authorization.split('Bearer ')[1],
+        'supersecretkey',
+      ) as User;
+      return { jwtPayload: payload };
     },
   });
 
