@@ -1,13 +1,24 @@
 import { Routes, Route } from 'react-router-dom';
 import './App.css';
-import LoginPage from './components/LoginPage';
+
+import CanvasPage from './pages/CanvasPage';
+import LoginPage from './pages/LoginPage';
+import HomePage from './pages/HomePage';
+
+import { Container, ThemeProvider } from '@mui/material';
+import theme from './theme';
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/login" element={<LoginPage />} />
-    </Routes>
+    <ThemeProvider theme={theme}>
+      <Container>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/canvas" element={<CanvasPage />} />
+        </Routes>
+      </Container>
+    </ThemeProvider>
   );
 }
 

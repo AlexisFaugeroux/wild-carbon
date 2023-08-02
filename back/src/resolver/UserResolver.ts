@@ -103,7 +103,8 @@ class UserResolver {
       .findOneByOrFail({ email });
     try {
       if (await argon2.verify(user.password, password)) {
-        const token = jwt.sign({ email }, 'supersecretkey');
+        const { password, ...userData } = user;
+        const token = jwt.sign(userData, 'supersecretkey');
         return token;
       } else {
         return 'error';

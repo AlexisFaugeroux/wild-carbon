@@ -4,7 +4,6 @@ import {
   Column,
   UpdateDateColumn,
   CreateDateColumn,
-  OneToMany,
   ManyToOne,
 } from 'typeorm';
 import { ObjectType, Field } from 'type-graphql';
@@ -28,7 +27,7 @@ export class Expense {
 
   @Field()
   @Column('numeric', { precision: 8, scale: 2 })
-  emissionFactorTotal: number;
+  emissionTotal: number;
 
   @Field()
   @CreateDateColumn()
