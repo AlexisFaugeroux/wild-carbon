@@ -23,7 +23,7 @@ export class Item {
 
   @Field()
   @Column()
-  emissionFactor: string;
+  emissionFactorTotal: string;
 
   @Field()
   @Column()
