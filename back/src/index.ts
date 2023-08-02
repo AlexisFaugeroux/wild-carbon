@@ -42,8 +42,7 @@ const start = async (): Promise<void> => {
         req.headers.authorization === undefined ||
         req.headers.authorization === ''
       )
-        throw new Error('Authorization headers not set');
-
+        return { message: 'No authorization headers set' };
       const payload = jwt.verify(
         req.headers.authorization.split('Bearer ')[1],
         'supersecretkey',
