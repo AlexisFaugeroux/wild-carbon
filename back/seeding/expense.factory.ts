@@ -6,7 +6,7 @@ export const ExpenseFactory = setSeederFactory(Expense, (faker: Faker) => {
   const expense = new Expense();
   expense.title = faker.lorem.word();
   expense.quantity = faker.number.float();
-  expense.emissionFactorTotal = faker.number.float({ precision: 0.2 });
+  expense.emissionTotal = faker.number.float({ precision: 0.2 });
 
   return expense;
 });
