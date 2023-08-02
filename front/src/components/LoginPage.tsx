@@ -1,6 +1,6 @@
-import { Navigate } from "react-router-dom";
-import { gql, useLazyQuery } from "@apollo/client";
-import { useState } from "react";
+import { Navigate } from 'react-router-dom';
+import { gql, useLazyQuery } from '@apollo/client';
+import { useState } from 'react';
 
 const LOGIN = gql`
   query Query($password: String!, $email: String!) {
@@ -9,25 +9,25 @@ const LOGIN = gql`
 `;
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("alice@gmail.com");
-  const [password, setPassword] = useState("test");
+  const [email, setEmail] = useState('alice@gmail.com');
+  const [password, setPassword] = useState('test');
   const [login, { data, error }] = useLazyQuery(LOGIN, {
     variables: { email, password },
   });
   if (data) {
-    console.log("data from query", data.login);
-    localStorage.setItem("token", data.login);
+    console.log('data from query', data.login);
+    localStorage.setItem('token', data.login);
     return <Navigate to="/" />;
   }
   if (error) {
-    console.log("error", error);
+    console.log('error', error);
   }
   return (
     <form
       onSubmit={async (e) => {
         e.preventDefault();
-        console.log("email", email);
-        console.log("password", password);
+        console.log('email', email);
+        console.log('password', password);
         login();
       }}
     >
