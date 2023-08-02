@@ -19,7 +19,7 @@ export class Expense {
   @Column('numeric', { precision: 8, scale: 2 }) 
   quantity: number;
 
-  @Field(() => Float!, { nullable: true })
+  @Field()
   @Column()
   emissionFactor: number;
 
