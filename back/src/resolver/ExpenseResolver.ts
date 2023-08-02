@@ -20,6 +20,7 @@ class ExpenseResolver {
     const item = await dataSource
       .getRepository(Item)
       .findOneByOrFail({ id: itemId });
+
     if (!item) {
       throw new Error('Item introuvable dans la base de données');
     }
@@ -44,6 +45,7 @@ class ExpenseResolver {
       .getRepository(Item)
       .findOneByOrFail({ id: itemId });
 
+
     if (!item) {
       throw new Error('Item introuvable dans la base de données');
     }
@@ -53,7 +55,7 @@ class ExpenseResolver {
   }
 
   @Mutation(() => String)
-  async deleteExpense(@Arg('expenseId') id: string): Promise<String> {
+  async deleteExpense(@Arg('expenseId') id: string): Promise<string> {
     const targetedExpense = await dataSource
       .getRepository(Expense)
       .findOneByOrFail({ id });
