@@ -1,12 +1,19 @@
-import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, OneToMany, ManyToOne } from "typeorm";
-import { ObjectType, Field } from "type-graphql";
-import { User } from "./User";
-import { Item } from "./Item";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  UpdateDateColumn,
+  CreateDateColumn,
+  OneToMany,
+  ManyToOne,
+} from 'typeorm';
+import { ObjectType, Field } from 'type-graphql';
+import { User } from './User';
+import { Item } from './Item';
 
 @ObjectType()
 @Entity()
 export class Expense {
-
   @Field()
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -16,11 +23,11 @@ export class Expense {
   title: string;
 
   @Field()
-  @Column('numeric', { precision: 8, scale: 2 }) 
+  @Column('numeric', { precision: 8, scale: 2 })
   quantity: number;
 
   @Field()
-  @Column('numeric', { precision: 8, scale: 2 }) 
+  @Column('numeric', { precision: 8, scale: 2 })
   emissionFactorTotal: number;
 
   @Field()
@@ -38,5 +45,4 @@ export class Expense {
   @Field(() => Item)
   @ManyToOne(() => Item, (item) => item.expenses)
   item: Item;
-
 }
