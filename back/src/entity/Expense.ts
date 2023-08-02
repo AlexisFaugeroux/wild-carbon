@@ -1,5 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne } from "typeorm";
-import { ObjectType, Field, Float } from "type-graphql";
+import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, OneToMany, ManyToOne } from "typeorm";
+import { ObjectType, Field } from "type-graphql";
 import { User } from "./User";
 import { Item } from "./Item";
 
@@ -18,6 +18,10 @@ export class Expense {
   @Field()
   @Column('numeric', { precision: 8, scale: 2 }) 
   quantity: number;
+
+  @Field(() => Float!, { nullable: true })
+  @Column()
+  emissionFactor: number;
 
   @Field()
   @CreateDateColumn()

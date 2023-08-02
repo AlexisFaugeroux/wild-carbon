@@ -2,12 +2,13 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { Field, ObjectType } from "type-graphql";
 import { Expense } from "./Expense";
 import { Category } from "./Category";
+import UnitEnum from "../enum/unitEnum";
 
-enum UnitEnum{
+/*enum UnitEnum{
   KG = "kg",
   KM = "km",
   L = "l"
-}
+}*/
 
 @ObjectType()
 @Entity()
