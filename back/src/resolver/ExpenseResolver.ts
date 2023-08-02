@@ -12,7 +12,7 @@ class ExpenseResolver {
         @Arg('userId')  idUser: User,
         @Arg('title') title: string,
         @Arg('quantity') quantity: number,
-        @Arg('emissionFactor') emissionFactor: number,
+        @Arg('emissionFactorTotal') emissionFactorTotal: number,
     ) : Promise<string> {
         const expense = new Expense();
 
@@ -26,7 +26,7 @@ class ExpenseResolver {
         expense.item = id;
         expense.user = idUser;
         expense.title = title;
-        expense.emissionFactor = emissionFactor;
+        expense.emissionFactorTotal = emissionFactorTotal;
         expense.quantity = quantity;
         expense.createdAt = new Date();
 
@@ -49,7 +49,7 @@ class ExpenseResolver {
             throw new Error('Item introuvable dans la base de données');
         }
 
-        const emissionFactorCO2 = parseInt(item.emissionFactor) * quantity;
+        const emissionFactorCO2 = item.emissionFactor * quantity;
         return emissionFactorCO2;
     }
 

@@ -9,7 +9,7 @@ class ItemResolver {
     @Mutation(() => Item)
     async createItem(
         @Arg('label') label: string, 
-        @Arg('emissionFactor') emissionFactor: string,
+        @Arg('emissionFactor') emissionFactor: number,
         @Arg('unit') unit: UnitEnum,
         @Arg('category') category: string,
     ): Promise<Item> {
@@ -39,7 +39,7 @@ class ItemResolver {
     async updateItem(
         @Arg('itemId') id: string,
         @Arg('label') label: string, 
-        @Arg('emissionFactor') emissionFactor: string,
+        @Arg('emissionFactor') emissionFactor: number,
         @Arg('unit') unit: UnitEnum,
         @Arg('category') category: string,
     ): Promise<Item>{

@@ -4,12 +4,6 @@ import { Expense } from "./Expense";
 import { Category } from "./Category";
 import UnitEnum from "../enum/unitEnum";
 
-/*enum UnitEnum{
-  KG = "kg",
-  KM = "km",
-  L = "l"
-}*/
-
 @ObjectType()
 @Entity()
 export class Item {
@@ -23,8 +17,8 @@ export class Item {
   label: string;
 
   @Field()
-  @Column()
-  emissionFactorTotal: string;
+  @Column('numeric', { precision: 8, scale: 2 }) 
+  emissionFactor: number;
 
   @Field()
   @Column()
