@@ -1,4 +1,5 @@
-import { Arg, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { Context } from '../index';
 import dataSource from '../utils';
 import { Expense } from '../entity/Expense';
 import { User } from '../entity/User';
@@ -8,23 +9,25 @@ import { Item } from '../entity/Item';
 class ExpenseResolver {
   @Mutation(() => String)
   async createExpense(
-    @Arg('itemId') id: Item,
-    @Arg('userId') idUser: User,
+    @Arg('itemId') itemId: string,
     @Arg('title') title: string,
     @Arg('quantity') quantity: number,
-    @Arg('emissionFactorTotal') emissionFactorTotal: number,
+    @Arg('emissionFactorTotal') emissionTotal: number,
+    @Ctx() contextValue: Context,
   ): Promise<string> {
     const expense = new Expense();
 
-    const item = await dataSource.getRepository(Item).findOneByOrFail(id);
+    const item = await dataSource
+      .getRepository(Item)
+      .findOneByOrFail({ id: itemId });
+
     if (!item) {
       throw new Error('Item introuvable dans la base de données');
     }
-
-    expense.item = id;
-    expense.user = idUser;
+    expense.item = item;
+    expense.user = contextValue.jwtPayload;
     expense.title = title;
-    expense.emissionFactorTotal = emissionFactorTotal;
+    expense.emissionTotal = emissionTotal;
     expense.quantity = quantity;
     expense.createdAt = new Date();
 
@@ -35,10 +38,13 @@ class ExpenseResolver {
 
   @Mutation(() => Number)
   async calculatingEmissionFactor(
-    @Arg('itemId') id: Item,
+    @Arg('itemId') itemId: string,
     @Arg('quantity') quantity: number,
   ): Promise<number> {
-    const item = await dataSource.getRepository(Item).findOneByOrFail(id);
+    const item = await dataSource
+      .getRepository(Item)
+      .findOneByOrFail({ id: itemId });
+
 
     if (!item) {
       throw new Error('Item introuvable dans la base de données');

@@ -27,7 +27,7 @@ export class Expense {
 
   @Field()
   @Column('numeric', { precision: 8, scale: 2 })
-  emissionFactorTotal: number;
+  emissionTotal: number;
 
   @Field()
   @CreateDateColumn()
