@@ -6,6 +6,8 @@ export function calculateExpenseTotalEmission(
   emissionFactor: number,
   quantity: number,
 ): number {
+  if (emissionFactor < 0 || quantity < 0) return 0;
+
   const emissionTotal = emissionFactor * quantity;
   return formatNumberTwoDigits(emissionTotal);
 }
