@@ -5,6 +5,11 @@ services:
       - 4000:4000
     volumes:
       - ./back/src:/app/src
+    env_file:
+      - ./.env
+    command: npx ts-node /app/src/seeding/seed.ts && npx ts-node /app/src/index.ts
+    depends_on:
+      - db
 
   frontend:
     build: ./front
@@ -16,8 +21,8 @@ services:
   db:
     image: postgres
     restart: always
-    environment:
-      POSTGRES_PASSWORD: example
+    env_file:
+      - ./.env
 
   adminer:
     image: adminer

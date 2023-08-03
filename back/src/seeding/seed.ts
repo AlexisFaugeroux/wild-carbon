@@ -4,11 +4,11 @@ import 'reflect-metadata';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { runSeeders, SeederOptions } from 'typeorm-extension';
 
-import { Article } from '../src/entity/Article';
-import { Category } from '../src/entity/Category';
-import { Expense } from '../src/entity/Expense';
-import { Item } from '../src/entity/Item';
-import { User } from '../src/entity/User';
+import { Article } from '../entity/Article';
+import { Category } from '../entity/Category';
+import { Expense } from '../entity/Expense';
+import { Item } from '../entity/Item';
+import { User } from '../entity/User';
 
 import { ArticleFactory } from './article.factory';
 import { CategoryFactory } from './category.factory';
@@ -22,10 +22,10 @@ dotenv.config();
 
 const options: DataSourceOptions & SeederOptions = {
   type: 'postgres',
-  host: 'localhost',
+  host: 'db',
   port: 5432,
-  username: process.env.USERNAME_DB,
-  password: process.env.PASSWORD_DB,
+  username: process.env.POSTGRES_USER,
+  password: process.env.POSTGRES_PASSWORD,
   database: 'carbone',
   entities: [Article, Category, Expense, Item, User],
   factories: [
