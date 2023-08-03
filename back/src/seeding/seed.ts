@@ -4,11 +4,11 @@ import 'reflect-metadata';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { runSeeders, SeederOptions } from 'typeorm-extension';
 
-import { Article } from '../src/entity/Article';
-import { Category } from '../src/entity/Category';
-import { Expense } from '../src/entity/Expense';
-import { Item } from '../src/entity/Item';
-import { User } from '../src/entity/User';
+import { Article } from '../entity/Article';
+import { Category } from '../entity/Category';
+import { Expense } from '../entity/Expense';
+import { Item } from '../entity/Item';
+import { User } from '../entity/User';
 
 import { ArticleFactory } from './article.factory';
 import { CategoryFactory } from './category.factory';
