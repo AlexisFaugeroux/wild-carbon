@@ -20,6 +20,7 @@ const dataSource = new DataSource({
   database: 'carbone',
   synchronize: true,
   entities: [Item, Article, User, Expense, Category],
+  logging: ['schema', 'error'],
 });
 
 export default dataSource;

@@ -36,6 +36,7 @@ const options: DataSourceOptions & SeederOptions = {
     UserFactory,
   ],
   seeds: [MainSeeder],
+  logging: ['schema', 'error'],
 };
 
 const dataSource = new DataSource(options);
