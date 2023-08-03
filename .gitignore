@@ -1,6 +1,7 @@
 #vscode
 .vscode/
 back/.env
+.env
 
 #tour
 back/.tours
