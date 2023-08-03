@@ -22,11 +22,11 @@ dotenv.config();
 
 const options: DataSourceOptions & SeederOptions = {
   type: 'postgres',
-  host: 'db',
-  port: 5432,
+  host: process.env.POSTGRES_HOST,
+  port: parseInt(process.env.POSTGRES_PORT ?? '', 10),
   username: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
-  database: 'carbone',
+  database: process.env.POSTGRES_DB,
   entities: [Article, Category, Expense, Item, User],
   factories: [
     ArticleFactory,
@@ -40,12 +40,32 @@ const options: DataSourceOptions & SeederOptions = {
 
 const dataSource = new DataSource(options);
 
-dataSource
-  .initialize()
-  .then(async () => {
-    await dataSource.synchronize(true);
-    await runSeeders(dataSource);
-    console.log('Seeding complete !');
-    return dataSource.destroy();
-  })
-  .then(() => console.log('connection closed'));
+dataSource.initialize().then(async () => {
+  const userRepository = dataSource.getRepository(User);
+
+  const tableExists = (
+    await userRepository.manager.query(
+      `SELECT EXISTS (
+        SELECT FROM pg_tables
+          WHERE schemaname = 'public'
+          AND tablename = 'user'
+          )`,
+    )
+  )[0].exists;
+
+  if (tableExists) {
+    const tableHasRecords = await userRepository
+      .createQueryBuilder('user')
+      .getExists();
+
+    if (tableHasRecords) {
+      dataSource.destroy();
+      return console.log('Database is not empty. Seeding skipped');
+    }
+  }
+
+  await dataSource.synchronize(true);
+  await runSeeders(dataSource);
+  console.log('Seeding complete !');
+  dataSource.destroy();
+});
