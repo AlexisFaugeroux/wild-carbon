@@ -40,9 +40,12 @@ const options: DataSourceOptions & SeederOptions = {
 
 const dataSource = new DataSource(options);
 
-dataSource.initialize().then(async () => {
-  await dataSource.synchronize(true);
-  await runSeeders(dataSource);
-  console.log('Seeding complete !');
-  process.exit();
-});
+dataSource
+  .initialize()
+  .then(async () => {
+    await dataSource.synchronize(true);
+    await runSeeders(dataSource);
+    console.log('Seeding complete !');
+    return dataSource.destroy();
+  })
+  .then(() => console.log('connection closed'));
