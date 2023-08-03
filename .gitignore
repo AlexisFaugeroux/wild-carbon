@@ -2,6 +2,13 @@
 .vscode/
 back/.env
 
+#tour
+back/.tours
+
+#package.lock.json
+back/package-lock.json
+front/package-lock.json
+
 #node_modules
 back/node_modules/
 front/node_modules/
@@ -9,7 +16,3 @@ front/node_modules/
 #prettier
 .prettierignore
 .prettierrc.yml
-
-#eslint
-back/.eslintrc.json
-front/.eslintrc.json
