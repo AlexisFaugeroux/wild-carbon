@@ -1,21 +1,19 @@
 services:
   backend:
     build: ./back
-    ports:
-      - 4000:4000
-    volumes:
-      - ./back/src:/app/src
     env_file:
       - ./.env
     depends_on:
       - db
+    networks:
+      - networksData
 
   frontend:
     build: ./front
-    ports:
-      - 3000:3000
     volumes:
       - ./front/src:/app/src
+    networks:
+      - networksData
 
   db:
     image: postgres
@@ -24,12 +22,16 @@ services:
       - postgresData:/var/lib/postgresql/data
     env_file:
       - ./.env
+    networks:
+      - networksData
 
   adminer:
     image: adminer
     restart: always
     ports:
       - 8080:8080
+    networks:
+      - networksData
 
 volumes:
   postgresData:
