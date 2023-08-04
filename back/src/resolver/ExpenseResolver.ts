@@ -23,7 +23,7 @@ class ExpenseResolver {
       throw new Error('Item introuvable dans la base de données');
     }
 
-    if (quantity < 0 || quantity >= 500000 || quantity != null){
+    if (quantity < 0 || quantity >= 500000 || quantity != null) {
       throw new Error('error quantity value');
     }
 
@@ -48,8 +48,8 @@ class ExpenseResolver {
     @Ctx() contextValue: Context,
   ): Promise<Expense> {
     const targetedExpense = await dataSource
-    .getRepository(Expense)
-    .findOneByOrFail( {id} );
+      .getRepository(Expense)
+      .findOneByOrFail({ id });
 
     const item = await dataSource
       .getRepository(Item)
@@ -59,18 +59,20 @@ class ExpenseResolver {
       throw new Error('Item introuvable dans la base de données');
     }
 
-    if (quantity < 0 || quantity >= 500000 || quantity != null){
+    if (quantity < 0 || quantity >= 500000 || quantity != null) {
       throw new Error('error quantity value');
     }
 
     targetedExpense.item = item;
     targetedExpense.user = contextValue.jwtPayload;
     targetedExpense.title = title;
-    targetedExpense.emissionTotal =  item.emissionFactor * quantity;
+    targetedExpense.emissionTotal = item.emissionFactor * quantity;
     targetedExpense.quantity = quantity;
     targetedExpense.updatedAt = new Date();
 
-    const updateExpense = await dataSource.getRepository(Expense).save(targetedExpense);
+    const updateExpense = await dataSource
+      .getRepository(Expense)
+      .save(targetedExpense);
 
     return updateExpense;
   }
