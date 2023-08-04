@@ -1,11 +1,12 @@
 import { DataSource } from 'typeorm';
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { faker } from '@faker-js/faker';
-import { Article } from '../src/entity/Article';
-import { Category } from '../src/entity/Category';
-import { Expense } from '../src/entity/Expense';
-import { Item } from '../src/entity/Item';
-import { User } from '../src/entity/User';
+import { Article } from '../entity/Article';
+import { Category } from '../entity/Category';
+import { Expense } from '../entity/Expense';
+import { Item } from '../entity/Item';
+import { User } from '../entity/User';
+import { Categories } from '../enum/categoriesEnum';
 
 export class MainSeeder implements Seeder {
   public async run(
@@ -16,14 +17,14 @@ export class MainSeeder implements Seeder {
     const articleRepository = dataSource.getRepository(Article);
     const itemRepository = dataSource.getRepository(Item);
     const expenseRepository = dataSource.getRepository(Expense);
+    const categoryRespository = dataSource.getRepository(Category);
 
     const articleFactory = factoryManager.get(Article);
-    const categoryFactory = factoryManager.get(Category);
     const expenseFactory = factoryManager.get(Expense);
     const itemFactory = factoryManager.get(Item);
     const userFactory = factoryManager.get(User);
 
-    console.log('Processing Users...');
+    console.log('Seeding: Processing Users...');
     const users = await userFactory.saveMany(10);
     users.forEach((user) => {
       const friends = faker.helpers.arrayElements(users, {
@@ -35,9 +36,18 @@ export class MainSeeder implements Seeder {
     await userRepository.save(users);
 
     console.log('Processing Categories...');
-    const categories = await categoryFactory.saveMany(8);
+    const categoriesArray: Categories[] = [];
+    Object.values(Categories).forEach((cat) => categoriesArray.push(cat));
+    const categories = Array(4)
+      .fill('')
+      .map((_, index) => {
+        const category = new Category();
+        category.name = categoriesArray[index];
+        return category;
+      });
+    await categoryRespository.save(categories);
 
-    console.log('Processing Articles...');
+    console.log('Seeding: Processing Articles...');
     const articles = await Promise.all(
       Array(6)
         .fill('')
@@ -50,7 +60,7 @@ export class MainSeeder implements Seeder {
     );
     await articleRepository.save(articles);
 
-    console.log('Processing Items...');
+    console.log('Seeding: Processing Items...');
     const items = await Promise.all(
       Array(50)
         .fill('')
@@ -63,7 +73,7 @@ export class MainSeeder implements Seeder {
     );
     await itemRepository.save(items);
 
-    console.log('Processing Expenses...');
+    console.log('Seeding: Processing Expenses...');
     const expenses = await Promise.all(
       Array(30)
         .fill('')

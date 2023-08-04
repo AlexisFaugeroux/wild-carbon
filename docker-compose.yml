@@ -1,26 +1,44 @@
 services:
   backend:
     build: ./back
+    env_file:
+      - ./.env
+    depends_on:
+      - db
     ports:
       - 4000:4000
-    volumes:
-      - ./back/src:/app/src
+    networks:
+      - networksData
 
   frontend:
     build: ./front
-    ports:
-      - 3000:3000
     volumes:
       - ./front/src:/app/src
+    ports:
+      - 3000:3000
+    networks:
+      - networksData
 
   db:
     image: postgres
     restart: always
-    environment:
-      POSTGRES_PASSWORD: example
+    volumes:
+      - postgresData:/var/lib/postgresql/data
+    env_file:
+      - ./.env
+    networks:
+      - networksData
 
   adminer:
     image: adminer
     restart: always
     ports:
       - 8080:8080
+    networks:
+      - networksData
+
+volumes:
+  postgresData:
+
+networks:
+  networksData:
