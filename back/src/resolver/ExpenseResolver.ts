@@ -11,7 +11,7 @@ class ExpenseResolver {
     @Arg('itemId') itemId: string,
     @Arg('title') title: string,
     @Arg('quantity') quantity: number,
-    @Arg('emissionFactorTotal') emissionTotal: number,
+    @Arg('emissionTotal') emissionTotal: number,
     @Ctx() contextValue: Context,
   ): Promise<string> {
     const expense = new Expense();
