@@ -18,9 +18,7 @@ import smallLogo from "../../assets/leaf.png";
 import logo from "../../assets/FinalLogo.png";
 
 import variables from "../../variables";
-import "./style.css";
 import { Link } from "react-router-dom";
-// import { useState  } from "react";
 
 type MenuProps = DrawerProps & {
   isOpenMenu: boolean;
