@@ -3,11 +3,11 @@ import { Menu, Person } from "@mui/icons-material";
 import { useState } from "react";
 import { useFormik } from "formik";
 import CarbonIconButton from "../CarbonIconButton";
-import variables from "../../variables";
 import CarbonButton from "../CarbonButton";
 import CarbonInputBase from "../CarbonInputBase";
-// import MenuBar from "../Menu";
+import MenuBar from "../Menu";
 import logo from "../../assets/FinalLogo.png";
+import variables from "../../variables";
 
 const HeaderBar = () => {
   const [isOpenPopover, setIsOpenPopover] = useState(false);
@@ -21,7 +21,11 @@ const HeaderBar = () => {
   };
 
   const handleOpeningMenu = () => {
-    setIsOpenMenu(!isOpenMenu);
+    setIsOpenMenu(true);
+  };
+
+  const handleClosingMenu = () => {
+    setIsOpenMenu(false);
   };
 
   const formik = useFormik({
@@ -50,7 +54,7 @@ const HeaderBar = () => {
           icon={<Menu color="primary" fontSize="large" />}
           onClick={handleOpeningMenu}
         />
-        {/* <MenuBar isOpenMenu /> */}
+        <MenuBar onClose={handleClosingMenu} isOpenMenu={isOpenMenu} />
         <Box
           sx={{
             margin: "auto",
