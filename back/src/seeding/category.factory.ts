@@ -1,6 +1,6 @@
 import { Faker } from '@faker-js/faker';
 import { setSeederFactory } from 'typeorm-extension';
-import { Category } from '../src/entity/Category';
+import { Category } from '../entity/Category';
 
 export const CategoryFactory = setSeederFactory(Category, (faker: Faker) => {
   const category = new Category();

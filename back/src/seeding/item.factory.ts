@@ -1,7 +1,7 @@
 import { Faker } from '@faker-js/faker';
 import { setSeederFactory } from 'typeorm-extension';
-import { Item } from '../src/entity/Item';
-import UnitEnum from '../src/enum/unitEnum';
+import { Item } from '../entity/Item';
+import UnitEnum from '../enum/unitEnum';
 
 export const ItemFactory = setSeederFactory(Item, (faker: Faker) => {
   const item = new Item();
