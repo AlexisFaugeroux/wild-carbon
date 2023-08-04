@@ -50,9 +50,8 @@ const theme = createTheme({
   },
   styleInputBase: {
     border: '1px solid',
-    height: '6vh',
     borderColor: '#1CAF68',
-    padding: '10px',
+    borderRadius: "5px",
     backgroundColor:'#FFF'
   },
 });
