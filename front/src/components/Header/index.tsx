@@ -1,22 +1,25 @@
-import { Box, FormControl, Popover } from "@mui/material";
-import { Menu, Person } from "@mui/icons-material";
-import { useState } from "react";
-import { useFormik } from "formik";
-import CarbonIconButton from "../CarbonIconButton";
-import CarbonButton from "../CarbonButton";
-import CarbonInputBase from "../CarbonInputBase";
-import MenuBar from "../Menu";
-import logo from "../../assets/FinalLogo.png";
-import variables from "../../variables";
+import { Box, FormControl, Popover } from '@mui/material';
+import { Menu, Person } from '@mui/icons-material';
+import { useState } from 'react';
+import { useFormik } from 'formik';
+import CarbonIconButton from '../CarbonIconButton';
+import CarbonButton from '../CarbonButton';
+import CarbonInputBase from '../CarbonInputBase';
+import MenuBar from '../Menu';
+import logo from '../../assets/FinalLogo.png';
+import variables from '../../variables';
 
 const HeaderBar = () => {
   const [isOpenPopover, setIsOpenPopover] = useState(false);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
-  const handleOpeningPopover = () => {
+  const handleOpeningPopover = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
     setIsOpenPopover(!isOpenPopover);
   };
   const handleClosingPopover = () => {
+    setAnchorEl(null);
     setIsOpenPopover(!isOpenPopover);
   };
 
@@ -30,8 +33,8 @@ const HeaderBar = () => {
 
   const formik = useFormik({
     initialValues: {
-      pseudo: "",
-      password: "",
+      pseudo: '',
+      password: '',
     },
     onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
@@ -43,28 +46,28 @@ const HeaderBar = () => {
       <Box
         sx={{
           backgroundColor: variables.bgHeaderFooter,
-          position: "relative",
+          position: 'relative',
           height: variables.heightHeader,
-          display: "flex",
-          alignItems: "center",
+          display: 'flex',
+          alignItems: 'center',
         }}
       >
         <CarbonIconButton
-          sx={{ position: "absolute" }}
+          sx={{ position: 'absolute' }}
           icon={<Menu color="primary" fontSize="large" />}
           onClick={handleOpeningMenu}
         />
         <MenuBar onClose={handleClosingMenu} isOpenMenu={isOpenMenu} />
         <Box
           sx={{
-            margin: "auto",
+            margin: 'auto',
             height: `calc(${variables.heightHeader} - 1vh)`,
           }}
         >
           <img src={logo} alt="Logo BalanceTonCarbone" height="100%" />
         </Box>
         <CarbonIconButton
-          sx={{ position: "absolute", right: "0" }}
+          sx={{ position: 'absolute', right: '0' }}
           icon={<Person color="primary" fontSize="large" />}
           onClick={handleOpeningPopover}
         />
@@ -74,19 +77,19 @@ const HeaderBar = () => {
         open={isOpenPopover}
         onClose={handleClosingPopover}
         anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
+          vertical: 'bottom',
+          horizontal: 'right',
         }}
         sx={{
           boxShadow:
-            "rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px",
+            'rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px',
         }}
       >
         <Box
-          sx={{ backgroundColor: variables.bgHeaderFooter, padding: "20px" }}
+          sx={{ backgroundColor: variables.bgHeaderFooter, padding: '20px' }}
         >
           <FormControl
-            sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+            sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
           >
             <CarbonInputBase
               placeholder="Pseudo"
