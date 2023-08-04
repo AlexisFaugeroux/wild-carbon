@@ -6,7 +6,7 @@ import { Item } from '../entity/Item';
 
 @Resolver()
 class ExpenseResolver {
-  @Mutation(() => Expense)
+  @Mutation(() => String)
   async createExpense(
     @Arg('itemId') itemId: string,
     @Arg('title') title: string,
@@ -30,7 +30,7 @@ class ExpenseResolver {
     expense.item = item;
     expense.user = contextValue.jwtPayload;
     expense.title = title;
-    expense.emissionTotal =  item.emissionFactor * quantity;
+    expense.emissionTotal = item.emissionFactor * quantity;
     expense.quantity = quantity;
     expense.createdAt = new Date();
 
