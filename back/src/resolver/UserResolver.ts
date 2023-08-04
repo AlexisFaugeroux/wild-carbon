@@ -67,7 +67,7 @@ class UserResolver {
   }
 
   @Mutation(() => String)
-  async deleteUser(@Arg('userId') id: string): Promise<String> {
+  async deleteUser(@Arg('userId') id: string): Promise<string> {
     const targetedUser = await dataSource
       .getRepository(User)
       .findOneByOrFail({ id });
@@ -89,6 +89,7 @@ class UserResolver {
       const users = await dataSource.getRepository(User).find();
       return users;
     } catch (error) {
+      console.error(error);
       throw error;
     }
   }
@@ -97,12 +98,14 @@ class UserResolver {
   async login(
     @Arg('email') email: string,
     @Arg('password') password: string,
-  ): Promise<String> {
+  ): Promise<string> {
     const user = await dataSource
       .getRepository(User)
       .findOneByOrFail({ email });
     try {
       if (await argon2.verify(user.password, password)) {
+        // we just need the user object without password
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { password, ...userData } = user;
         const token = jwt.sign(userData, 'supersecretkey');
         return token;

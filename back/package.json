@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node-dev src/index.ts",
-    "seedDB": "ts-node-dev seeding/seed.ts"
+    "seedDB": "ts-node-dev src/seeding/seed.ts"
   },
   "author": "",
   "license": "ISC",
