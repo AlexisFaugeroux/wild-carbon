@@ -12,14 +12,11 @@ import variables from '../../variables';
 const HeaderBar = () => {
   const [isOpenPopover, setIsOpenPopover] = useState(false);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
-  const handleOpeningPopover = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
+  const handleOpeningPopover = () => {
     setIsOpenPopover(!isOpenPopover);
   };
   const handleClosingPopover = () => {
-    setAnchorEl(null);
     setIsOpenPopover(!isOpenPopover);
   };
 
