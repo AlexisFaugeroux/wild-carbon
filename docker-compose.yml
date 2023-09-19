@@ -12,6 +12,8 @@ services:
 
   frontend:
     build: ./front
+    environment:
+      - WATCHPACK_POLLING=true
     volumes:
       - ./front/src:/app/src
     ports:
