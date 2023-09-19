@@ -1,10 +1,17 @@
-import { FC } from 'react';
-import { InputBase, InputBaseProps, useTheme } from '@mui/material';
+import { FC } from "react";
+import { TextField, TextFieldProps, useTheme } from "@mui/material";
 
-const CarbonInputBase: FC<InputBaseProps> = ({ ...inputProps }) => {
+const CarbonInputBase: FC<TextFieldProps> = ({ ...inputProps }) => {
   const { styleInputBase } = useTheme();
 
-  return <InputBase sx={styleInputBase} placeholder="..." {...inputProps} />;
+  return (
+    <TextField
+      sx={styleInputBase}
+      size="small"
+      placeholder="..."
+      {...inputProps}
+    />
+  );
 };
 
 export default CarbonInputBase;

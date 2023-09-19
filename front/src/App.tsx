@@ -4,20 +4,24 @@ import './App.css';
 import CanvasPage from './pages/CanvasPage';
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
+import HeaderBar from './components/Header';
 
-import { Container, ThemeProvider } from '@mui/material';
+import { Box, ThemeProvider } from '@mui/material';
 import theme from './theme';
+import Footer from './components/Footer';
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <Container>
+      <Box>
+        <HeaderBar />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/canvas" element={<CanvasPage />} />
         </Routes>
-      </Container>
+        <Footer />
+      </Box>
     </ThemeProvider>
   );
 }
