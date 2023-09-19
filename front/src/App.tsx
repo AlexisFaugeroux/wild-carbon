@@ -8,6 +8,7 @@ import HeaderBar from './components/Header';
 
 import { Box, ThemeProvider } from '@mui/material';
 import theme from './theme';
+import Footer from './components/Footer';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/canvas" element={<CanvasPage />} />
         </Routes>
+        <Footer />
       </Box>
     </ThemeProvider>
   );
