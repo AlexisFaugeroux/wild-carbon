@@ -7,7 +7,6 @@ import CanvasPage from './pages/CanvasPage';
 
 const Navigator: FC = () => {
   const { isLoggedIn } = useContext(LoginContext);
-  console.log('isLoggedIn', isLoggedIn);
 
   return (
     <Routes>
