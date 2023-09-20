@@ -13,7 +13,6 @@ export default function ExpensesCard() {
   return (
     <Box sx={{ width: "100%" }}>
       <CarbonCard
-        // title="Mes dépenses carbones récentes:"
         style={{
           backgroundColor: "white",
           border: "2px solid #3C8962",
