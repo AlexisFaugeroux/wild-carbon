@@ -68,7 +68,7 @@ const HeaderBar = () => {
         open={isOpenPopover}
         onClose={handleClosingPopover}
         anchorOrigin={{
-          vertical: 'bottom',
+          vertical: 'top',
           horizontal: 'right',
         }}
         sx={{
