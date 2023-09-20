@@ -9,6 +9,7 @@ back/.tours
 #package.lock.json
 back/package-lock.json
 front/package-lock.json
+package-lock.json
 
 #node_modules
 back/node_modules/

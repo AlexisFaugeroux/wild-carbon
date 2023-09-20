@@ -1,9 +1,9 @@
-import { Card, CardProps, Typography } from '@mui/material';
-import { FC } from 'react';
-import CarbonCardContent from './components/Content';
-import CarbonCardActions from './components/Actions';
-import CarboneCardMedia from './components/Media';
-import { lightGreen } from '@mui/material/colors';
+import { Card, CardProps, Typography } from "@mui/material";
+import { FC } from "react";
+import CarbonCardContent from "./components/Content";
+import CarbonCardActions from "./components/Actions";
+import CarboneCardMedia from "./components/Media";
+import { lightGreen } from "@mui/material/colors";
 
 interface CardParts {
   Media: typeof CarboneCardMedia;
@@ -26,15 +26,15 @@ const CarbonCard: FC<CarbonCardProps> & CardParts = ({
       {...CardProps}
       sx={{
         backgroundColor: lightGreen[50],
-        marginBottom: '12px',
-        padding: '12px',
+        marginBottom: "12px",
+        padding: "12px",
       }}
     >
       {title ? (
         <Typography
           variant="body1"
           component="div"
-          sx={{ marginBottom: '16px' }}
+          sx={{ marginBottom: "16px", fontFamily: "Roboto" }}
         >
           {title}
         </Typography>
