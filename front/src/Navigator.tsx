@@ -12,7 +12,7 @@ const Navigator: FC = () => {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
-      {isLoggedIn ? <Route path="/login" element={<LoginPage />} /> : null}
+      <Route path="/login" element={<LoginPage />} />
       {isLoggedIn ? <Route path="/canvas" element={<CanvasPage />} /> : null}
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
