@@ -13,8 +13,8 @@ const Footer: FC = () => {
         display="flex"
         alignItems="center"
         justifyContent="center"
-        position="relative"
         bottom={0}
+        sx={{ position: { xs: 'relative', sm: 'absolute' } }}
       >
         <WebsiteCarbonBadge co2="0.12" percentage="89" />
       </Box>

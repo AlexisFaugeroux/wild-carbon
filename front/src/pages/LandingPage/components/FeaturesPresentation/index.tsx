@@ -25,7 +25,12 @@ const FeaturesPresentation: FC<FeaturesPresentationProps> = ({
       alignItems="center"
       justifyContent="center"
       paddingY={variables.spacings.abs24}
-      paddingX={variables.spacings.abs8}
+      sx={{
+        paddingX: {
+          xs: variables.spacings.abs8,
+          sm: variables.spacings.abs24,
+        },
+      }}
       {...props}
     >
       <Stack spacing={3}>
@@ -35,14 +40,20 @@ const FeaturesPresentation: FC<FeaturesPresentationProps> = ({
 
         <Typography>{description}</Typography>
       </Stack>
-      <img
-        src={image}
-        style={{
-          margin: !isMobile ? `0px ${variables.spacings.abs16}` : 0,
-          maxHeight: 256,
-          maxWidth: 512,
-        }}
-      />
+      <Box
+        display="flex"
+        justifyContent="center"
+        minWidth={!isMobile ? 512 : 0}
+      >
+        <img
+          src={image}
+          style={{
+            margin: !isMobile ? `0px ${variables.spacings.abs16}` : 0,
+            maxHeight: 256,
+            maxWidth: 512,
+          }}
+        />
+      </Box>
     </Box>
   );
 };
