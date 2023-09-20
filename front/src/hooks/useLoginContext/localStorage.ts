@@ -11,7 +11,7 @@ const LocalStorageUserTokenSchema = z.record(
   }),
 );
 
-const USER_TOKEN_LOCAL_STORAGE_KEY = 'hasLoggedIn';
+const USER_TOKEN_LOCAL_STORAGE_KEY = 'userTokenData';
 
 export const getUserTokenFromLocalStorage =
   (): LocalStorageUserToken | null => {
