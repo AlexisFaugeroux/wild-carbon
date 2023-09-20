@@ -23,12 +23,12 @@ const CarbonCard: FC<CarbonCardProps> & CardParts = ({
 }) => {
   return (
     <Card
-      {...CardProps}
       sx={{
         backgroundColor: lightGreen[50],
         marginBottom: "12px",
         padding: "12px",
       }}
+      {...CardProps}
     >
       {title ? (
         <Typography

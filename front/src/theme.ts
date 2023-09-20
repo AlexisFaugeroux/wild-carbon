@@ -1,7 +1,6 @@
 import { createTheme } from '@mui/material/styles';
 import variables from './variables';
 
-
 // Needed to add variables to theme
 declare module '@mui/material/styles' {
   interface Theme {
@@ -51,8 +50,8 @@ const theme = createTheme({
   styleInputBase: {
     border: '1px solid',
     borderColor: '#1CAF68',
-    borderRadius: "5px",
-    backgroundColor:'#FFF'
+    borderRadius: '5px',
+    backgroundColor: '#FFF',
   },
 });
 

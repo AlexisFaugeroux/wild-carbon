@@ -5,10 +5,13 @@ type CarbonCardActionsProps = CardActionsProps & {
   children: React.ReactNode;
 };
 
-const CarbonCardActions: FC<CarbonCardActionsProps> = ({ children }) => {
+const CarbonCardActions: FC<CarbonCardActionsProps> = ({
+  children,
+  ...props
+}) => {
   return (
     <CardActions>
-      <Box display="flex" justifyContent="flex-end" width="100%">
+      <Box display="flex" justifyContent="flex-end" width="100%" {...props}>
         <Box
           display="grid"
           gap={2}

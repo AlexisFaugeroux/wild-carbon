@@ -5,19 +5,19 @@ import { WebsiteCarbonBadge } from 'react-websitecarbon-badge';
 
 const Footer: FC = () => {
   return (
-    <Box
-      sx={{
-        backgroundColor: variables.bgHeaderFooter,
-        height: variables.heightFooter,
-        width: '100vw',
-        position: 'fixed',
-        bottom: 0,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <WebsiteCarbonBadge co2="0.12" percentage="89" />
+    <Box>
+      <Box
+        bgcolor={variables.bgHeaderFooter}
+        height={variables.heightFooter}
+        width="100vw"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        position="relative"
+        bottom={0}
+      >
+        <WebsiteCarbonBadge co2="0.12" percentage="89" />
+      </Box>
     </Box>
   );
 };

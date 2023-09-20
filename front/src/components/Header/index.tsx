@@ -38,7 +38,13 @@ const HeaderBar = () => {
         }}
       >
         <CarbonIconButton
-          sx={{ position: 'absolute' }}
+          sx={{
+            backgroundColor: variables.bgHeaderFooter,
+            position: 'fixed',
+            top: 10,
+            left: 10,
+            zIndex: 2,
+          }}
           icon={<Menu color="primary" fontSize="large" />}
           onClick={handleOpeningMenu}
         />
