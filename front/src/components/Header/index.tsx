@@ -1,10 +1,8 @@
-import { Box, FormControl, Popover } from '@mui/material';
+import { Box, Popover } from '@mui/material';
 import { Menu, Person } from '@mui/icons-material';
 import { useState } from 'react';
-import { useFormik } from 'formik';
 import CarbonIconButton from '../CarbonIconButton';
-import CarbonButton from '../CarbonButton';
-import CarbonInputBase from '../CarbonInputBase';
+import AuthenticationForm from '../AuthenticationForm';
 import MenuBar from '../Menu';
 import logo from '../../assets/FinalLogo.png';
 import variables from '../../variables';
@@ -27,16 +25,6 @@ const HeaderBar = () => {
   const handleClosingMenu = () => {
     setIsOpenMenu(false);
   };
-
-  const formik = useFormik({
-    initialValues: {
-      pseudo: '',
-      password: '',
-    },
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
-    },
-  });
 
   return (
     <Box>
@@ -85,25 +73,7 @@ const HeaderBar = () => {
         <Box
           sx={{ backgroundColor: variables.bgHeaderFooter, padding: '20px' }}
         >
-          <FormControl
-            sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
-          >
-            <CarbonInputBase
-              placeholder="Pseudo"
-              id="pseudo"
-              name="pseudo"
-              onChange={formik.handleChange}
-              value={formik.values.pseudo}
-            />
-            <CarbonInputBase
-              placeholder="Mot de passe"
-              id="password"
-              name="password"
-              onChange={formik.handleChange}
-              value={formik.values.password}
-            />
-            <CarbonButton>Se connecter</CarbonButton>
-          </FormControl>
+          <AuthenticationForm handleClosingPopover={handleClosingPopover} />
         </Box>
       </Popover>
     </Box>
