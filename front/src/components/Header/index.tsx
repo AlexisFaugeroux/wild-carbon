@@ -1,11 +1,14 @@
 import { Box, Popover } from '@mui/material';
 import { Menu, Person } from '@mui/icons-material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useFormik } from 'formik';
 import CarbonIconButton from '../CarbonIconButton';
 import AuthenticationForm from '../AuthenticationForm';
 import MenuBar from '../Menu';
 import logo from '../../assets/FinalLogo.png';
+import simplifiedLogo from '../../assets/leaf.png';
 import variables from '../../variables';
+import theme from '../../theme';
 
 const HeaderBar = () => {
   const [isOpenPopover, setIsOpenPopover] = useState(false);
@@ -26,6 +29,38 @@ const HeaderBar = () => {
     setIsOpenMenu(false);
   };
 
+  const formik = useFormik({
+    initialValues: {
+      pseudo: '',
+      password: '',
+    },
+    onSubmit: (values) => {
+      alert(JSON.stringify(values, null, 2));
+    },
+  });
+
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 926 || window.innerHeight < 500) {
+        setIsMobile(true);
+      } else {
+        setIsMobile(false);
+      }
+    };
+
+    if (window.innerWidth < 926 || window.innerHeight < 500) {
+      setIsMobile(true);
+    }
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
     <Box>
       <Box
@@ -38,7 +73,13 @@ const HeaderBar = () => {
         }}
       >
         <CarbonIconButton
-          sx={{ position: 'absolute' }}
+          sx={{
+            backgroundColor: variables.bgHeaderFooter,
+            position: 'fixed',
+            top: 10,
+            left: 10,
+            zIndex: 2,
+          }}
           icon={<Menu color="primary" fontSize="large" />}
           onClick={handleOpeningMenu}
         />
@@ -49,7 +90,11 @@ const HeaderBar = () => {
             height: `calc(${variables.heightHeader} - 1vh)`,
           }}
         >
-          <img src={logo} alt="Logo BalanceTonCarbone" height="100%" />
+          <img
+            src={isMobile ? simplifiedLogo : logo}
+            alt="Logo BalanceTonCarbone"
+            height="100%"
+          />
         </Box>
         <CarbonIconButton
           sx={{ position: 'absolute', right: '0' }}
@@ -62,7 +107,7 @@ const HeaderBar = () => {
         open={isOpenPopover}
         onClose={handleClosingPopover}
         anchorOrigin={{
-          vertical: 'bottom',
+          vertical: 'top',
           horizontal: 'right',
         }}
         sx={{

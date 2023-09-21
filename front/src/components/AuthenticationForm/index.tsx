@@ -7,6 +7,8 @@ import CarbonInputBase from '../CarbonInputBase';
 import CarbonButton from '../CarbonButton';
 import { LoginQuery } from './loginQuery';
 import { loginValidationSchema } from './loginValidationSchema';
+import { saveUserTokenInLocalStorage } from '../../hooks/useLoginContext/localStorage';
+import { routes } from '../../Navigator';
 
 interface IAuthentifcationForm {
   handleClosingPopover: () => void;
@@ -20,9 +22,9 @@ const AuthenticationForm: FC<IAuthentifcationForm> = ({
 
   useEffect(() => {
     if (data) {
-      localStorage.setItem('token', data.login);
+      saveUserTokenInLocalStorage({ userToken: data.login });
       handleClosingPopover();
-      navigate('/');
+      navigate(routes.dashboard);
     }
   }, [data]);
 
