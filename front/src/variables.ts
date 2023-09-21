@@ -4,7 +4,7 @@ const variables = {
   thirdColor: '#A98E60',
   backgroundColor: '#F6F6F6',
   bgHeaderFooter: '#D7CBB5',
-  heightFooter: '6vh',
+  heightFooter: '10vh',
   heightHeader: '8vh',
   spacings: {
     abs4: '4px',
