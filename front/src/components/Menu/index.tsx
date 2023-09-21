@@ -51,7 +51,7 @@ const MenuBar: FC<MenuProps> = ({ isOpenMenu, onClose }) => {
         }}
       >
         <Box>
-          <Link to="" style={{ textDecoration: "none" }}>
+          <Link to="/dashboard" style={{ textDecoration: "none" }}>
             <ListItem>
               <CarbonIconButton
                 icon={<Home fontSize="large" color="secondary" />}
