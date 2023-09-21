@@ -5,11 +5,9 @@ interface LocalStorageUserToken {
   userToken?: string;
 }
 
-const LocalStorageUserTokenSchema = z.record(
-  z.object({
-    userToken: z.optional(z.string()),
-  }),
-);
+const LocalStorageUserTokenSchema = z.object({
+  userToken: z.string(),
+});
 
 const USER_TOKEN_LOCAL_STORAGE_KEY = 'userTokenData';
 
@@ -18,6 +16,7 @@ export const getUserTokenFromLocalStorage =
     const userTokenData = localStorageObjectSchema
       .pipe(LocalStorageUserTokenSchema)
       .safeParse(window.localStorage.getItem(USER_TOKEN_LOCAL_STORAGE_KEY));
+    console.log('userTokenData', userTokenData);
     if (userTokenData.success) {
       return userTokenData.data;
     }
