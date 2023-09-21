@@ -5,13 +5,14 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import CanvasPage from './pages/CanvasPage';
 import Dashboard from './pages/Dashboard';
+import LandingPage from './pages/LandingPage';
 
 const Navigator: FC = () => {
   const { isLoggedIn } = useContext(LoginContext);
 
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
+      <Route path="/" element={isLoggedIn ? <HomePage /> : <LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
       {isLoggedIn ? <Route path="/canvas" element={<CanvasPage />} /> : null}
       <Route path="/dashboard" element={<Dashboard />} />

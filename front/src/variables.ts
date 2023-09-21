@@ -13,6 +13,10 @@ const variables = {
     abs16: '16px',
     abs24: '24px',
     abs32: '32px',
+    abs40: '40px',
+    abs48: '48px',
+    abs64: '64px',
+    abs128: '128px',
   },
 };
 

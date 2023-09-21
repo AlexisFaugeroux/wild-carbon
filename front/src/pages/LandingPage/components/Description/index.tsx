@@ -1,18 +1,17 @@
 import { FC } from 'react';
 import CarbonCard from '../../../../components/CarbonCard';
-import { Button, Stack, Typography, useMediaQuery } from '@mui/material';
+import { Button, Stack, Typography } from '@mui/material';
 import LeafImg from '../../../../assets/leaf.png';
 import { lightGreen } from '@mui/material/colors';
 import variables from '../../../../variables';
 
 const Description: FC = () => {
-  const isMobile = useMediaQuery('(max-width: 700px)');
   return (
     <CarbonCard
       sx={{
         backgroundColor: lightGreen[50],
         marginBottom: 0,
-        paddingBottom: variables.spacings.abs32,
+        paddingY: variables.spacings.abs128,
         borderRadius: 0,
       }}
     >
@@ -20,11 +19,7 @@ const Description: FC = () => {
         <Stack alignItems="center" justifyContent="center" spacing={2}>
           <img src={LeafImg} alt="logo" style={{ width: '100px' }} />
 
-          <Typography
-            fontWeight="bold"
-            textAlign="center"
-            variant={isMobile ? 'h6' : 'h4'}
-          >
+          <Typography fontWeight="bold" textAlign="center" variant="h3">
             Balance Ton Carbone
           </Typography>
 
