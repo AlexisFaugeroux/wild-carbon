@@ -1,23 +1,24 @@
 import { Box, Popover } from '@mui/material';
 import { Menu, Person } from '@mui/icons-material';
-import { useEffect, useState } from 'react';
-import { useFormik } from 'formik';
+import { useState, useEffect, MouseEvent } from 'react';
 import CarbonIconButton from '../CarbonIconButton';
 import AuthenticationForm from '../AuthenticationForm';
 import MenuBar from '../Menu';
 import logo from '../../assets/FinalLogo.png';
 import simplifiedLogo from '../../assets/leaf.png';
 import variables from '../../variables';
-import theme from '../../theme';
 
 const HeaderBar = () => {
   const [isOpenPopover, setIsOpenPopover] = useState(false);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
+  const [anchor, setAnchor] = useState<HTMLButtonElement | null>(null);
 
-  const handleOpeningPopover = () => {
+  const handleOpeningPopover = (event: MouseEvent<HTMLButtonElement>) => {
+    setAnchor(event.currentTarget);
     setIsOpenPopover(!isOpenPopover);
   };
   const handleClosingPopover = () => {
+    setAnchor(null);
     setIsOpenPopover(!isOpenPopover);
   };
 
@@ -28,16 +29,6 @@ const HeaderBar = () => {
   const handleClosingMenu = () => {
     setIsOpenMenu(false);
   };
-
-  const formik = useFormik({
-    initialValues: {
-      pseudo: '',
-      password: '',
-    },
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
-    },
-  });
 
   const [isMobile, setIsMobile] = useState(false);
 
@@ -106,8 +97,9 @@ const HeaderBar = () => {
       <Popover
         open={isOpenPopover}
         onClose={handleClosingPopover}
+        anchorEl={anchor}
         anchorOrigin={{
-          vertical: 'top',
+          vertical: 'bottom',
           horizontal: 'right',
         }}
         sx={{

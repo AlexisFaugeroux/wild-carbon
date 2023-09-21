@@ -1,55 +1,44 @@
-import { Navigate } from 'react-router-dom';
-import { gql, useLazyQuery } from '@apollo/client';
-import { useState } from 'react';
+import { FC } from 'react';
+import AuthenticationForm from '../../components/AuthenticationForm';
+import { Box, Typography } from '@mui/material';
+import variables from '../../variables';
 
-const LOGIN = gql`
-  query Query($password: String!, $email: String!) {
-    login(password: $password, email: $email)
-  }
-`;
-
-const LoginPage = () => {
-  const [email, setEmail] = useState('alice@gmail.com');
-  const [password, setPassword] = useState('test');
-  const [login, { data, error }] = useLazyQuery(LOGIN, {
-    variables: { email, password },
-  });
-  if (data) {
-    console.log('data from query', data.login);
-    localStorage.setItem('token', data.login);
-    return <Navigate to="/" />;
-  }
-  if (error) {
-    console.log('error', error);
-  }
+const LoginPage: FC = () => {
   return (
-    <form
-      onSubmit={async (e) => {
-        e.preventDefault();
-        console.log('email', email);
-        console.log('password', password);
-        login();
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '1rem',
+        alignItems: 'center',
+        padding: '1rem',
+        height: `calc(100vh - ${variables.heightHeader} - ${variables.heightFooter})`,
+        backgroundColor: variables.backgroundColor,
       }}
     >
-      <h3>Login</h3>
-      <label>Email </label>
-      <input
-        value={email}
-        onChange={(e) => {
-          setEmail(e.target.value);
+      <Typography
+        variant="body1"
+        sx={{
+          marginTop: '0.5rem',
+          marginRight: '0.5rem',
+          fontFamily: 'Roboto',
+          fontWeight: 'bold',
+          textAlign: 'right',
+          fontStyle: 'italic',
+          fontSize: {
+            xs: '1.3rem',
+            sm: '1.4rem',
+            md: '1.5rem',
+            lg: '1.6rem',
+            xl: '1.7rem',
+          },
+          color: variables.secondaryColor,
         }}
-      />
-      <br />
-      <label>Password </label>
-      <input
-        value={password}
-        onChange={(e) => {
-          setPassword(e.target.value);
-        }}
-      />
-      <br />
-      <button>Log me in</button>
-    </form>
+      >
+        Connexion
+      </Typography>
+      <AuthenticationForm />
+    </Box>
   );
 };
 
