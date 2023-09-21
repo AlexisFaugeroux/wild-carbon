@@ -11,7 +11,6 @@ class ExpenseResolver {
     @Arg('itemId') itemId: string,
     @Arg('title') title: string,
     @Arg('quantity') quantity: number,
-    @Arg('emissionFactorTotal') emissionTotal: number,
     @Ctx() contextValue: Context,
   ): Promise<string> {
     const expense = new Expense();
@@ -23,10 +22,15 @@ class ExpenseResolver {
     if (!item) {
       throw new Error('Item introuvable dans la base de données');
     }
+
+    if (quantity < 0 || quantity >= 500000 || quantity != null) {
+      throw new Error('error quantity value');
+    }
+
     expense.item = item;
     expense.user = contextValue.jwtPayload;
     expense.title = title;
-    expense.emissionTotal = emissionTotal;
+    expense.emissionTotal = item.emissionFactor * quantity;
     expense.quantity = quantity;
     expense.createdAt = new Date();
 
@@ -35,11 +39,18 @@ class ExpenseResolver {
     return 'Expense created';
   }
 
-  @Mutation(() => Number)
-  async calculatingEmissionFactor(
+  @Mutation(() => Expense)
+  async updateExpense(
+    @Arg('id') id: string,
     @Arg('itemId') itemId: string,
+    @Arg('title') title: string,
     @Arg('quantity') quantity: number,
-  ): Promise<number> {
+    @Ctx() contextValue: Context,
+  ): Promise<Expense> {
+    const targetedExpense = await dataSource
+      .getRepository(Expense)
+      .findOneByOrFail({ id });
+
     const item = await dataSource
       .getRepository(Item)
       .findOneByOrFail({ id: itemId });
@@ -48,8 +59,22 @@ class ExpenseResolver {
       throw new Error('Item introuvable dans la base de données');
     }
 
-    const emissionFactorCO2 = item.emissionFactor * quantity;
-    return emissionFactorCO2;
+    if (quantity < 0 || quantity >= 500000 || quantity != null) {
+      throw new Error('error quantity value');
+    }
+
+    targetedExpense.item = item;
+    targetedExpense.user = contextValue.jwtPayload;
+    targetedExpense.title = title;
+    targetedExpense.emissionTotal = item.emissionFactor * quantity;
+    targetedExpense.quantity = quantity;
+    targetedExpense.updatedAt = new Date();
+
+    const updateExpense = await dataSource
+      .getRepository(Expense)
+      .save(targetedExpense);
+
+    return updateExpense;
   }
 
   @Mutation(() => String)

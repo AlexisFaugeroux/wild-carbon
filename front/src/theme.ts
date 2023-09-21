@@ -1,4 +1,5 @@
-import { createTheme } from '@mui/material/styles';
+import { createTheme, responsiveFontSizes } from '@mui/material/styles';
+import variables from './variables';
 
 // Needed to add variables to theme
 declare module '@mui/material/styles' {
@@ -29,28 +30,32 @@ declare module '@mui/material/styles' {
   }
 }
 
-const theme = createTheme({
+let theme = createTheme({
   palette: {
     primary: {
-      main: '#1CAF68',
+      main: variables.primaryColor,
     },
     secondary: {
-      main: '#3C8962',
+      main: variables.secondaryColor,
     },
     background: {
-      default: '#3C8962',
+      default: variables.backgroundColor,
     },
   },
   typography: {
     allVariants: {
       fontFamily: 'Roboto mono',
     },
+    fontSize: 16,
   },
   styleInputBase: {
     border: '1px solid',
-    height: '6vh',
     borderColor: '#1CAF68',
+    borderRadius: '5px',
+    backgroundColor: '#FFF',
   },
 });
+
+theme = responsiveFontSizes(theme);
 
 export default theme;
