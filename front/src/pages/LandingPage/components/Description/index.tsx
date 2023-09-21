@@ -1,17 +1,27 @@
 import { FC } from 'react';
 import CarbonCard from '../../../../components/CarbonCard';
-import { Button, Stack, Typography } from '@mui/material';
+import {
+  Button,
+  Stack,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 import LeafImg from '../../../../assets/leaf.png';
 import { lightGreen } from '@mui/material/colors';
 import variables from '../../../../variables';
 
 const Description: FC = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   return (
     <CarbonCard
       sx={{
         backgroundColor: lightGreen[50],
         marginBottom: 0,
-        paddingY: variables.spacings.abs128,
+        paddingY: isMobile
+          ? variables.spacings.abs64
+          : variables.spacings.abs128,
         borderRadius: 0,
       }}
     >
