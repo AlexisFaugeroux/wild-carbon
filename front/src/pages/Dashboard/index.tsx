@@ -3,6 +3,7 @@ import { Box, Stack, Theme, Typography, useMediaQuery } from "@mui/material";
 import ExpensesCard from "../../components/ExpensesCard";
 
 import carbonAddIcon from "../../assets/carbon_add.png";
+import GraphicTracking from "../../components/GraphicTracking";
 
 export default function Dashboard() {
   const isLg = useMediaQuery((theme: Theme) => theme.breakpoints.down("lg"));
@@ -10,6 +11,25 @@ export default function Dashboard() {
 
   return (
     <Box>
+      <Typography
+        variant="body1"
+        sx={{
+          marginTop: "0.5rem",
+          marginRight: "0.5rem",
+          fontFamily: "Roboto",
+          textAlign: "right",
+          fontStyle: "italic",
+          fontSize: {
+            xs: "1.1rem",
+            sm: "1.2rem",
+            md: "1.3rem",
+            lg: "1.4rem",
+            xl: "1.5rem",
+          },
+        }}
+      >
+        Bienvenue sur ton dashboard //NOM//
+      </Typography>
       <Box
         sx={{
           margin: "1rem 0.5rem",
@@ -48,6 +68,7 @@ export default function Dashboard() {
         sx={{ padding: "0 0.5rem" }}
       >
         <ExpensesCard />
+        <GraphicTracking />
       </Stack>
     </Box>
   );

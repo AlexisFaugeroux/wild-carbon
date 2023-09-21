@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, useMediaQuery } from "@mui/material";
 
 import CarbonCard from "../CarbonCard";
 import ExpensesListItem from "../ExpensesListItem";
@@ -10,13 +10,15 @@ import {
 } from "@mui/icons-material";
 
 export default function ExpensesCard() {
+  const isPortrait = useMediaQuery("(orientation: portrait)");
+
   return (
     <Box sx={{ width: "100%" }}>
       <CarbonCard
         style={{
           backgroundColor: "white",
           border: "2px solid #3C8962",
-          height: "30vh",
+          height: isPortrait ? "30vh" : "50vh",
           overflow: "scroll",
         }}
         sx={{
