@@ -133,15 +133,62 @@ class UserResolver {
   ): Promise<string> {
     const UserRepo = dataSource.getRepository(User);
     const currentUserId = contextValue.jwtPayload?.id ?? userId;
+    const currentUser = await UserRepo.findOne({
+      where: { id: currentUserId },
+      relations: { users: true },
+    });
+    if (currentUser) {
+      const friend = await UserRepo.findOneByOrFail({ id: userIdToAdd });
+      currentUser.users = currentUser.users
+        ? [...currentUser.users, friend]
+        : [friend];
+      await UserRepo.save(currentUser);
+      return 'Friend added';
+    }
+    throw new Error('Something broke, try again');
+  }
+
+  @Mutation(() => String)
+  async removeFriend(
+    @Arg('userId') userId: string,
+    @Arg('userIdToRemove') userIdToRemove: string,
+    @Ctx() contextValue: Context,
+  ): Promise<string> {
+    const UserRepo = dataSource.getRepository(User);
+    const currentUserId = contextValue.jwtPayload?.id ?? userId;
     const currentUser =
       contextValue.jwtPayload ??
-      (await UserRepo.findOneByOrFail({ id: currentUserId }));
-    const friend = await UserRepo.findOneByOrFail({ id: userIdToAdd });
-    currentUser.users = currentUser.users
-      ? [...currentUser.users, friend]
-      : [friend];
+      (await UserRepo.findOne({
+        where: { id: currentUserId },
+        relations: { users: true },
+      }));
+    currentUser.users = currentUser.users.filter(
+      (friend) => friend.id !== userIdToRemove,
+    );
     await UserRepo.save(currentUser);
-    return 'Friend added';
+    return 'Friend removed';
+  }
+
+  @Query(() => [User])
+  async getFriends(
+    @Arg('userId') userId: string,
+    @Ctx() contextValue: Context,
+  ): Promise<User[] | null> {
+    try {
+      const UserRepo = dataSource.getRepository(User);
+      const currentUserId = contextValue.jwtPayload?.id ?? userId;
+      const currentUser = await UserRepo.findOne({
+        where: { id: currentUserId },
+        relations: { users: true },
+      });
+      if (currentUser) {
+        return currentUser.users;
+      }
+      return null;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 }
 
