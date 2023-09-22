@@ -140,7 +140,6 @@ class UserResolver {
     currentUser.users = currentUser.users
       ? [...currentUser.users, friend]
       : [friend];
-    console.log('currentUser.users', currentUser.users);
     await UserRepo.save(currentUser);
     return 'Friend added';
   }
