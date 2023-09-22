@@ -26,7 +26,6 @@ class UserResolver {
       user.pseudo = pseudo;
       user.email = email;
       user.password = await argon2.hash(password);
-      user.users = [];
       const createdUser = await dataSource.getRepository(User).save(user);
       return createdUser;
     } catch (error) {
