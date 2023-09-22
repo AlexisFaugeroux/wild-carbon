@@ -18,6 +18,7 @@ const variables = {
     abs64: '64px',
     abs128: '128px',
   },
+  errorColor: '#fc8181',
 };
 
 export default variables;
