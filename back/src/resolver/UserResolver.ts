@@ -1,10 +1,11 @@
 import * as argon2 from 'argon2';
 import * as jwt from 'jsonwebtoken';
 
-import { Arg, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import dataSource from '../utils';
 import { User } from '../entity/User';
 import { EntityNotFoundError } from 'typeorm';
+import { Context } from '..';
 
 @Resolver()
 class UserResolver {
@@ -36,9 +37,9 @@ class UserResolver {
   @Mutation(() => User)
   async updateUser(
     @Arg('userId') id: string,
-    @Arg('pseudo') pseudo: string,
-    @Arg('email') email: string,
-    @Arg('password') password: string,
+    @Arg('pseudo', { nullable: true }) pseudo: string,
+    @Arg('email', { nullable: true }) email: string,
+    @Arg('password', { nullable: true }) password: string,
   ): Promise<User> {
     try {
       // Check first if provided id matches a user in database. If not, the save() method below will create a new user.
@@ -46,11 +47,17 @@ class UserResolver {
         .getRepository(User)
         .findOneByOrFail({ id }); // This method throws an error if no user is found in database
 
-      const hashedPassword = await argon2.hash(password);
+      if (pseudo) {
+        targetedUser.pseudo = pseudo;
+      }
 
-      targetedUser.pseudo = pseudo;
-      targetedUser.email = email;
-      targetedUser.password = hashedPassword;
+      if (email) {
+        targetedUser.email = email;
+      }
+
+      if (password) {
+        targetedUser.password = await argon2.hash(password);
+      }
 
       const updatedUser = await dataSource
         .getRepository(User)
@@ -116,6 +123,25 @@ class UserResolver {
       console.log(err);
       return 'error';
     }
+  }
+
+  @Mutation(() => String)
+  async addFriend(
+    @Arg('userId') userId: string,
+    @Arg('userIdToAdd') userIdToAdd: string,
+    @Ctx() contextValue: Context,
+  ): Promise<string> {
+    const UserRepo = dataSource.getRepository(User);
+    const currentUserId = contextValue.jwtPayload?.id ?? userId;
+    const currentUser =
+      contextValue.jwtPayload ??
+      (await UserRepo.findOneByOrFail({ id: currentUserId }));
+    const friend = await UserRepo.findOneByOrFail({ id: userIdToAdd });
+    currentUser.users = currentUser.users
+      ? [...currentUser.users, friend]
+      : [friend];
+    await UserRepo.save(currentUser);
+    return 'Friend added';
   }
 }
 
