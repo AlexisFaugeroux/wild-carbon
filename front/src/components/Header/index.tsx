@@ -1,17 +1,21 @@
 import { Box, Popover } from '@mui/material';
 import { Menu, Person } from '@mui/icons-material';
-import { useState, useEffect, MouseEvent } from 'react';
+import { useState, useEffect, MouseEvent, useContext } from 'react';
 import CarbonIconButton from '../CarbonIconButton';
-import AuthenticationForm from '../AuthenticationForm';
+import LoginForm from '../LoginForm';
 import MenuBar from '../Menu';
 import logo from '../../assets/FinalLogo.png';
 import simplifiedLogo from '../../assets/leaf.png';
 import variables from '../../variables';
+import { LoginContext } from '../../hooks/useLoginContext';
+import LogoutForm from '../LogoutForm';
 
 const HeaderBar = () => {
   const [isOpenPopover, setIsOpenPopover] = useState(false);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const [anchor, setAnchor] = useState<HTMLButtonElement | null>(null);
+
+  const { isLoggedIn } = useContext(LoginContext);
 
   const handleOpeningPopover = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchor(event.currentTarget);
@@ -110,7 +114,11 @@ const HeaderBar = () => {
         <Box
           sx={{ backgroundColor: variables.bgHeaderFooter, padding: '20px' }}
         >
-          <AuthenticationForm handleClosingPopover={handleClosingPopover} />
+          {isLoggedIn ? (
+            <LogoutForm />
+          ) : (
+            <LoginForm handleClosingPopover={handleClosingPopover} />
+          )}
         </Box>
       </Popover>
     </Box>
