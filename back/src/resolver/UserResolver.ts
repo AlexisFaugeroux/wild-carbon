@@ -84,8 +84,18 @@ class UserResolver {
   }
 
   @Query(() => User)
-  async getUser(@Arg('userId') id: string): Promise<User> {
-    const user = await dataSource.getRepository(User).findOneByOrFail({ id });
+  async getUser(
+    @Arg('userId', { nullable: true }) id: string,
+    @Ctx() contextValue: Context,
+  ): Promise<User> {
+    let userToGetId = contextValue.jwtPayload.id;
+    //if id is not null, we want to retrieve another user info
+    if (id) {
+      userToGetId = id;
+    }
+    const user = await dataSource
+      .getRepository(User)
+      .findOneByOrFail({ id: userToGetId });
 
     return user;
   }
@@ -127,7 +137,7 @@ class UserResolver {
 
   @Mutation(() => String)
   async addFriend(
-    @Arg('userId') userId: string,
+    @Arg('userId', { nullable: true }) userId: string,
     @Arg('userIdToAdd') userIdToAdd: string,
     @Ctx() contextValue: Context,
   ): Promise<string> {
@@ -171,7 +181,7 @@ class UserResolver {
 
   @Query(() => [User])
   async getFriends(
-    @Arg('userId') userId: string,
+    @Arg('userId', { nullable: true }) userId: string,
     @Ctx() contextValue: Context,
   ): Promise<User[] | null> {
     try {
