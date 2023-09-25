@@ -13,7 +13,7 @@ export class Category {
   @Column({ unique: true })
   name: string;
 
-  @Field(() => Item)
+  @Field(() => [Item])
   @OneToMany(() => Item, (item) => item.category)
   items: Item[];
 }

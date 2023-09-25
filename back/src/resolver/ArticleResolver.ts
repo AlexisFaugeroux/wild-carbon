@@ -84,9 +84,16 @@ class ArticleResolver {
 
   @Query(() => Article)
   async getArticle(@Arg('articleId') id: string): Promise<Article> {
-    const article = await dataSource
-      .getRepository(Article)
-      .findOneByOrFail({ id });
+    const article = await dataSource.getRepository(Article).findOne({
+      where: {
+        id,
+      },
+      relations: {
+        user: true,
+      },
+    });
+
+    if (!article) throw new Error('Article not found');
 
     return article;
   }
@@ -94,7 +101,11 @@ class ArticleResolver {
   @Query(() => [Article])
   async getAllArticle(): Promise<Article[]> {
     try {
-      const articles = await dataSource.getRepository(Article).find();
+      const articles = await dataSource.getRepository(Article).find({
+        relations: {
+          user: true,
+        },
+      });
 
       return articles;
     } catch (error) {

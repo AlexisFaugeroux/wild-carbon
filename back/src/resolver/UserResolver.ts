@@ -85,25 +85,49 @@ class UserResolver {
 
   @Query(() => User)
   async getUser(
-    @Arg('userId', { nullable: true }) id: string,
+    @Arg('userId') id: string,
     @Ctx() contextValue: Context,
   ): Promise<User> {
-    let userToGetId = contextValue.jwtPayload.id;
-    //if id is not null, we want to retrieve another user info
-    if (id) {
-      userToGetId = id;
-    }
-    const user = await dataSource
-      .getRepository(User)
-      .findOneByOrFail({ id: userToGetId });
+    const jwtId = contextValue.jwtPayload?.id;
 
-    return user;
+    if (!jwtId) throw new Error('User not logged in');
+
+    try {
+      const user = await dataSource.getRepository(User).findOne({
+        where: {
+          id,
+        },
+        relations: {
+          articles: true,
+          expenses: {
+            item: true,
+          },
+          users: true,
+        },
+      });
+
+      if (!user) throw new Error('User not found');
+
+      return user;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
 
   @Query(() => [User])
   async getAllUsers(): Promise<User[]> {
     try {
-      const users = await dataSource.getRepository(User).find();
+      const users = await dataSource.getRepository(User).find({
+        relations: {
+          articles: true,
+          expenses: {
+            item: true,
+          },
+          users: true,
+        },
+      });
+
       return users;
     } catch (error) {
       console.error(error);
@@ -126,6 +150,7 @@ class UserResolver {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { password, ...userData } = user;
         const token = jwt.sign(userData, 'supersecretkey');
+
         return token;
       } else {
         throw new Error();
