@@ -84,8 +84,18 @@ class UserResolver {
   }
 
   @Query(() => User)
-  async getUser(@Arg('userId') id: string): Promise<User> {
-    const user = await dataSource.getRepository(User).findOneByOrFail({ id });
+  async getUser(
+    @Arg('userId', { nullable: true }) id: string,
+    @Ctx() contextValue: Context,
+  ): Promise<User> {
+    let userToGetId = contextValue.jwtPayload.id;
+    //if id is not null, we want to retrieve another user info
+    if (id) {
+      userToGetId = id;
+    }
+    const user = await dataSource
+      .getRepository(User)
+      .findOneByOrFail({ id: userToGetId });
 
     return user;
   }
@@ -127,21 +137,68 @@ class UserResolver {
 
   @Mutation(() => String)
   async addFriend(
-    @Arg('userId') userId: string,
+    @Arg('userId', { nullable: true }) userId: string,
     @Arg('userIdToAdd') userIdToAdd: string,
+    @Ctx() contextValue: Context,
+  ): Promise<string> {
+    const UserRepo = dataSource.getRepository(User);
+    const currentUserId = contextValue.jwtPayload?.id ?? userId;
+    const currentUser = await UserRepo.findOne({
+      where: { id: currentUserId },
+      relations: { users: true },
+    });
+    if (currentUser) {
+      const friend = await UserRepo.findOneByOrFail({ id: userIdToAdd });
+      currentUser.users = currentUser.users
+        ? [...currentUser.users, friend]
+        : [friend];
+      await UserRepo.save(currentUser);
+      return 'Friend added';
+    }
+    throw new Error('Something broke, try again');
+  }
+
+  @Mutation(() => String)
+  async removeFriend(
+    @Arg('userId') userId: string,
+    @Arg('userIdToRemove') userIdToRemove: string,
     @Ctx() contextValue: Context,
   ): Promise<string> {
     const UserRepo = dataSource.getRepository(User);
     const currentUserId = contextValue.jwtPayload?.id ?? userId;
     const currentUser =
       contextValue.jwtPayload ??
-      (await UserRepo.findOneByOrFail({ id: currentUserId }));
-    const friend = await UserRepo.findOneByOrFail({ id: userIdToAdd });
-    currentUser.users = currentUser.users
-      ? [...currentUser.users, friend]
-      : [friend];
+      (await UserRepo.findOne({
+        where: { id: currentUserId },
+        relations: { users: true },
+      }));
+    currentUser.users = currentUser.users.filter(
+      (friend) => friend.id !== userIdToRemove,
+    );
     await UserRepo.save(currentUser);
-    return 'Friend added';
+    return 'Friend removed';
+  }
+
+  @Query(() => [User])
+  async getFriends(
+    @Arg('userId', { nullable: true }) userId: string,
+    @Ctx() contextValue: Context,
+  ): Promise<User[] | null> {
+    try {
+      const UserRepo = dataSource.getRepository(User);
+      const currentUserId = contextValue.jwtPayload?.id ?? userId;
+      const currentUser = await UserRepo.findOne({
+        where: { id: currentUserId },
+        relations: { users: true },
+      });
+      if (currentUser) {
+        return currentUser.users;
+      }
+      return null;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 }
 
