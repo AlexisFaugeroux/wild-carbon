@@ -89,16 +89,36 @@ class ExpenseResolver {
 
   @Query(() => Expense)
   async getExpense(@Arg('expenseId') id: string): Promise<Expense> {
-    const expense = await dataSource
-      .getRepository(Expense)
-      .findOneByOrFail({ id });
-    return expense;
+    try {
+      const expense = await dataSource.getRepository(Expense).findOne({
+        where: {
+          id,
+        },
+        relations: {
+          item: true,
+          user: true,
+        },
+      });
+
+      if (!expense) throw new Error('Expense not found');
+
+      return expense;
+    } catch (error) {
+      console.log(error);
+      throw new Error();
+    }
   }
 
   @Query(() => [Expense])
   async getAllExpenses(): Promise<Expense[]> {
     try {
-      const expenses = await dataSource.getRepository(Expense).find();
+      const expenses = await dataSource.getRepository(Expense).find({
+        relations: {
+          item: true,
+          user: true,
+        },
+      });
+
       return expenses;
     } catch (error) {
       console.error(error);

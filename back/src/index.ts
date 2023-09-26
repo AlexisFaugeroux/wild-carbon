@@ -47,7 +47,6 @@ const start = async (): Promise<void> => {
 
   const { url } = await server.listen();
   console.log(`🚀  Server ready at ${url}`);
-  console.log('hello hot reload ?');
 };
 
 void start();
