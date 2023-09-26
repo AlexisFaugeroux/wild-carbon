@@ -14,13 +14,17 @@ interface LoginContextType {
   setIsLoggedIn: Dispatch<SetStateAction<boolean>>;
   userToken: string | undefined;
   setUserToken: Dispatch<SetStateAction<string | undefined>>;
+  userId: string;
+  setUserId: Dispatch<SetStateAction<string>>;
 }
 
 export const LoginContext = createContext<LoginContextType>({
   isLoggedIn: false,
   setIsLoggedIn: () => {},
-  userToken: undefined,
+  userToken: "",
   setUserToken: () => {},
+  userId: "",
+  setUserId: () => {},
 });
 
 export const LoginContextProvider: FC<{ children: React.ReactNode }> = ({
@@ -31,6 +35,7 @@ export const LoginContextProvider: FC<{ children: React.ReactNode }> = ({
   const [userToken, setUserToken] = useState<string | undefined>(
     userTokenData?.userToken,
   );
+  const [userId, setUserId] = useState("")
 
   const providerValue = useMemo(
     () => ({
@@ -38,6 +43,8 @@ export const LoginContextProvider: FC<{ children: React.ReactNode }> = ({
       setIsLoggedIn,
       userToken,
       setUserToken,
+      userId,
+      setUserId,
     }),
     [isLoggedIn, setIsLoggedIn],
   );
