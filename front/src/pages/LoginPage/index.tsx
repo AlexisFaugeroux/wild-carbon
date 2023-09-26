@@ -1,9 +1,13 @@
-import { FC } from 'react';
-import AuthenticationForm from '../../components/AuthenticationForm';
+import { FC, useContext } from 'react';
+import LoginForm from '../../components/LoginForm';
 import { Box, Typography } from '@mui/material';
 import variables from '../../variables';
+import { LoginContext } from '../../hooks/useLoginContext';
+import LogoutForm from '../../components/LogoutForm';
 
 const LoginPage: FC = () => {
+  const { isLoggedIn } = useContext(LoginContext);
+
   return (
     <Box
       sx={{
@@ -35,9 +39,10 @@ const LoginPage: FC = () => {
           color: variables.secondaryColor,
         }}
       >
-        Connexion
+        Connexion / Déconnexion
       </Typography>
-      <AuthenticationForm />
+
+      {isLoggedIn ? <LogoutForm /> : <LoginForm />}
     </Box>
   );
 };
