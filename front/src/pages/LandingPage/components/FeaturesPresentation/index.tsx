@@ -43,7 +43,12 @@ const FeaturesPresentation: FC<FeaturesPresentationProps> = ({
       <Box
         display="flex"
         justifyContent="center"
-        minWidth={!isMobile ? 512 : 0}
+        sx={{
+          minWidth: {
+            xs: 256,
+            md: 512,
+          },
+        }}
       >
         <img
           src={image}

@@ -47,11 +47,11 @@ const LandingPage: FC = () => {
                 key={title}
                 item
                 xs={12}
-                sm={6}
+                lg={6}
                 sx={{
                   bgcolor: {
                     xs: index % 2 ? bgColor[0] : bgColor[1],
-                    sm: index % 3 ? bgColor[0] : bgColor[1],
+                    lg: index % 3 ? bgColor[0] : bgColor[1],
                   },
                 }}
               >
