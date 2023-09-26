@@ -25,12 +25,14 @@ class ItemResolver {
       item.category.id = category;
 
       const createdItem = await dataSource.getRepository(Item).save(item);
+
       return createdItem;
     } catch (error) {
       console.error(error);
       throw error;
     }
   }
+
   @Mutation(() => Item)
   async updateItem(
     @Arg('itemId') id: string,
@@ -64,6 +66,7 @@ class ItemResolver {
       throw error;
     }
   }
+
   @Mutation(() => String)
   async deleteItem(@Arg('itemId') id: string): Promise<string> {
     const targetedItem = await dataSource
@@ -76,15 +79,36 @@ class ItemResolver {
 
   @Query(() => Item)
   async getItem(@Arg('itemId') id: string): Promise<Item> {
-    const item = await dataSource.getRepository(Item).findOneByOrFail({ id });
+    try {
+      const item = await dataSource.getRepository(Item).findOne({
+        where: {
+          id,
+        },
+        relations: {
+          expenses: true,
+          category: true,
+        },
+      });
 
-    return item;
+      if (!item) throw new Error('Item not found');
+
+      return item;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
 
   @Query(() => [Item])
   async getAllItems(): Promise<Item[]> {
     try {
-      const items = await dataSource.getRepository(Item).find();
+      const items = await dataSource.getRepository(Item).find({
+        relations: {
+          category: true,
+          expenses: true,
+        },
+      });
+
       return items;
     } catch (error) {
       console.error(error);

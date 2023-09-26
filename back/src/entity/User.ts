@@ -30,16 +30,16 @@ export class User {
   @Column()
   password: string;
 
-  @Field(() => Article)
+  @Field(() => [Article])
   @OneToMany(() => Article, (article) => article.user)
   articles: Article[];
 
-  @Field(() => User)
+  @Field(() => [User])
   @ManyToMany(() => User)
   @JoinTable()
   users: User[];
 
-  @Field(() => Expense)
+  @Field(() => [Expense])
   @OneToMany(() => Expense, (expense) => expense.user)
   expenses: Expense[];
 }

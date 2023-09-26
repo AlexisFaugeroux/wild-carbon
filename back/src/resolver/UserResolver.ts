@@ -84,16 +84,50 @@ class UserResolver {
   }
 
   @Query(() => User)
-  async getUser(@Arg('userId') id: string): Promise<User> {
-    const user = await dataSource.getRepository(User).findOneByOrFail({ id });
+  async getUser(
+    @Arg('userId') id: string,
+    @Ctx() contextValue: Context,
+  ): Promise<User> {
+    const jwtId = contextValue.jwtPayload?.id;
 
-    return user;
+    if (!jwtId) throw new Error('User not logged in');
+
+    try {
+      const user = await dataSource.getRepository(User).findOne({
+        where: {
+          id,
+        },
+        relations: {
+          articles: true,
+          expenses: {
+            item: true,
+          },
+          users: true,
+        },
+      });
+
+      if (!user) throw new Error('User not found');
+
+      return user;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
 
   @Query(() => [User])
   async getAllUsers(): Promise<User[]> {
     try {
-      const users = await dataSource.getRepository(User).find();
+      const users = await dataSource.getRepository(User).find({
+        relations: {
+          articles: true,
+          expenses: {
+            item: true,
+          },
+          users: true,
+        },
+      });
+
       return users;
     } catch (error) {
       console.error(error);
@@ -101,47 +135,96 @@ class UserResolver {
     }
   }
 
-  @Query(() => String)
+  @Mutation(() => String)
   async login(
     @Arg('email') email: string,
     @Arg('password') password: string,
   ): Promise<string> {
-    const user = await dataSource
-      .getRepository(User)
-      .findOneByOrFail({ email });
     try {
-      if (await argon2.verify(user.password, password)) {
+      console.log('login attempt detected');
+      const user = await dataSource
+        .getRepository(User)
+        .findOneByOrFail({ email });
+      if (user && (await argon2.verify(user.password, password))) {
         // we just need the user object without password
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { password, ...userData } = user;
         const token = jwt.sign(userData, 'supersecretkey');
+
         return token;
       } else {
-        return 'error';
+        throw new Error();
       }
     } catch (err) {
-      console.log(err);
-      return 'error';
+      console.log('no user with this mail');
+      return 'INVALID';
     }
   }
 
   @Mutation(() => String)
   async addFriend(
-    @Arg('userId') userId: string,
+    @Arg('userId', { nullable: true }) userId: string,
     @Arg('userIdToAdd') userIdToAdd: string,
+    @Ctx() contextValue: Context,
+  ): Promise<string> {
+    const UserRepo = dataSource.getRepository(User);
+    const currentUserId = contextValue.jwtPayload?.id ?? userId;
+    const currentUser = await UserRepo.findOne({
+      where: { id: currentUserId },
+      relations: { users: true },
+    });
+    if (currentUser) {
+      const friend = await UserRepo.findOneByOrFail({ id: userIdToAdd });
+      currentUser.users = currentUser.users
+        ? [...currentUser.users, friend]
+        : [friend];
+      await UserRepo.save(currentUser);
+      return 'Friend added';
+    }
+    throw new Error('Something broke, try again');
+  }
+
+  @Mutation(() => String)
+  async removeFriend(
+    @Arg('userId') userId: string,
+    @Arg('userIdToRemove') userIdToRemove: string,
     @Ctx() contextValue: Context,
   ): Promise<string> {
     const UserRepo = dataSource.getRepository(User);
     const currentUserId = contextValue.jwtPayload?.id ?? userId;
     const currentUser =
       contextValue.jwtPayload ??
-      (await UserRepo.findOneByOrFail({ id: currentUserId }));
-    const friend = await UserRepo.findOneByOrFail({ id: userIdToAdd });
-    currentUser.users = currentUser.users
-      ? [...currentUser.users, friend]
-      : [friend];
+      (await UserRepo.findOne({
+        where: { id: currentUserId },
+        relations: { users: true },
+      }));
+    currentUser.users = currentUser.users.filter(
+      (friend) => friend.id !== userIdToRemove,
+    );
     await UserRepo.save(currentUser);
-    return 'Friend added';
+    return 'Friend removed';
+  }
+
+  @Query(() => [User])
+  async getFriends(
+    @Arg('userId', { nullable: true }) userId: string,
+    @Ctx() contextValue: Context,
+  ): Promise<User[] | null> {
+    try {
+      const UserRepo = dataSource.getRepository(User);
+      const currentUserId = contextValue.jwtPayload?.id ?? userId;
+      const currentUser = await UserRepo.findOne({
+        where: { id: currentUserId },
+        relations: { users: true },
+      });
+      if (currentUser) {
+        return currentUser.users;
+      }
+      return null;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 }
 

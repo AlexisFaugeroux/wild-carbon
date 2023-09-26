@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLazyQuery } from '@apollo/client';
 import { Formik, Form } from 'formik';
@@ -10,16 +10,16 @@ import { LoginQuery } from './loginQuery';
 import { loginValidationSchema } from './loginValidationSchema';
 import { saveUserTokenInLocalStorage } from '../../hooks/useLoginContext/localStorage';
 import { routes } from '../../Navigator';
+import { LoginContext } from '../../hooks/useLoginContext';
 
-interface IAuthentifcationForm {
+interface ILoginForm {
   handleClosingPopover?: () => void;
 }
 
-const AuthenticationForm: FC<IAuthentifcationForm> = ({
-  handleClosingPopover,
-}) => {
+const AuthenticationForm: FC<ILoginForm> = ({ handleClosingPopover }) => {
   const [login, { data, error }] = useLazyQuery(LoginQuery);
   const navigate = useNavigate();
+  const { setIsLoggedIn } = useContext(LoginContext);
 
   useEffect(() => {
     if (data) {
@@ -27,6 +27,7 @@ const AuthenticationForm: FC<IAuthentifcationForm> = ({
       if (handleClosingPopover) {
         handleClosingPopover();
       }
+      setIsLoggedIn(true);
       navigate(routes.dashboard);
     }
   }, [data]);

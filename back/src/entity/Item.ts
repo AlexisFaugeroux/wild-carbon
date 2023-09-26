@@ -43,7 +43,7 @@ export class Item {
   @ManyToOne(() => Category, (category) => category.items)
   category: Category;
 
-  @Field(() => Expense)
+  @Field(() => [Expense])
   @OneToMany(() => Expense, (expense) => expense.item)
   expenses: Expense[];
 }
