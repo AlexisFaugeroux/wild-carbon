@@ -6,6 +6,7 @@ import dataSource from '../utils';
 import { User } from '../entity/User';
 import { EntityNotFoundError } from 'typeorm';
 import { Context } from '..';
+import LoginResponse from '../helpers/LoginResponse';
 
 @Resolver()
 class UserResolver {
@@ -135,29 +136,26 @@ class UserResolver {
     }
   }
 
-  @Mutation(() => String)
+  @Mutation(() => LoginResponse)
   async login(
     @Arg('email') email: string,
     @Arg('password') password: string,
-  ): Promise<string> {
-    try {
-      console.log('login attempt detected');
-      const user = await dataSource
-        .getRepository(User)
-        .findOneByOrFail({ email });
-      if (user && (await argon2.verify(user.password, password))) {
-        // we just need the user object without password
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { password, ...userData } = user;
-        const token = jwt.sign(userData, 'supersecretkey');
-
-        return token;
-      } else {
-        throw new Error();
-      }
-    } catch (err) {
-      console.log('no user with this mail');
-      return 'INVALID';
+  ): Promise<LoginResponse> {
+    console.log('login attempt detected');
+    const user = await dataSource.getRepository(User).findOneBy({ email });
+    const isUserValid =
+      user !== null && (await argon2.verify(user.password, password));
+    if (isUserValid) {
+      // we just need the user object without password
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...userData } = user;
+      const token = jwt.sign(userData, 'supersecretkey');
+      const response: LoginResponse = { user, token, success: true };
+      return response;
+    } else {
+      console.log('invalid credentials sir');
+      const response: LoginResponse = { user: null, token: '', success: false };
+      return response;
     }
   }
 

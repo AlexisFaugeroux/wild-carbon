@@ -9,7 +9,6 @@ import ArticleResolver from './resolver/ArticleResolver';
 import ExpenseResolver from './resolver/ExpenseResolver';
 import ItemResolver from './resolver/ItemResolver';
 import { User } from './entity/User';
-import customAuthChecker from './helpers/customAuthChecker';
 
 export interface Context {
   jwtPayload: User;
@@ -26,7 +25,14 @@ const start = async (): Promise<void> => {
       ExpenseResolver,
       ItemResolver,
     ],
-    authChecker: customAuthChecker,
+    authChecker: ({ context }) => {
+      console.log('context from authchecker', context);
+      if (context.email !== undefined) {
+        return true;
+      } else {
+        return false;
+      }
+    },
   });
 
   const server = new ApolloServer({
