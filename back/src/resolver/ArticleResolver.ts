@@ -2,6 +2,7 @@ import { Arg, Mutation, Query, Resolver } from 'type-graphql';
 import dataSource from '../utils';
 import { Article } from '../entity/Article';
 import { EntityNotFoundError } from 'typeorm';
+import { User } from '../entity/User';
 
 @Resolver()
 class ArticleResolver {
@@ -24,7 +25,14 @@ class ArticleResolver {
       article.description = description;
       article.url = url;
       article.createdAt = new Date();
-      article.user.id = userId;
+      
+      const user = await dataSource.getRepository(User).findOne({ where: { id: userId } });
+      if (!user) {
+        throw new Error(`User with ID ${userId} not found`);
+      }
+
+      article.user = user;
+
       const createdArticle = await dataSource
         .getRepository(Article)
         .save(article);
