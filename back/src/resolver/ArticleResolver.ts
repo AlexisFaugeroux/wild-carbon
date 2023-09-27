@@ -26,7 +26,12 @@ class ArticleResolver {
       article.url = url;
       article.createdAt = new Date();
       
+      const user = await dataSource.getRepository(User).findOne({ where: { id: userId } });
+      if (!user) {
+        throw new Error(`User with ID ${userId} not found`);
+      }
 
+      article.user = user;
 
       const createdArticle = await dataSource
         .getRepository(Article)
