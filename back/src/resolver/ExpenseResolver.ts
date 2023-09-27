@@ -11,6 +11,7 @@ class ExpenseResolver {
     @Arg('itemId') itemId: string,
     @Arg('title') title: string,
     @Arg('quantity') quantity: number,
+    @Arg('date') date: string,
     @Ctx() contextValue: Context,
   ): Promise<string> {
     const expense = new Expense();
@@ -32,7 +33,7 @@ class ExpenseResolver {
     expense.title = title;
     expense.emissionTotal = item.emissionFactor * quantity;
     expense.quantity = quantity;
-    expense.createdAt = new Date();
+    expense.createdAt = new Date(date);
 
     await dataSource.getRepository(Expense).save(expense);
 
@@ -45,6 +46,7 @@ class ExpenseResolver {
     @Arg('itemId') itemId: string,
     @Arg('title') title: string,
     @Arg('quantity') quantity: number,
+    @Arg('date') date: string,
     @Ctx() contextValue: Context,
   ): Promise<Expense> {
     const targetedExpense = await dataSource
@@ -68,7 +70,7 @@ class ExpenseResolver {
     targetedExpense.title = title;
     targetedExpense.emissionTotal = item.emissionFactor * quantity;
     targetedExpense.quantity = quantity;
-    targetedExpense.updatedAt = new Date();
+    targetedExpense.updatedAt = new Date(date);
 
     const updateExpense = await dataSource
       .getRepository(Expense)

@@ -5,3 +5,7 @@ export interface CategoryType {
     name: string
     items: ItemType[]
 }
+
+export interface CategoryItemType {
+    items: ItemType[]
+}

@@ -28,12 +28,13 @@ import CarbonButton from "../CarbonButton";
 import { useLazyQuery } from "@apollo/client";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { CategoryType } from "../../types/category";
+import { CategoryItemType, CategoryType } from "../../types/category";
 import {
   GET_ALL_CATEGORIES,
   GET_CATEGORY_AND_ITEM,
 } from "../../gql/CategoryGql";
 import { ItemType } from "../../types/item";
+import { GET_ITEM } from "../../gql/ItemGql";
 
 export default function AddExpenseModal() {
   const isLg = useMediaQuery((theme: Theme) => theme.breakpoints.down("lg"));
@@ -42,17 +43,24 @@ export default function AddExpenseModal() {
   const handleClose = () => setOpen(false);
 
   const [open, setOpen] = useState(false);
-  const [category, setCategory] = useState<CategoryType[]>([]);
-  const [item, setItem] = useState<ItemType[]>([]);
+  const [openInputLabel, setOpenInputLabel] = useState(false);
+  const [openInputUnit, setOpenInputUnit] = useState(false);
+
+  // const [selectedLabel, setSelectedLabel] = useState<string>("");
+
   // Fetch
 
   const [fetchCategories, { data: dataCategory }] = useLazyQuery<{
     getAllCategory: CategoryType[];
   }>(GET_ALL_CATEGORIES);
 
-  const [fetchItems, { data }] = useLazyQuery<{
-    getCategory: ItemType[];
+  const [fetchItems, { data: dataItems }] = useLazyQuery<{
+    getCategory: CategoryItemType;
   }>(GET_CATEGORY_AND_ITEM);
+
+  const [fetchOneItem, { data: dataOneItem }] = useLazyQuery<{
+    getItem: ItemType[];
+  }>(GET_ITEM);
 
   useEffect(() => {
     fetchCategories();
@@ -61,27 +69,32 @@ export default function AddExpenseModal() {
   // handle
   const handleSelectCategory = async (categoryId: string) => {
     try {
-      const result = await fetchItems({
+      fetchItems({
         variables: { categoryId },
       });
-      console.log(result.data?.getCategory);
-
-      if (result.data) {
-        const dataItem = result?.data?.getCategory;
-        setItem(dataItem);
-      }
     } catch (error) {
       console.error("Problème:", error);
-      // Gérez l'erreur ici si nécessaire.
     }
   };
-  console.log("item:", item);
-
-  useEffect(() => {
-    if (dataCategory && dataCategory.getAllCategory) {
-      setCategory(dataCategory.getAllCategory);
+  const handleSelectItemLabel = async (itemId: string) => {
+    try {
+      fetchOneItem({
+        variables: { itemId },
+      });
+      console.log("id", itemId);
+    } catch (error) {
+      console.error("Problème:", error);
     }
-  }, [dataCategory]);
+  };
+
+  // useEffect(() => {
+  //   // Mettez à jour l'unité sélectionnée lorsque les données de l'élément changent
+  //   if (dataOneItem && dataOneItem.getItem.length > 0) {
+  //     setSelectedLabel(dataOneItem.getItem[0].unit);
+  //   }
+  // }, [dataOneItem]);
+
+  console.log("label:", dataOneItem);
 
   const modalStyle = {
     position: "absolute",
@@ -120,30 +133,6 @@ export default function AddExpenseModal() {
   // Il faut récupèrer l'item (label, facteur d'emission, unité)  correspondant à la catégorie selectionné (transport, repas, energie, housing)
 
   // si value.category === "transport" => get item
-
-  //
-
-  // const GETUserQuery = gql`
-  //   query GetUser($userId: String!) {
-  //     getUser(userId: $userId) {
-  //       id
-  //       pseudo
-  //     }
-  //   }
-  // `;
-
-  // function getUser({ userId }: userType) {
-  //   const { loading, error, data } = useQuery<userType>(GETUserQuery, {
-  //     variables: { userId },
-  //   });
-  //   if (loading) return <p>Chargement en cours...</p>;
-  //   if (error) return <p> Une erreur est survenue</p>;
-
-  //   const user = data?.userId;
-  //   console.log(user);
-
-  //   return user;
-  // }
 
   const validationSchema = Yup.object({
     title: Yup.string().required("Tu nous as pas dit ce que tu as fait."),
@@ -214,12 +203,103 @@ export default function AddExpenseModal() {
             Allez, dis nous tout ! Et pas d'entourloupe, la planète le saura...
           </Typography>
 
+          <TextField
+            InputProps={{ style: inputStyle }}
+            select={true}
+            // name="category"
+            variant="outlined"
+            label="Quel type d'activité as-tu réalisé ?"
+            defaultValue={"Housing"}
+            required
+            onChange={(e) => {
+              handleSelectCategory(e.target.value);
+              setOpenInputLabel(true);
+            }}
+            InputLabelProps={{
+              shrink: true,
+              style: {
+                fontFamily: "Roboto",
+                fontSize: "1rem",
+                color: variables.thirdColor,
+              },
+            }}
+            // error={touched.category && Boolean(errors.category)}
+            // helperText={touched.category && errors.category}
+          >
+            {dataCategory?.getAllCategory.map((cat) => {
+              let icon;
+              switch (cat.name) {
+                case "Food":
+                  icon = (
+                    <Restaurant
+                      fontSize="medium"
+                      sx={{
+                        color: variables.thirdColor,
+                        marginRight: "0.5rem",
+                      }}
+                    />
+                  );
+                  break;
+                case "Transport":
+                  icon = (
+                    <Train
+                      fontSize="medium"
+                      sx={{
+                        color: variables.thirdColor,
+                        marginRight: "0.5rem",
+                      }}
+                    />
+                  );
+                  break;
+                case "Housing":
+                  icon = (
+                    <House
+                      fontSize="medium"
+                      sx={{
+                        color: variables.thirdColor,
+                        marginRight: "0.5rem",
+                      }}
+                    />
+                  );
+                  break;
+                case "Energy":
+                  icon = (
+                    <Bolt
+                      fontSize="medium"
+                      sx={{
+                        color: variables.thirdColor,
+                        marginRight: "0.5rem",
+                      }}
+                    />
+                  );
+                  break;
+                default:
+                  icon = (
+                    <QuestionAnswer
+                      fontSize="medium"
+                      sx={{
+                        color: variables.thirdColor,
+                        marginRight: "0.5rem",
+                      }}
+                    />
+                  );
+                  break;
+              }
+              return (
+                <MenuItem key={cat.id} value={cat.id}>
+                  <Stack direction="row">
+                    {icon}
+                    <Typography sx={inputStyle}>{cat.name}</Typography>
+                  </Stack>
+                </MenuItem>
+              );
+            })}
+          </TextField>
           <Formik
             initialValues={{
               title: "",
               quantity: "",
               itemId: "",
-              category: "",
               createAt: new Date(),
             }}
             onSubmit={(values, { setSubmitting, resetForm }) => {
@@ -246,144 +326,19 @@ export default function AddExpenseModal() {
                   marginTop: "2rem",
                 }}
               >
-                <FormControl>
-                  <TextField
-                    InputProps={{ style: inputStyle }}
-                    select={true}
-                    name="category"
-                    variant="outlined"
-                    label="Quel type d'activité as-tu réalisé ?"
-                    required
-                    value={values.category}
-                    onChange={(e) => {
-                      handleChange(e);
-                      handleSelectCategory(e.target.value);
-                    }}
-                    InputLabelProps={{
-                      shrink: true,
-                      style: {
-                        fontFamily: "Roboto",
-                        fontSize: "1rem",
-                        color: variables.thirdColor,
-                      },
-                    }}
-                    // error={touched.category && Boolean(errors.category)}
-                    // helperText={touched.category && errors.category}
-                  >
-                    {category.map((cat) => {
-                      let icon;
-                      switch (cat.name) {
-                        case "Food":
-                          icon = (
-                            <Restaurant
-                              fontSize="medium"
-                              sx={{
-                                color: variables.thirdColor,
-                                marginRight: "0.5rem",
-                              }}
-                            />
-                          );
-                          break;
-                        case "Transport":
-                          icon = (
-                            <Train
-                              fontSize="medium"
-                              sx={{
-                                color: variables.thirdColor,
-                                marginRight: "0.5rem",
-                              }}
-                            />
-                          );
-                          break;
-                        case "Housing":
-                          icon = (
-                            <House
-                              fontSize="medium"
-                              sx={{
-                                color: variables.thirdColor,
-                                marginRight: "0.5rem",
-                              }}
-                            />
-                          );
-                          break;
-                        case "Energy":
-                          icon = (
-                            <Bolt
-                              fontSize="medium"
-                              sx={{
-                                color: variables.thirdColor,
-                                marginRight: "0.5rem",
-                              }}
-                            />
-                          );
-                          break;
-                        default:
-                          icon = (
-                            <QuestionAnswer
-                              fontSize="medium"
-                              sx={{
-                                color: variables.thirdColor,
-                                marginRight: "0.5rem",
-                              }}
-                            />
-                          );
-                          break;
-                      }
-                      return (
-                        <MenuItem key={cat.id} value={cat.id}>
-                          <Stack direction="row">
-                            {icon}
-                            <Typography sx={inputStyle}>{cat.name}</Typography>
-                          </Stack>
-                        </MenuItem>
-                      );
-                    })}
-                  </TextField>
-                </FormControl>
-                <FormControl>
-                  <Autocomplete
-                    freeSolo
-                    id={values.itemId}
-                    disableClearable
-                    options={
-                      item.items
-                        ? item.map(
-                            (option: { label: ItemType }) => option.label
-                          )
-                    }
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Qu'est ce que tu as fait de beau ?"
-                        InputProps={{
-                          ...params.InputProps,
-                          type: "search",
-                          style: inputStyle,
-                        }}
-                        InputLabelProps={{
-                          shrink: true,
-                          style: {
-                            fontFamily: "Roboto",
-                            fontSize: "1rem",
-                            color: variables.thirdColor,
-                          },
-                        }}
-                      />
-                    )}
-                  />
-                </FormControl>
-                {/* <TextField
+                {/* <FormControl> */}
+                <TextField
                   InputProps={{ style: inputStyle }}
-                  fullWidth
-                  id="title"
-                  name="title"
-                  label="Qu'est ce que tu as fait de beau ?"
-                  placeholder="Trajet en voiture ? restaurant ?..."
+                  select={true}
+                  name="category"
                   variant="outlined"
-                  autoComplete="false"
+                  label="Quel type d'activité as-tu réalisé ?"
                   required
-                  value={values.title}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    handleChange(e);
+                    handleSelectCategory(e.target.value);
+                    setOpenInputLabel(true);
+                  }}
                   InputLabelProps={{
                     shrink: true,
                     style: {
@@ -392,9 +347,127 @@ export default function AddExpenseModal() {
                       color: variables.thirdColor,
                     },
                   }}
-                  error={touched.title && Boolean(errors.title)}
-                  helperText={touched.title && errors.title}
-                /> */}
+                  // error={touched.category && Boolean(errors.category)}
+                  // helperText={touched.category && errors.category}
+                >
+                  {dataCategory?.getAllCategory.map((cat) => {
+                    let icon;
+                    switch (cat.name) {
+                      case "Food":
+                        icon = (
+                          <Restaurant
+                            fontSize="medium"
+                            sx={{
+                              color: variables.thirdColor,
+                              marginRight: "0.5rem",
+                            }}
+                          />
+                        );
+                        break;
+                      case "Transport":
+                        icon = (
+                          <Train
+                            fontSize="medium"
+                            sx={{
+                              color: variables.thirdColor,
+                              marginRight: "0.5rem",
+                            }}
+                          />
+                        );
+                        break;
+                      case "Housing":
+                        icon = (
+                          <House
+                            fontSize="medium"
+                            sx={{
+                              color: variables.thirdColor,
+                              marginRight: "0.5rem",
+                            }}
+                          />
+                        );
+                        break;
+                      case "Energy":
+                        icon = (
+                          <Bolt
+                            fontSize="medium"
+                            sx={{
+                              color: variables.thirdColor,
+                              marginRight: "0.5rem",
+                            }}
+                          />
+                        );
+                        break;
+                      default:
+                        icon = (
+                          <QuestionAnswer
+                            fontSize="medium"
+                            sx={{
+                              color: variables.thirdColor,
+                              marginRight: "0.5rem",
+                            }}
+                          />
+                        );
+                        break;
+                    }
+                    return (
+                      <MenuItem key={cat.id} value={cat.id}>
+                        <Stack direction="row">
+                          {icon}
+                          <Typography sx={inputStyle}>{cat.name}</Typography>
+                        </Stack>
+                      </MenuItem>
+                    );
+                  })}
+                </TextField>
+                {/* </FormControl> */}
+
+                {openInputLabel && (
+                  <>
+                    <FormControl>
+                      <Autocomplete
+                        // freeSolo
+                        // id={values.itemId}
+                        disableClearable
+                        options={
+                          dataItems
+                            ? dataItems.getCategory.items.map((item) => ({
+                                unit: item.unit,
+                                id: item.id,
+                                label: item.label,
+                              }))
+                            : []
+                        }
+                        getOptionLabel={(option) => `${option.label}`}
+                        renderInput={(params) => (
+                          <TextField
+                            value={values.itemId}
+                            onChange={(e) => {
+                              handleChange(e);
+                              handleSelectItemLabel(e.target.value);
+                              setOpenInputUnit(true);
+                            }}
+                            {...params}
+                            label="Qu'est ce que tu as fait de beau ?"
+                            InputProps={{
+                              ...params.InputProps,
+                              type: "search",
+                              style: inputStyle,
+                            }}
+                            InputLabelProps={{
+                              shrink: true,
+                              style: {
+                                fontFamily: "Roboto",
+                                fontSize: "1rem",
+                                color: variables.thirdColor,
+                              },
+                            }}
+                          />
+                        )}
+                      />
+                    </FormControl>
+                  </>
+                )}
+
                 <FormControl>
                   <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <DatePicker
@@ -417,8 +490,6 @@ export default function AddExpenseModal() {
                     />
                   </LocalizationProvider>
                 </FormControl>
-
-                <FormControl></FormControl>
 
                 <FormControl>
                   <TextField
