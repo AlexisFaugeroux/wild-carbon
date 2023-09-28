@@ -49,18 +49,24 @@ class ExpenseResolver {
   ): Promise<Expense> {
     const targetedExpense = await dataSource
       .getRepository(Expense)
-      .findOneByOrFail({ id });
+      .findOne({ where: { id }, relations: { user: true } });
+
+    if (!targetedExpense) throw new Error('Expense not found');
+
+    if (targetedExpense.user.id !== contextValue.jwtPayload.id) {
+      throw new Error("You're not the owner of this expense");
+    }
 
     const item = await dataSource
       .getRepository(Item)
       .findOneByOrFail({ id: itemId });
 
     if (!item) {
-      throw new Error('Item introuvable dans la base de données');
+      throw new Error('Item not found');
     }
 
-    if (quantity < 0 || quantity >= 500000 || quantity != null) {
-      throw new Error('error quantity value');
+    if (quantity < 0 || quantity >= 500000 || quantity === null) {
+      throw new Error('Quantity value is not valid');
     }
 
     targetedExpense.item = item;
