@@ -24,6 +24,7 @@
     "jsonwebtoken": "^9.0.0",
     "pg": "^8.10.0",
     "reflect-metadata": "^0.1.13",
+    "stripe": "^13.7.0",
     "type-graphql": "^1.1.1",
     "typeorm": "^0.3.17",
     "typeorm-extension": "^3.0.1"
