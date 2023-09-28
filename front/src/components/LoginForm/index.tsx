@@ -75,9 +75,6 @@ const AuthenticationForm: FC<ILoginForm> = ({ handleClosingPopover }) => {
           sx={{
             display: 'flex',
             flexDirection: 'column',
-            width: {
-              md: '33%',
-            },
           }}
         >
           <Form onSubmit={handleSubmit}>

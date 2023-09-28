@@ -104,7 +104,11 @@ const HeaderBar = () => {
         anchorEl={anchor}
         anchorOrigin={{
           vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        transformOrigin={{
           horizontal: 'right',
+          vertical: 'top',
         }}
         sx={{
           boxShadow:
