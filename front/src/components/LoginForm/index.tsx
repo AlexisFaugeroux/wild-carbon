@@ -1,12 +1,12 @@
-import { FC, useContext, useEffect } from 'react';
+import { FC, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useLazyQuery } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { Formik, Form } from 'formik';
 import { Box, CircularProgress, FormControl } from '@mui/material';
 import CarbonInputBase from '../CarbonInputBase';
 import CarbonButton from '../CarbonButton';
 import ErrorMessage from './components/ErrorMessage';
-import { LoginQuery } from './loginQuery';
+import { LOGIN } from './loginMutation';
 import { loginValidationSchema } from './loginValidationSchema';
 import { saveUserTokenInLocalStorage } from '../../hooks/useLoginContext/localStorage';
 import { routes } from '../../Navigator';
@@ -17,20 +17,31 @@ interface ILoginForm {
 }
 
 const AuthenticationForm: FC<ILoginForm> = ({ handleClosingPopover }) => {
-  const [login, { data, error }] = useLazyQuery(LoginQuery);
   const navigate = useNavigate();
-  const { setIsLoggedIn } = useContext(LoginContext);
-
-  useEffect(() => {
-    if (data) {
-      saveUserTokenInLocalStorage({ userToken: data.login });
-      if (handleClosingPopover) {
-        handleClosingPopover();
+  const { setIsLoggedIn, setUserId, setUserToken } = useContext(LoginContext);
+  const [loginErrorMessage, setLoginErrorMessage] = useState('');
+  const [login, { error }] = useMutation(LOGIN, {
+    onCompleted: (data) => {
+      if (data?.login && data.login.success) {
+        saveUserTokenInLocalStorage({
+          userToken: data.login.token,
+          userId: data.login.user.id,
+        });
+        setUserId(data.login.user.id);
+        setUserToken(data.login.token);
+        if (handleClosingPopover) {
+          handleClosingPopover();
+        }
+        setIsLoggedIn(true);
+        navigate(routes.dashboard);
+      } else {
+        setLoginErrorMessage('Identifiants invalides');
       }
-      setIsLoggedIn(true);
-      navigate(routes.dashboard);
-    }
-  }, [data]);
+    },
+    onError: (error) => {
+      console.log('Mutation error: ', error);
+    },
+  });
 
   if (error) {
     console.log('error', error);
@@ -102,6 +113,10 @@ const AuthenticationForm: FC<ILoginForm> = ({ handleClosingPopover }) => {
               />
               {errors.password && touched.password && (
                 <ErrorMessage message={errors.password} />
+              )}
+
+              {loginErrorMessage && (
+                <ErrorMessage message={loginErrorMessage} />
               )}
 
               <CarbonButton type="submit" disabled={isSubmitting}>

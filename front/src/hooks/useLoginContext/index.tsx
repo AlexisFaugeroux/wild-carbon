@@ -14,13 +14,17 @@ interface LoginContextType {
   setIsLoggedIn: Dispatch<SetStateAction<boolean>>;
   userToken: string | undefined;
   setUserToken: Dispatch<SetStateAction<string | undefined>>;
+  userId: string | undefined;
+  setUserId: Dispatch<SetStateAction<string | undefined>>;
 }
 
 export const LoginContext = createContext<LoginContextType>({
   isLoggedIn: false,
   setIsLoggedIn: () => {},
-  userToken: undefined,
+  userToken: '',
   setUserToken: () => {},
+  userId: '',
+  setUserId: () => {},
 });
 
 export const LoginContextProvider: FC<{ children: React.ReactNode }> = ({
@@ -31,6 +35,9 @@ export const LoginContextProvider: FC<{ children: React.ReactNode }> = ({
   const [userToken, setUserToken] = useState<string | undefined>(
     userTokenData?.userToken,
   );
+  const [userId, setUserId] = useState<string | undefined>(
+    userTokenData?.userId,
+  );
 
   const providerValue = useMemo(
     () => ({
@@ -38,14 +45,18 @@ export const LoginContextProvider: FC<{ children: React.ReactNode }> = ({
       setIsLoggedIn,
       userToken,
       setUserToken,
+      userId,
+      setUserId,
     }),
     [isLoggedIn, setIsLoggedIn],
   );
 
   useEffect(() => {
     if (userTokenData) {
+      console.log('late setting up context:', userTokenData);
       setIsLoggedIn(!!userTokenData.userToken);
       setUserToken(userTokenData.userToken);
+      setUserId(userTokenData.userId);
     }
   }, [userTokenData]);
 

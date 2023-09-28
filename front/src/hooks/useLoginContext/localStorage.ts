@@ -2,11 +2,13 @@ import localStorageObjectSchema from '../../helpers/localStorageObjectSchema';
 import { z } from 'zod';
 
 interface LocalStorageUserToken {
-  userToken?: string;
+  userToken: string;
+  userId: string;
 }
 
 const LocalStorageUserTokenSchema = z.object({
   userToken: z.string(),
+  userId: z.string(),
 });
 
 const USER_TOKEN_LOCAL_STORAGE_KEY = 'userTokenData';
