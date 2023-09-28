@@ -25,8 +25,10 @@ class ArticleResolver {
       article.description = description;
       article.url = url;
       article.createdAt = new Date();
-      
-      const user = await dataSource.getRepository(User).findOne({ where: { id: userId } });
+
+      const user = await dataSource
+        .getRepository(User)
+        .findOne({ where: { id: userId } });
       if (!user) {
         throw new Error(`User with ID ${userId} not found`);
       }
@@ -53,16 +55,25 @@ class ArticleResolver {
     @Arg('userId') userId: string,
   ): Promise<Article> {
     try {
-      const targetedArticle = await dataSource
-        .getRepository(Article)
-        .findOne({ where: { id: articleId } });
+      const targetedArticle = await dataSource.getRepository(Article).findOne({
+        where: {
+          id: articleId,
+        },
+        relations: {
+          user: true,
+        },
+      });
 
-      const user = await dataSource.getRepository(User).findOne({ where: { id: userId } });
+      if (!targetedArticle) throw new Error('Article not found');
+
+      const user = await dataSource
+        .getRepository(User)
+        .findOne({ where: { id: userId } });
       if (!user) {
         throw new Error(`User with ID ${userId} not found`);
       }
 
-      if (!user ) {
+      if (!user) {
         throw new Error('your not a owner to this article');
       }
 
