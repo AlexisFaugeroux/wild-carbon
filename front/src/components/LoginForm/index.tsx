@@ -23,7 +23,10 @@ const AuthenticationForm: FC<ILoginForm> = ({ handleClosingPopover }) => {
   const [login, { error }] = useMutation(LOGIN, {
     onCompleted: (data) => {
       if (data?.login && data.login.success) {
-        saveUserTokenInLocalStorage({ userToken: data.login });
+        saveUserTokenInLocalStorage({
+          userToken: data.login.token,
+          userId: data.login.user.id,
+        });
         setUserId(data.login.user.id);
         setUserToken(data.login.token);
         if (handleClosingPopover) {
