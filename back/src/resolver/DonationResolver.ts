@@ -5,12 +5,16 @@ import { isArray } from 'class-validator';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-if (!process.env.STRIPE_KEY) {
-  console.log('STRIPE_KEY is not set in .env');
-  process.exit();
+let stripe_key = process.env.STRIPE_KEY;
+if (!stripe_key) {
+  console.log(
+    'STRIPE_KEY is not set in .env, using public key but this will not work',
+  );
+  stripe_key =
+    'pk_test_51NuvMzJEwVqT2uVtTQuXUu4rsfkBIykgkpaGpKMpS4B48aU8ZRHuwGzt6XMm6PKgYPFPOhjWQahYhvgPJVt7KI2b004Akj68f9';
 }
 
-const stripe = new Stripe(process.env.STRIPE_KEY, {
+const stripe = new Stripe(stripe_key, {
   apiVersion: '2023-08-16',
 });
 
