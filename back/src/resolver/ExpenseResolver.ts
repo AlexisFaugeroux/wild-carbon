@@ -24,7 +24,7 @@ class ExpenseResolver {
       throw new Error('Item introuvable dans la base de données');
     }
 
-    if (quantity < 0 || quantity >= 500000 || quantity != null) {
+    if (quantity < 0 || quantity >= 500000 || quantity == null) {
       throw new Error('error quantity value');
     }
 
