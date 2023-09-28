@@ -49,16 +49,25 @@ class ArticleResolver {
     @Arg('title') title: string,
     @Arg('description') description: string,
     @Arg('url') url: string,
-    @Arg('articleId') id: string,
+    @Arg('articleId') articleId: string,
     @Arg('userId') userId: string,
   ): Promise<Article> {
     try {
       const targetedArticle = await dataSource
         .getRepository(Article)
-        .findOneByOrFail({ id });
+        .findOne({ where: { id: articleId } });
 
-      if (targetedArticle.user.id !== userId) {
+      const user = await dataSource.getRepository(User).findOne({ where: { id: userId } });
+      if (!user) {
+        throw new Error(`User with ID ${userId} not found`);
+      }
+
+      if (!user ) {
         throw new Error('your not a owner to this article');
+      }
+
+      if (!targetedArticle) {
+        throw new Error('Article not found');
       }
 
       targetedArticle.title = title;
