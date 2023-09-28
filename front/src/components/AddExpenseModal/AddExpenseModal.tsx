@@ -25,7 +25,7 @@ import carbonAddIcon from "../../assets/carbon_add.png";
 import { Form, Formik } from "formik";
 import variables from "../../variables";
 import CarbonButton from "../CarbonButton";
-import { useLazyQuery } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { CategoryItemType, CategoryType } from "../../types/category";
@@ -33,8 +33,8 @@ import {
   GET_ALL_CATEGORIES,
   GET_CATEGORY_AND_ITEM,
 } from "../../gql/CategoryGql";
-import { ItemType } from "../../types/item";
-import { GET_ITEM } from "../../gql/ItemGql";
+import { CREATE_EXPENSE } from "../../gql/ExpenseGql";
+import { ExpenseType } from "../../types/expense";
 
 export default function AddExpenseModal() {
   const isLg = useMediaQuery((theme: Theme) => theme.breakpoints.down("lg"));
@@ -44,9 +44,8 @@ export default function AddExpenseModal() {
 
   const [open, setOpen] = useState(false);
   const [openInputLabel, setOpenInputLabel] = useState(false);
-  const [openInputUnit, setOpenInputUnit] = useState(false);
-
-  // const [selectedLabel, setSelectedLabel] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedId, setSelectedId] = useState("");
 
   // Fetch
 
@@ -58,9 +57,14 @@ export default function AddExpenseModal() {
     getCategory: CategoryItemType;
   }>(GET_CATEGORY_AND_ITEM);
 
-  const [fetchOneItem, { data: dataOneItem }] = useLazyQuery<{
-    getItem: ItemType[];
-  }>(GET_ITEM);
+  const [createExpense] = useMutation(CREATE_EXPENSE, {
+    onCompleted: (data) => {
+      console.log("Mutation successful. Data:", data);
+    },
+    onError: (error) => {
+      console.error("Mutation error:", error);
+    },
+  });
 
   useEffect(() => {
     fetchCategories();
@@ -69,6 +73,7 @@ export default function AddExpenseModal() {
   // handle
   const handleSelectCategory = async (categoryId: string) => {
     try {
+      setSelectedCategory(categoryId);
       fetchItems({
         variables: { categoryId },
       });
@@ -76,25 +81,6 @@ export default function AddExpenseModal() {
       console.error("Problème:", error);
     }
   };
-  const handleSelectItemLabel = async (itemId: string) => {
-    try {
-      fetchOneItem({
-        variables: { itemId },
-      });
-      console.log("id", itemId);
-    } catch (error) {
-      console.error("Problème:", error);
-    }
-  };
-
-  // useEffect(() => {
-  //   // Mettez à jour l'unité sélectionnée lorsque les données de l'élément changent
-  //   if (dataOneItem && dataOneItem.getItem.length > 0) {
-  //     setSelectedLabel(dataOneItem.getItem[0].unit);
-  //   }
-  // }, [dataOneItem]);
-
-  console.log("label:", dataOneItem);
 
   const modalStyle = {
     position: "absolute",
@@ -136,11 +122,9 @@ export default function AddExpenseModal() {
 
   const validationSchema = Yup.object({
     title: Yup.string().required("Tu nous as pas dit ce que tu as fait."),
-    createAt: Yup.string().required("Tu nous as pas dit quand c'était."),
-    category: Yup.string().required(
-      "Si tu pouvais nous préciser la cétagorie d'activité..."
-    ),
-    quantity: Yup.string().required("Tu as oublié le principal."),
+    date: Yup.string().required("Tu nous as pas dit quand c'était."),
+    quantity: Yup.number().required("Tu as oublié le principal."),
+    itemId: Yup.string().required("Tu as oublié l'item."),
   });
 
   return (
@@ -204,13 +188,14 @@ export default function AddExpenseModal() {
           </Typography>
 
           <TextField
+            fullWidth
             InputProps={{ style: inputStyle }}
             select={true}
             // name="category"
             variant="outlined"
             label="Quel type d'activité as-tu réalisé ?"
-            defaultValue={"Housing"}
             required
+            value={selectedCategory}
             onChange={(e) => {
               handleSelectCategory(e.target.value);
               setOpenInputLabel(true);
@@ -298,17 +283,25 @@ export default function AddExpenseModal() {
           <Formik
             initialValues={{
               title: "",
-              quantity: "",
+              quantity: 0,
               itemId: "",
-              createAt: new Date(),
+              date: new Date(),
             }}
             onSubmit={(values, { setSubmitting, resetForm }) => {
               setSubmitting(true);
+              createExpense({
+                variables: {
+                  date: values.date,
+                  quantity: values.quantity,
+                  title: values.title,
+                  itemId: values.itemId,
+                },
+              });
               console.log("Valeurs soumises :", values);
               setSubmitting(false);
               resetForm();
             }}
-            validationSchema={validationSchema}
+            // validationSchema={validationSchema}
           >
             {({
               errors,
@@ -316,6 +309,7 @@ export default function AddExpenseModal() {
               touched,
               handleChange,
               handleSubmit,
+              setFieldValue,
             }): JSX.Element => (
               <Form
                 onSubmit={handleSubmit}
@@ -326,128 +320,47 @@ export default function AddExpenseModal() {
                   marginTop: "2rem",
                 }}
               >
-                {/* <FormControl> */}
-                <TextField
-                  InputProps={{ style: inputStyle }}
-                  select={true}
-                  name="category"
-                  variant="outlined"
-                  label="Quel type d'activité as-tu réalisé ?"
-                  required
-                  onChange={(e) => {
-                    handleChange(e);
-                    handleSelectCategory(e.target.value);
-                    setOpenInputLabel(true);
-                  }}
-                  InputLabelProps={{
-                    shrink: true,
-                    style: {
-                      fontFamily: "Roboto",
-                      fontSize: "1rem",
-                      color: variables.thirdColor,
-                    },
-                  }}
-                  // error={touched.category && Boolean(errors.category)}
-                  // helperText={touched.category && errors.category}
-                >
-                  {dataCategory?.getAllCategory.map((cat) => {
-                    let icon;
-                    switch (cat.name) {
-                      case "Food":
-                        icon = (
-                          <Restaurant
-                            fontSize="medium"
-                            sx={{
-                              color: variables.thirdColor,
-                              marginRight: "0.5rem",
-                            }}
-                          />
-                        );
-                        break;
-                      case "Transport":
-                        icon = (
-                          <Train
-                            fontSize="medium"
-                            sx={{
-                              color: variables.thirdColor,
-                              marginRight: "0.5rem",
-                            }}
-                          />
-                        );
-                        break;
-                      case "Housing":
-                        icon = (
-                          <House
-                            fontSize="medium"
-                            sx={{
-                              color: variables.thirdColor,
-                              marginRight: "0.5rem",
-                            }}
-                          />
-                        );
-                        break;
-                      case "Energy":
-                        icon = (
-                          <Bolt
-                            fontSize="medium"
-                            sx={{
-                              color: variables.thirdColor,
-                              marginRight: "0.5rem",
-                            }}
-                          />
-                        );
-                        break;
-                      default:
-                        icon = (
-                          <QuestionAnswer
-                            fontSize="medium"
-                            sx={{
-                              color: variables.thirdColor,
-                              marginRight: "0.5rem",
-                            }}
-                          />
-                        );
-                        break;
-                    }
-                    return (
-                      <MenuItem key={cat.id} value={cat.id}>
-                        <Stack direction="row">
-                          {icon}
-                          <Typography sx={inputStyle}>{cat.name}</Typography>
-                        </Stack>
-                      </MenuItem>
-                    );
-                  })}
-                </TextField>
-                {/* </FormControl> */}
-
                 {openInputLabel && (
                   <>
                     <FormControl>
+                      <TextField
+                        value={values.title}
+                        name="title"
+                        variant="outlined"
+                        required
+                        fullWidth
+                        onChange={handleChange}
+                        label="Qu'est ce que tu as fait de beau ?"
+                        InputProps={{
+                          style: inputStyle,
+                        }}
+                        InputLabelProps={{
+                          shrink: true,
+                          style: {
+                            fontFamily: "Roboto",
+                            fontSize: "1rem",
+                            color: variables.thirdColor,
+                          },
+                        }}
+                      />
+                    </FormControl>
+                    <FormControl>
                       <Autocomplete
                         // freeSolo
-                        // id={values.itemId}
+                        id="itemId"
                         disableClearable
-                        options={
-                          dataItems
-                            ? dataItems.getCategory.items.map((item) => ({
-                                unit: item.unit,
-                                id: item.id,
-                                label: item.label,
-                              }))
-                            : []
-                        }
-                        getOptionLabel={(option) => `${option.label}`}
+                        options={dataItems ? dataItems.getCategory.items : []}
+                        getOptionLabel={(option) => option.label}
+                        onChange={(e, values) => {
+                          setFieldValue("itemId", values.id);
+                          // setSelectedId(e.target.value);
+                        }}
                         renderInput={(params) => (
                           <TextField
                             value={values.itemId}
-                            onChange={(e) => {
-                              handleChange(e);
-                              handleSelectItemLabel(e.target.value);
-                              setOpenInputUnit(true);
-                            }}
+                            required
                             {...params}
-                            label="Qu'est ce que tu as fait de beau ?"
+                            label="Choisis ce qui correspond à ton activité ?"
                             InputProps={{
                               ...params.InputProps,
                               type: "search",
@@ -472,7 +385,7 @@ export default function AddExpenseModal() {
                   <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <DatePicker
                       label="Mais non ?! Quand ça ?"
-                      value={values.createAt}
+                      value={values.date}
                       onChange={() => handleChange}
                       format="dd/MM/yyyy"
                       sx={{
@@ -495,10 +408,10 @@ export default function AddExpenseModal() {
                   <TextField
                     InputProps={{ style: inputStyle }}
                     fullWidth
+                    type="number"
                     id="quantity"
                     name="quantity"
                     label="Combien ??"
-                    placeholder="En grammes"
                     variant="outlined"
                     required
                     value={values.quantity}
