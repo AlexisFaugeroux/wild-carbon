@@ -210,28 +210,6 @@ class UserResolver {
     await userRepo.save(currentUser);
     return 'Friend removed';
   }
-
-  @Query(() => [User])
-  async getFriends(
-    @Arg('userId', { nullable: true }) userId: string,
-    @Ctx() contextValue: Context,
-  ): Promise<User[] | null> {
-    try {
-      const userRepo = dataSource.getRepository(User);
-      const currentUserId = contextValue.jwtPayload?.id ?? userId;
-      const currentUser = await userRepo.findOne({
-        where: { id: currentUserId },
-        relations: { users: true },
-      });
-      if (currentUser) {
-        return currentUser.users;
-      }
-      return null;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
 }
 
 export default UserResolver;
