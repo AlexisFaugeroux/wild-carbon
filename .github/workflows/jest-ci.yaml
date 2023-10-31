@@ -5,8 +5,6 @@ on: pull_request
 jobs:
   test-front:
     runs-on: ubuntu-latest
-
-
     steps: 
       - name: Check out code
         uses: actions/checkout@v4
@@ -34,9 +32,9 @@ jobs:
       - name: Goto back
         run: cd back && npm i
       - name: Check TS
-        run: npx tsc --noEmit
+        run: cd back && npx tsc --noEmit
       - name: run tests
-        run: npm test
+        run: cd back && npm test
 
   docker:
     needs: test-front
