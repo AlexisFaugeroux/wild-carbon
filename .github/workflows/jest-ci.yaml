@@ -5,13 +5,15 @@ on: pull_request
 jobs:
   test-front:
     runs-on: ubuntu-latest
+
+
     steps: 
       - name: Check out code
         uses: actions/checkout@v4
       - name: Goto front
         run: cd front && npm i
       - name: Check TS
-        run: tsc --noEmit
+        run: npx tsc --noEmit
       - name: Check build
         run: npm run build
       - name: run tests
@@ -19,15 +21,20 @@ jobs:
 
   test-back:
     runs-on: unbuntu-latest
+    strategy:
+      matrix:
+        node-version: ['14.x', '16.x', '18.x']
     steps: 
       - name: Check out code 
         uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
       - name: Goto back
         run: cd back && npm i
       - name: Check TS
-        run: tsc --noEmit
-      - name: Check build
-        run: npm run build
+        run: npx tsc --noEmit
       - name: run tests
         run: npm test
 

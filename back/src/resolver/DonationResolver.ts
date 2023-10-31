@@ -26,7 +26,7 @@ class DonationResolver {
       const donations = await stripe.paymentIntents.list();
       if (isArray(donations?.data)) {
         const totalAmount = donations.data.reduce(
-          (acc, currentElt) => acc + currentElt.amount,
+          (acc: number, currentElt: { amount: number }) => acc + currentElt.amount,
           0,
         );
         const response: DonationResponse = { amount: totalAmount / 100 };
