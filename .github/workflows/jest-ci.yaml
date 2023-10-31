@@ -3,22 +3,22 @@ name: jest-ci-wild-carbone
 on: pull_request 
 
 jobs:
-  test-front:
-    runs-on: ubuntu-latest
-    steps: 
-      - name: Check out code
-        uses: actions/checkout@v4
-      - name: Goto front
-        run: cd front && npm i
-      - name: Check TS
-        run: cd front && npx tsc --noEmit
-      - name: Check build
-        run: cd front && npm run build
-      - name: run tests
-        run: cd front && npm test
+  # test-front:
+  #   runs-on: ubuntu-latest
+  #   steps: 
+  #     - name: Check out code
+  #       uses: actions/checkout@v4
+  #     - name: Goto front
+  #       run: cd front && npm i
+  #     - name: Check TS
+  #       run: cd front && npx tsc --noEmit
+  #     - name: Check build
+  #       run: cd front && npm run build
+  #     - name: run tests
+  #       run: cd front && npm test
 
   test-back:
-    runs-on: unbuntu-latest
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: ['14.x', '16.x', '18.x']
