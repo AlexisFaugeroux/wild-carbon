@@ -7,6 +7,8 @@ import {
   FormControl,
   Autocomplete,
   Alert,
+  IconButton,
+  Collapse,
 } from "@mui/material";
 import {
   Bolt,
@@ -30,16 +32,26 @@ import {
   GET_CATEGORY_AND_ITEM,
 } from "../../gql/CategoryGql";
 import { CREATE_EXPENSE } from "../../gql/ExpenseGql";
+import CloseIcon from "@mui/icons-material/Close";
 
 interface ExpenseFormProps {
-  onSubmitSuccess: () => void;
+  handleShowSuccessAlert: () => void;
+  handleShowErrorAlert: () => void;
+  handleClose: () => void;
+  showSuccessAlert: boolean;
+  showErrorAlert: boolean;
 }
 
-export default function ExpenseForm({ onSubmitSuccess }: ExpenseFormProps) {
+export default function ExpenseForm({
+  showSuccessAlert,
+  showErrorAlert,
+  handleShowSuccessAlert,
+  handleShowErrorAlert,
+  handleClose,
+}: ExpenseFormProps) {
   const [openInputLabel, setOpenInputLabel] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
-
-  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [showAlert, setshowAlert] = useState(true);
 
   // Fetch
   const [fetchCategories, { data: dataCategory }] = useLazyQuery<{
@@ -52,12 +64,16 @@ export default function ExpenseForm({ onSubmitSuccess }: ExpenseFormProps) {
 
   const [createExpense] = useMutation(CREATE_EXPENSE, {
     onCompleted: () => {
-      setShowSuccessAlert(true);
-      onSubmitSuccess();
+      if (!showSuccessAlert) {
+        handleShowSuccessAlert();
+        handleClose();
+      }
     },
     onError: () => {
-      onSubmitSuccess();
-      setShowSuccessAlert(false);
+      if (!showErrorAlert) {
+        handleShowErrorAlert();
+        handleClose();
+      }
     },
   });
 
@@ -73,7 +89,7 @@ export default function ExpenseForm({ onSubmitSuccess }: ExpenseFormProps) {
         variables: { categoryId },
       });
     } catch (error) {
-      console.error("Problème:", error);
+      throw new Error("Something went wrong");
     }
   };
 
@@ -88,31 +104,9 @@ export default function ExpenseForm({ onSubmitSuccess }: ExpenseFormProps) {
     quantity: Yup.number().required("Tu as oublié le principal."),
     itemId: Yup.string().required("Tu as oublié l'item."),
   });
+
   return (
     <Box sx={{ position: "relative" }}>
-      {!validationSchema ? (
-        <Alert
-          severity="error"
-          onClose={() => setShowSuccessAlert(false)}
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            width: 300,
-
-            transform: "translate(-50%, -50%)",
-            zIndex: 1,
-            border: "2px solid red",
-          }}
-        >
-          <Stack direction={"column"} alignItems={"center"} spacing={1}>
-            <Typography sx={{ fontFamily: "Roboto" }}>
-              Aïe! Mais Qu'est ce que t'as fait?
-            </Typography>
-          </Stack>
-        </Alert>
-      ) : null}
-
       <TextField
         fullWidth
         sx={{ mt: 3 }}
@@ -205,7 +199,7 @@ export default function ExpenseForm({ onSubmitSuccess }: ExpenseFormProps) {
         })}
       </TextField>
 
-      {/* //////////////////////// FORM ///////////////////////////////////          */}
+      {/* //////////////////////// FORM /////////////////////////////////// */}
 
       <Formik
         initialValues={{
@@ -231,141 +225,186 @@ export default function ExpenseForm({ onSubmitSuccess }: ExpenseFormProps) {
       >
         {({
           errors,
+          isValid,
           values,
           touched,
           handleChange,
           handleSubmit,
           setFieldValue,
         }): JSX.Element => (
-          <Form
-            onSubmit={handleSubmit}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "1rem",
-              marginTop: "1rem",
-            }}
-          >
-            {openInputLabel && (
-              <>
-                <FormControl>
-                  <TextField
-                    value={values.title}
-                    name="title"
-                    variant="outlined"
-                    required
-                    fullWidth
-                    onChange={handleChange}
-                    label="Qu'est ce que tu as fait de beau ?"
-                    InputProps={{
-                      style: inputStyle,
-                    }}
-                    InputLabelProps={{
-                      shrink: true,
-                      style: {
+          <>
+            {!isValid ? (
+              <Collapse in={showAlert}>
+                <Alert
+                  severity="error"
+                  sx={{
+                    position: "absolute",
+                    top: "25%",
+                    left: "50%",
+                    width: "100%",
+                    transform: "translate(-50%, -50%)",
+                    zIndex: 10,
+                    border: "2px solid red",
+                  }}
+                  action={
+                    <IconButton
+                      aria-label="close"
+                      color="inherit"
+                      size="small"
+                      onClick={() => {
+                        setshowAlert(false),
+                          console.log("showAlert", showAlert);
+                      }}
+                    >
+                      <CloseIcon fontSize="inherit" />
+                    </IconButton>
+                  }
+                >
+                  <Stack direction={"column"} alignItems={"center"} spacing={1}>
+                    <Typography sx={{ fontFamily: "Roboto" }}>
+                      Aïe! Mais Qu'est ce que t'as fait ? Il faut remplir tous
+                      les champs.
+                    </Typography>
+                  </Stack>
+                </Alert>
+              </Collapse>
+            ) : null}
+            <Form
+              onSubmit={handleSubmit}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "1rem",
+                marginTop: "1rem",
+              }}
+            >
+              {openInputLabel && (
+                <>
+                  <FormControl>
+                    <TextField
+                      value={values.title}
+                      name="title"
+                      variant="outlined"
+                      required
+                      fullWidth
+                      onChange={handleChange}
+                      label="Qu'est ce que tu as fait de beau ?"
+                      InputProps={{
+                        style: inputStyle,
+                      }}
+                      InputLabelProps={{
+                        shrink: true,
+                        style: {
+                          fontFamily: "Roboto",
+                          fontSize: "1rem",
+                          color: variables.thirdColor,
+                        },
+                      }}
+                    />
+                  </FormControl>
+
+                  <FormControl>
+                    <Autocomplete
+                      id="itemId"
+                      disableClearable
+                      options={dataItems ? dataItems.getCategory.items : []}
+                      getOptionLabel={(option) => option.label}
+                      onChange={(e, values) => {
+                        setFieldValue("itemId", values.id);
+                      }}
+                      renderInput={(params) => (
+                        <TextField
+                          value={values.itemId}
+                          required
+                          {...params}
+                          label="Choisis ce qui correspond à ton activité ?"
+                          InputProps={{
+                            ...params.InputProps,
+                            type: "search",
+                            style: inputStyle,
+                          }}
+                          InputLabelProps={{
+                            shrink: true,
+                            style: {
+                              fontFamily: "Roboto",
+                              fontSize: "1rem",
+                              color: variables.thirdColor,
+                            },
+                          }}
+                        />
+                      )}
+                      renderOption={(props, option) => (
+                        <li {...props} key={option.id}>
+                          {option.label}
+                        </li>
+                      )}
+                    />
+                  </FormControl>
+                </>
+              )}
+
+              <FormControl>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DatePicker
+                    label="Mais non ?! Quand ça ?"
+                    value={values.date}
+                    onChange={() => handleChange}
+                    format="dd/MM/yyyy"
+                    sx={{
+                      ".css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input":
+                        {
+                          fontFamily: "Roboto",
+                          fontSize: "1rem",
+                        },
+                      ".css-1pq332w-MuiFormLabel-root-MuiInputLabel-root": {
                         fontFamily: "Roboto",
                         fontSize: "1rem",
                         color: variables.thirdColor,
                       },
                     }}
                   />
-                </FormControl>
+                </LocalizationProvider>
+              </FormControl>
 
-                <FormControl>
-                  <Autocomplete
-                    id="itemId"
-                    disableClearable
-                    options={dataItems ? dataItems.getCategory.items : []}
-                    getOptionLabel={(option) => option.label}
-                    onChange={(e, values) => {
-                      setFieldValue("itemId", values.id);
-                    }}
-                    renderInput={(params) => (
-                      <TextField
-                        value={values.itemId}
-                        required
-                        {...params}
-                        label="Choisis ce qui correspond à ton activité ?"
-                        InputProps={{
-                          ...params.InputProps,
-                          type: "search",
-                          style: inputStyle,
-                        }}
-                        InputLabelProps={{
-                          shrink: true,
-                          style: {
-                            fontFamily: "Roboto",
-                            fontSize: "1rem",
-                            color: variables.thirdColor,
-                          },
-                        }}
-                      />
-                    )}
-                  />
-                </FormControl>
-              </>
-            )}
-
-            <FormControl>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  label="Mais non ?! Quand ça ?"
-                  value={values.date}
-                  onChange={() => handleChange}
-                  format="dd/MM/yyyy"
-                  sx={{
-                    ".css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input": {
-                      fontFamily: "Roboto",
-                      fontSize: "1rem",
-                    },
-                    ".css-1pq332w-MuiFormLabel-root-MuiInputLabel-root": {
+              <FormControl>
+                <TextField
+                  InputProps={{ style: inputStyle }}
+                  fullWidth
+                  type="number"
+                  id="quantity"
+                  name="quantity"
+                  label="Combien ?? (en km, g, L)"
+                  variant="outlined"
+                  placeholder="55 pour un trajet voiture de 55km"
+                  required
+                  value={values.quantity}
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    shrink: true,
+                    style: {
                       fontFamily: "Roboto",
                       fontSize: "1rem",
                       color: variables.thirdColor,
                     },
                   }}
+                  error={touched.quantity && Boolean(errors.quantity)}
+                  helperText={touched.quantity && errors.quantity}
                 />
-              </LocalizationProvider>
-            </FormControl>
+              </FormControl>
 
-            <FormControl>
-              <TextField
-                InputProps={{ style: inputStyle }}
-                fullWidth
-                type="number"
-                id="quantity"
-                name="quantity"
-                label="Combien ?? (en km, g, L)"
-                variant="outlined"
-                placeholder="55 pour un trajet voiture de 55km"
-                required
-                value={values.quantity}
-                onChange={handleChange}
-                InputLabelProps={{
-                  shrink: true,
-                  style: {
-                    fontFamily: "Roboto",
-                    fontSize: "1rem",
-                    color: variables.thirdColor,
-                  },
+              <CarbonButton
+                type="submit"
+                variant="contained"
+                style={{ marginTop: "1rem" }}
+                sx={{
+                  backgroundColor: variables.primaryColor,
+                  fontFamily: "Roboto",
                 }}
-                error={touched.quantity && Boolean(errors.quantity)}
-                helperText={touched.quantity && errors.quantity}
-              />
-            </FormControl>
-
-            <CarbonButton
-              type="submit"
-              variant="contained"
-              style={{ marginTop: "1rem" }}
-              sx={{
-                backgroundColor: variables.primaryColor,
-                fontFamily: "Roboto",
-              }}
-            >
-              Soumettre
-            </CarbonButton>
-          </Form>
+              >
+                Soumettre
+              </CarbonButton>
+            </Form>
+          </>
         )}
       </Formik>
     </Box>

@@ -23,16 +23,23 @@ import successG from "../../assets/gif/groot_gif.gif";
 export default function AddExpenseModal() {
   const isLg = useMediaQuery((theme: Theme) => theme.breakpoints.down("lg"));
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [showErrorAlert, setShowErrorAlert] = useState(false);
   const [open, setOpen] = useState(false);
 
   const handleOpenModal = () => {
     setOpen(true);
-    setShowSuccessAlert(false);
   };
 
   const handleClose = () => {
     setOpen(false);
-    setShowSuccessAlert(true);
+  };
+
+  const handleShowSuccessAlert = () => {
+    setShowSuccessAlert(!showSuccessAlert);
+  };
+
+  const handleShowErrorAlert = () => {
+    setShowErrorAlert(!showErrorAlert);
   };
 
   const modalStyle = {
@@ -80,13 +87,14 @@ export default function AddExpenseModal() {
           onClose={() => setShowSuccessAlert(false)}
           sx={{
             position: "absolute",
-            top: "50%",
+            top: "30%",
             left: "50%",
-            width: 300,
+            width: "90%",
 
             transform: "translate(-50%, -50%)",
             zIndex: 1,
             border: "2px solid #3C8962",
+            boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
           }}
         >
           <Stack direction={"column"} alignItems={"center"} spacing={1}>
@@ -94,6 +102,31 @@ export default function AddExpenseModal() {
               Bravo! Merci pour ton honnêteté!
             </Typography>
             <img src={successG} alt="Success" />
+          </Stack>
+        </Alert>
+      ) : null}
+
+      {showErrorAlert ? (
+        <Alert
+          severity="error"
+          onClose={() => setShowErrorAlert(false)}
+          sx={{
+            position: "absolute",
+            top: "25%",
+            left: "50%",
+            width: "90%",
+
+            transform: "translate(-50%, -50%)",
+            zIndex: 1,
+            border: "2px solid red",
+            boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+          }}
+        >
+          <Stack direction={"column"} alignItems={"center"} spacing={1}>
+            <Typography sx={{ fontFamily: "Roboto" }}>
+              Un problème est survenu lors de l'ajout de ta dépense carbone !
+              C'est malin !
+            </Typography>
           </Stack>
         </Alert>
       ) : null}
@@ -147,7 +180,13 @@ export default function AddExpenseModal() {
             Allez, dis nous tout ! Et pas d'entourloupe, la planète le saura...
           </Typography>
 
-          <ExpenseForm onSubmitSuccess={handleClose} />
+          <ExpenseForm
+            showSuccessAlert={showSuccessAlert}
+            showErrorAlert={showErrorAlert}
+            handleShowSuccessAlert={handleShowSuccessAlert}
+            handleShowErrorAlert={handleShowErrorAlert}
+            handleClose={handleClose}
+          />
         </Box>
       </Modal>
     </Stack>
