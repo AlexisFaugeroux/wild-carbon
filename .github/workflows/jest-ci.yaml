@@ -1,6 +1,10 @@
 name: jest-ci-wild-carbone
 
-on: pull_request 
+on: pull_request
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test-front:
@@ -21,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ['14.x', '16.x', '18.x']
+        node-version: ['16.x', '18.x']
     steps: 
       - name: Check out code 
         uses: actions/checkout@v4
