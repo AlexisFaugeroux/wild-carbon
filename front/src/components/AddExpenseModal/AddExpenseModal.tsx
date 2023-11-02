@@ -14,14 +14,36 @@ import { InfoRounded } from "@mui/icons-material";
 
 import CarbonIconButton from "../CarbonIconButton";
 import { useState } from "react";
-import carbonAddIcon from "../../assets/carbon_add.png";
 import variables from "../../variables";
 import ExpenseForm from "./ExpenseForm";
 
+import carbonAddIcon from "../../assets/carbon_add.png";
 import successG from "../../assets/gif/groot_gif.gif";
 
 export default function AddExpenseModal() {
-  const isLg = useMediaQuery((theme: Theme) => theme.breakpoints.down("lg"));
+  const isLg = useMediaQuery((theme: Theme) => theme.breakpoints.up("lg"));
+  const isPortrait = useMediaQuery("(orientation: portrait)");
+  const isLandscape = useMediaQuery("(orientation: landscape)");
+
+  const successAlertSize = () => {
+    if (isLg) {
+      return "30%";
+    } else if (isPortrait) {
+      return "90%";
+    } else if (isLandscape) {
+      return "40%";
+    }
+  };
+
+  const positionAlertTop = () => {
+    if (isLg) {
+      return "25%";
+    } else if (isPortrait) {
+      return "30%";
+    } else if (isLandscape) {
+      return "30%";
+    }
+  };
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
   const [open, setOpen] = useState(false);
@@ -64,19 +86,25 @@ export default function AddExpenseModal() {
       <CarbonIconButton
         onClick={handleOpenModal}
         sx={{
+          ".css-8je8zh-MuiTouchRipple-root": {
+            overflow: "none",
+            position: "relative",
+            borderRadius: "none",
+          },
           padding: "0",
-
+          margin: "0",
           transition: "transform 0.2s",
           "&:hover": {
             transform: "scale(1.2)",
             backgroundColor: "transparent",
+            color: "transparent",
           },
         }}
         icon={
           <img
             src={carbonAddIcon}
             alt="carbonIconAdd"
-            height={isLg ? "35" : "50"}
+            height={isLg ? "50" : "35"}
           />
         }
       />
@@ -86,18 +114,38 @@ export default function AddExpenseModal() {
           severity="success"
           onClose={() => setShowSuccessAlert(false)}
           sx={{
+            ".css-ki1hdl-MuiAlert-action": {
+              padding: 0,
+              margin: 0,
+              position: "absolute",
+              top: 1,
+              right: 1,
+            },
+            ".css-1ytlwq5-MuiAlert-icon ": {
+              padding: 0,
+              margin: 0,
+              position: "absolute",
+              top: 5,
+              left: 5,
+            },
             position: "absolute",
-            top: "30%",
+            top: positionAlertTop(),
             left: "50%",
-            width: "90%",
+            width: successAlertSize(),
 
             transform: "translate(-50%, -50%)",
             zIndex: 1,
             border: "2px solid #3C8962",
             boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+            justifyContent: "center",
           }}
         >
-          <Stack direction={"column"} alignItems={"center"} spacing={1}>
+          <Stack
+            width={"100%"}
+            direction={"column"}
+            alignItems={"center"}
+            spacing={1}
+          >
             <Typography sx={{ fontFamily: "Roboto" }}>
               Bravo! Merci pour ton honnêteté!
             </Typography>
@@ -112,19 +160,20 @@ export default function AddExpenseModal() {
           onClose={() => setShowErrorAlert(false)}
           sx={{
             position: "absolute",
-            top: "25%",
+            top: positionAlertTop(),
             left: "50%",
-            width: "90%",
+            width: successAlertSize(),
 
             transform: "translate(-50%, -50%)",
             zIndex: 1,
             border: "2px solid red",
             boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+            textAlign: "center",
           }}
         >
           <Stack direction={"column"} alignItems={"center"} spacing={1}>
             <Typography sx={{ fontFamily: "Roboto" }}>
-              Un problème est survenu lors de l'ajout de ta dépense carbone !
+              Un problème est survenu lors de l'ajout de ta dépense carbone.
               C'est malin !
             </Typography>
           </Stack>
