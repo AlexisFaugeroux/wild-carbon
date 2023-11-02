@@ -9,19 +9,45 @@ import {
   Tooltip,
   IconButton,
   Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Icon,
 } from "@mui/material";
-import { InfoRounded } from "@mui/icons-material";
+import { CheckCircleOutline, InfoRounded } from "@mui/icons-material";
 
 import CarbonIconButton from "../CarbonIconButton";
 import { useState } from "react";
-import carbonAddIcon from "../../assets/carbon_add.png";
 import variables from "../../variables";
 import ExpenseForm from "./ExpenseForm";
 
+import carbonAddIcon from "../../assets/carbon_add.png";
 import successG from "../../assets/gif/groot_gif.gif";
 
 export default function AddExpenseModal() {
-  const isLg = useMediaQuery((theme: Theme) => theme.breakpoints.down("lg"));
+  const isLg = useMediaQuery((theme: Theme) => theme.breakpoints.up("lg"));
+  const isPortrait = useMediaQuery("(orientation: portrait)");
+  const isLandscape = useMediaQuery("(orientation: landscape)");
+
+  const successAlertSize = () => {
+    if (isLg) {
+      return "30%";
+    } else if (isPortrait) {
+      return "90%";
+    } else if (isLandscape) {
+      return "40%";
+    }
+  };
+
+  const positionAlertTop = () => {
+    if (isLg) {
+      return "25%";
+    } else if (isPortrait) {
+      return "30%";
+    } else if (isLandscape) {
+      return "30%";
+    }
+  };
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
   const [open, setOpen] = useState(false);
@@ -61,49 +87,79 @@ export default function AddExpenseModal() {
         marginTop: "1rem",
       }}
     >
-      <CarbonIconButton
-        onClick={handleOpenModal}
-        sx={{
-          padding: "0",
-
-          transition: "transform 0.2s",
-          "&:hover": {
-            transform: "scale(1.2)",
-            backgroundColor: "transparent",
-          },
-        }}
-        icon={
-          <img
-            src={carbonAddIcon}
-            alt="carbonIconAdd"
-            height={isLg ? "35" : "50"}
-          />
-        }
-      />
+      <Box sx={{ display: "flex", width: "100%", justifyContent: "center" }}>
+        <CarbonIconButton
+          onClick={handleOpenModal}
+          sx={{
+            transition: "transform 0.2s",
+            "&:hover": {
+              transform: "scale(1.2)",
+              backgroundColor: "transparent",
+              color: "transparent",
+            },
+          }}
+          icon={
+            <img
+              src={carbonAddIcon}
+              alt="carbonIconAdd"
+              height={isLg ? "50" : "35"}
+            />
+          }
+        />
+      </Box>
 
       {showSuccessAlert ? (
-        <Alert
-          severity="success"
+        <Dialog
+          open
           onClose={() => setShowSuccessAlert(false)}
-          sx={{
-            position: "absolute",
-            top: "30%",
-            left: "50%",
-            width: "90%",
-
-            transform: "translate(-50%, -50%)",
-            zIndex: 1,
-            border: "2px solid #3C8962",
-            boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-          }}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
         >
-          <Stack direction={"column"} alignItems={"center"} spacing={1}>
-            <Typography sx={{ fontFamily: "Roboto" }}>
-              Bravo! Merci pour ton honnêteté!
-            </Typography>
-            <img src={successG} alt="Success" />
-          </Stack>
-        </Alert>
+          <Box
+            sx={{
+              padding: 5,
+              border: "3px solid #3C8962",
+              backgroundColor: "#bbd6bc",
+            }}
+          >
+            <Icon
+              sx={{
+                position: "absolute",
+                top: 5,
+                left: 5,
+                color: variables.secondaryColor,
+              }}
+            >
+              <CheckCircleOutline />
+            </Icon>
+            <Stack
+              width={"100%"}
+              direction={"column"}
+              alignItems={"center"}
+              spacing={1}
+              sx={{
+                borderWidth: 5,
+                borderColor: "red",
+              }}
+            >
+              <DialogTitle id="alert-dialog-title">
+                <Typography
+                  sx={{
+                    fontFamily: "Roboto",
+                    textAlign: "center",
+                    color: variables.thirdColor,
+                    fontWeight: "bolder",
+                  }}
+                >
+                  Bravo! Merci pour ton honnêteté!
+                </Typography>
+              </DialogTitle>
+              <DialogContent sx={{ borderRadius: 50 }}>
+                <img src={successG} alt="Success" />
+              </DialogContent>
+            </Stack>
+          </Box>
+        </Dialog>
       ) : null}
 
       {showErrorAlert ? (
@@ -112,19 +168,20 @@ export default function AddExpenseModal() {
           onClose={() => setShowErrorAlert(false)}
           sx={{
             position: "absolute",
-            top: "25%",
+            top: positionAlertTop(),
             left: "50%",
-            width: "90%",
+            width: successAlertSize(),
 
             transform: "translate(-50%, -50%)",
             zIndex: 1,
             border: "2px solid red",
             boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+            textAlign: "center",
           }}
         >
           <Stack direction={"column"} alignItems={"center"} spacing={1}>
             <Typography sx={{ fontFamily: "Roboto" }}>
-              Un problème est survenu lors de l'ajout de ta dépense carbone !
+              Un problème est survenu lors de l'ajout de ta dépense carbone.
               C'est malin !
             </Typography>
           </Stack>
