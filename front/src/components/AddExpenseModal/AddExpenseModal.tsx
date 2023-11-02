@@ -9,8 +9,12 @@ import {
   Tooltip,
   IconButton,
   Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Icon,
 } from "@mui/material";
-import { InfoRounded } from "@mui/icons-material";
+import { CheckCircleOutline, InfoRounded } from "@mui/icons-material";
 
 import CarbonIconButton from "../CarbonIconButton";
 import { useState } from "react";
@@ -83,75 +87,79 @@ export default function AddExpenseModal() {
         marginTop: "1rem",
       }}
     >
-      <CarbonIconButton
-        onClick={handleOpenModal}
-        sx={{
-          ".css-8je8zh-MuiTouchRipple-root": {
-            overflow: "none",
-            position: "relative",
-            borderRadius: "none",
-          },
-          padding: "0",
-          margin: "0",
-          transition: "transform 0.2s",
-          "&:hover": {
-            transform: "scale(1.2)",
-            backgroundColor: "transparent",
-            color: "transparent",
-          },
-        }}
-        icon={
-          <img
-            src={carbonAddIcon}
-            alt="carbonIconAdd"
-            height={isLg ? "50" : "35"}
-          />
-        }
-      />
+      <Box sx={{ display: "flex", width: "100%", justifyContent: "center" }}>
+        <CarbonIconButton
+          onClick={handleOpenModal}
+          sx={{
+            transition: "transform 0.2s",
+            "&:hover": {
+              transform: "scale(1.2)",
+              backgroundColor: "transparent",
+              color: "transparent",
+            },
+          }}
+          icon={
+            <img
+              src={carbonAddIcon}
+              alt="carbonIconAdd"
+              height={isLg ? "50" : "35"}
+            />
+          }
+        />
+      </Box>
 
       {showSuccessAlert ? (
-        <Alert
-          severity="success"
+        <Dialog
+          open
           onClose={() => setShowSuccessAlert(false)}
-          sx={{
-            ".css-ki1hdl-MuiAlert-action": {
-              padding: 0,
-              margin: 0,
-              position: "absolute",
-              top: 1,
-              right: 1,
-            },
-            ".css-1ytlwq5-MuiAlert-icon ": {
-              padding: 0,
-              margin: 0,
-              position: "absolute",
-              top: 5,
-              left: 5,
-            },
-            position: "absolute",
-            top: positionAlertTop(),
-            left: "50%",
-            width: successAlertSize(),
-
-            transform: "translate(-50%, -50%)",
-            zIndex: 1,
-            border: "2px solid #3C8962",
-            boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-            justifyContent: "center",
-          }}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
         >
-          <Stack
-            width={"100%"}
-            direction={"column"}
-            alignItems={"center"}
-            spacing={1}
+          <Box
+            sx={{
+              padding: 5,
+              border: "3px solid #3C8962",
+              backgroundColor: "#bbd6bc",
+            }}
           >
-            <Typography sx={{ fontFamily: "Roboto" }}>
-              Bravo! Merci pour ton honnêteté!
-            </Typography>
-            <img src={successG} alt="Success" />
-          </Stack>
-        </Alert>
+            <Icon
+              sx={{
+                position: "absolute",
+                top: 5,
+                left: 5,
+                color: variables.secondaryColor,
+              }}
+            >
+              <CheckCircleOutline />
+            </Icon>
+            <Stack
+              width={"100%"}
+              direction={"column"}
+              alignItems={"center"}
+              spacing={1}
+              sx={{
+                borderWidth: 5,
+                borderColor: "red",
+              }}
+            >
+              <DialogTitle id="alert-dialog-title">
+                <Typography
+                  sx={{
+                    fontFamily: "Roboto",
+                    textAlign: "center",
+                    color: variables.thirdColor,
+                    fontWeight: "bolder",
+                  }}
+                >
+                  Bravo! Merci pour ton honnêteté!
+                </Typography>
+              </DialogTitle>
+              <DialogContent sx={{ borderRadius: 50 }}>
+                <img src={successG} alt="Success" />
+              </DialogContent>
+            </Stack>
+          </Box>
+        </Dialog>
       ) : null}
 
       {showErrorAlert ? (
