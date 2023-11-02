@@ -96,6 +96,8 @@ const HeaderBar = () => {
         <MenuBar onClose={handleClosingMenu} isOpenMenu={isOpenMenu} />
         <Box
           sx={{
+            display: "flex",
+            alignItems: "center",
             margin: "auto",
             height: `calc(${variables.heightHeader} - 1vh)`,
           }}
@@ -103,7 +105,7 @@ const HeaderBar = () => {
           <img
             src={isMobile ? simplifiedLogo : logo}
             alt="Logo BalanceTonCarbone"
-            height={isLandscape ? "30rem" : "50rem"}
+            height={isMobile ? "30rem" : "50rem"}
           />
         </Box>
         <CarbonIconButton
