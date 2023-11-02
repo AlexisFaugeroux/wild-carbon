@@ -49,7 +49,10 @@ const start = async (): Promise<void> => {
         req.headers.authorization.split('Bearer ')[1],
         'supersecretkey',
       ) as User;
-      return { jwtPayload: payload };
+      return { 
+        dataSource,
+        jwtPayload: payload
+       };
     },
   });
 
