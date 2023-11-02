@@ -9,7 +9,7 @@ concurrency:
 jobs:
   test-front:
     runs-on: ubuntu-latest
-    steps: 
+    steps:
       - name: Check out code
         uses: actions/checkout@v4
       - name: Goto front
@@ -26,8 +26,8 @@ jobs:
     strategy:
       matrix:
         node-version: ['16.x', '18.x']
-    steps: 
-      - name: Check out code 
+    steps:
+      - name: Check out code
         uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -41,7 +41,9 @@ jobs:
         run: cd back && npm test
 
   docker:
-    needs: test-front
+    needs:
+      - test-front
+      - test-back
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
@@ -58,5 +60,5 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          context: "{{defaultContext}}:client"
+          context: '{{defaultContext}}:client'
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/Wild-Carbone:Wild-Carbone
