@@ -10,7 +10,7 @@ export default function Dashboard() {
   const isPortrait = useMediaQuery("(orientation: portrait)");
 
   return (
-    <Box>
+    <Box sx={{ height: "85vh" }}>
       <Typography
         variant="body1"
         sx={{
@@ -59,7 +59,6 @@ export default function Dashboard() {
           </span>
           {/*changement de la couleur du nombre à partir d'un certain seuil ? (vert orange rouge ?)*/}
         </Typography>
-
         <img src={carbonAddIcon} alt="carbonIconAdd" height="35" />
       </Box>
       <Stack
