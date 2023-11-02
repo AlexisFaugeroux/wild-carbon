@@ -10,7 +10,7 @@ export default function Dashboard() {
   const isPortrait = useMediaQuery("(orientation: portrait)");
 
   return (
-    <Box>
+    <Box sx={{ height: "85vh" }}>
       <Typography
         variant="body1"
         sx={{
@@ -44,13 +44,28 @@ export default function Dashboard() {
           },
         }}
       >
-        Aujourd'hui j'ai dépensé:
-        <span style={{ color: "green", fontWeight: "bolder" }}> 30 kg CO²</span>
-        {/*changement de la couleur du nombre à partir d'un certain seuil ? (vert orange rouge ?)*/}
-      </Typography>
-
-      <AddExpenseModal />
-
+        <Typography
+          variant="subtitle1"
+          sx={{
+            fontFamily: "Roboto",
+            fontSize: {
+              xs: "1rem",
+              sm: "1.1rem",
+              md: "1.2rem",
+              lg: "1.3rem",
+              xl: "1.5rem",
+            },
+          }}
+        >
+          Aujourd'hui j'ai dépensé:
+          <span style={{ color: "green", fontWeight: "bolder" }}>
+            {" "}
+            30 kg CO²
+          </span>
+          {/*changement de la couleur du nombre à partir d'un certain seuil ? (vert orange rouge ?)*/}
+        </Typography>
+        <img src={carbonAddIcon} alt="carbonIconAdd" height="35" />
+      </Box>
       <Stack
         spacing={1}
         direction={isLg && isPortrait ? "column" : "row"}

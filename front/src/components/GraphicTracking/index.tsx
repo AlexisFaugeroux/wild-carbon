@@ -11,18 +11,30 @@ import { format } from "date-fns";
 
 ChartJS.register(LineElement, PointElement, LinearScale, Title, CategoryScale);
 
-import { Box, Typography, useMediaQuery } from "@mui/material";
+import { Box, Typography, useMediaQuery, Theme } from "@mui/material";
 import CarbonCard from "../CarbonCard";
 import { eachDayOfInterval } from "date-fns";
 import variables from "../../variables";
 
 export default function GraphicTracking() {
-  const isPortrait = useMediaQuery("(orientation: portrait)");
-
   const septemberDates = eachDayOfInterval({
     start: new Date(2023, 8, 1), // 8 représente septembre (0-indexed)
     end: new Date(2023, 8, 30),
   });
+
+  const isLg = useMediaQuery((theme: Theme) => theme.breakpoints.up("lg"));
+  const isPortrait = useMediaQuery("(orientation: portrait)");
+  const isLandscape = useMediaQuery("(orientation: landscape)");
+
+  const calculateHeight = () => {
+    if (isLg) {
+      return "30vh";
+    } else if (isPortrait) {
+      return "25vh";
+    } else if (isLandscape) {
+      return "45vh";
+    }
+  };
 
   const labels = septemberDates.map((date) => format(date, "dd/MM"));
   const data = {
@@ -41,14 +53,15 @@ export default function GraphicTracking() {
     <Box
       sx={{
         width: "100%",
+        height: "auto",
       }}
     >
       <CarbonCard
         style={{
           backgroundColor: "white",
           border: "2px solid #3C8962",
-          height: isPortrait ? "30vh" : "50vh",
-          overflow: "scroll",
+          height: calculateHeight(),
+          margin: 0,
         }}
       >
         <Typography
@@ -72,7 +85,7 @@ export default function GraphicTracking() {
           style={{
             display: "flex",
             alignItems: "center",
-            width: "100%",
+            justifyContent: "center",
             height: "90%",
           }}
         >
