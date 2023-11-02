@@ -2,7 +2,6 @@ import { Box, Grid, Stack } from '@mui/material';
 import { FC } from 'react';
 import Description from './components/Description';
 import FeaturesPresentation from './components/FeaturesPresentation';
-import variables from '../../variables';
 import { brown, lightGreen } from '@mui/material/colors';
 import ListImg from '../../assets/list.png';
 import GraphImg from '../../assets/graph.png';

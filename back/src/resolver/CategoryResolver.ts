@@ -1,4 +1,4 @@
-import { Query, Resolver, Mutation, Arg } from 'type-graphql';
+import { Query, Resolver, Mutation, Arg, Ctx } from 'type-graphql';
 import { Category } from '../entity/Category';
 import { EntityNotFoundError } from 'typeorm';
 import dataSource from '../utils';
@@ -6,8 +6,13 @@ import dataSource from '../utils';
 @Resolver()
 class CategoryResolver {
   @Mutation(() => Category)
-  async createCategory(@Arg('name') name: string): Promise<Category> {
+  async createCategory(
+    @Arg('name') name: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    @Ctx() context: any,
+    ): Promise<Category> {
     try {
+      const { dataSource } = context;
       const category = new Category();
       category.name = name;
       const createdCategory = await dataSource
