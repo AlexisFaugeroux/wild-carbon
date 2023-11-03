@@ -66,3 +66,4 @@ jobs:
           TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.json
           VALIDATE_TYPESCRIPT_ES: true
           VALIDATE_TSX: true
+          EXPERIMENTAL_BATCH_WORKER: true
