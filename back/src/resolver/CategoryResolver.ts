@@ -10,7 +10,7 @@ class CategoryResolver {
     @Arg('name') name: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     @Ctx() context: any,
-    ): Promise<Category> {
+  ): Promise<Category> {
     try {
       const { dataSource } = context;
       const category = new Category();
@@ -29,8 +29,11 @@ class CategoryResolver {
   async updateCategory(
     @Arg('categoryId') id: string,
     @Arg('name') name: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    @Ctx() context: any,
   ): Promise<Category> {
     try {
+      const { dataSource } = context;
       const targetedCategory = await dataSource
         .getRepository(Category)
         .findOneByOrFail({ id });
@@ -53,7 +56,12 @@ class CategoryResolver {
   }
 
   @Mutation(() => String)
-  async deleteCategory(@Arg('categoryId') id: string): Promise<string> {
+  async deleteCategory(
+    @Arg('categoryId') id: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    @Ctx() context: any,
+  ): Promise<string> {
+    const { dataSource } = context;
     const targetedCategory = await dataSource
       .getRepository(Category)
       .findOneByOrFail({ id });
@@ -63,8 +71,13 @@ class CategoryResolver {
   }
 
   @Query(() => Category)
-  async getCategory(@Arg('categoryId') id: string): Promise<Category> {
+  async getCategory(
+    @Arg('categoryId') id: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    @Ctx() context: any,
+  ): Promise<Category> {
     try {
+      const { dataSource } = context;
       const category = await dataSource.getRepository(Category).findOne({
         where: { id },
         relations: {
