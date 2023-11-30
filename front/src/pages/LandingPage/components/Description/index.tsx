@@ -38,7 +38,7 @@ const Description: FC = () => {
           </Typography>
 
           <Typography>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            Le premier balanceur de carbone !
           </Typography>
         </Stack>
       </CarbonCard.Content>
