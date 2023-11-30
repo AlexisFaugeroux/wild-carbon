@@ -1,4 +1,4 @@
-import { Query, Resolver, Mutation, Arg } from 'type-graphql';
+import { Query, Resolver, Mutation, Arg, Ctx } from 'type-graphql';
 import { Category } from '../entity/Category';
 import { EntityNotFoundError } from 'typeorm';
 import dataSource from '../utils';
@@ -6,8 +6,13 @@ import dataSource from '../utils';
 @Resolver()
 class CategoryResolver {
   @Mutation(() => Category)
-  async createCategory(@Arg('name') name: string): Promise<Category> {
+  async createCategory(
+    @Arg('name') name: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    @Ctx() context: any,
+  ): Promise<Category> {
     try {
+      const { dataSource } = context;
       const category = new Category();
       category.name = name;
       const createdCategory = await dataSource
@@ -24,8 +29,11 @@ class CategoryResolver {
   async updateCategory(
     @Arg('categoryId') id: string,
     @Arg('name') name: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    @Ctx() context: any,
   ): Promise<Category> {
     try {
+      const { dataSource } = context;
       const targetedCategory = await dataSource
         .getRepository(Category)
         .findOneByOrFail({ id });
@@ -48,7 +56,12 @@ class CategoryResolver {
   }
 
   @Mutation(() => String)
-  async deleteCategory(@Arg('categoryId') id: string): Promise<string> {
+  async deleteCategory(
+    @Arg('categoryId') id: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    @Ctx() context: any,
+  ): Promise<string> {
+    const { dataSource } = context;
     const targetedCategory = await dataSource
       .getRepository(Category)
       .findOneByOrFail({ id });
@@ -58,18 +71,38 @@ class CategoryResolver {
   }
 
   @Query(() => Category)
-  async getCategory(@Arg('categoryId') id: string): Promise<Category> {
-    const category = await dataSource
-      .getRepository(Category)
-      .findOneByOrFail({ id });
+  async getCategory(
+    @Arg('categoryId') id: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    @Ctx() context: any,
+  ): Promise<Category> {
+    try {
+      const { dataSource } = context;
+      const category = await dataSource.getRepository(Category).findOne({
+        where: { id },
+        relations: {
+          items: true,
+        },
+      });
 
-    return category;
+      if (!category) throw new Error('Category not found');
+
+      return category;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
 
   @Query(() => [Category])
   async getAllCategory(): Promise<Category[]> {
     try {
-      const categories = await dataSource.getRepository(Category).find();
+      const categories = await dataSource.getRepository(Category).find({
+        relations: {
+          items: true,
+        },
+      });
+
       return categories;
     } catch (error) {
       console.error(error);

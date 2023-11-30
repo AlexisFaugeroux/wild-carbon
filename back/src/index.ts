@@ -9,6 +9,7 @@ import ArticleResolver from './resolver/ArticleResolver';
 import ExpenseResolver from './resolver/ExpenseResolver';
 import ItemResolver from './resolver/ItemResolver';
 import { User } from './entity/User';
+import DonationResolver from './resolver/DonationResolver';
 
 export interface Context {
   jwtPayload: User;
@@ -24,6 +25,7 @@ const start = async (): Promise<void> => {
       ArticleResolver,
       ExpenseResolver,
       ItemResolver,
+      DonationResolver,
     ],
     authChecker: ({ context }) => {
       console.log('context from authchecker', context);
@@ -47,13 +49,15 @@ const start = async (): Promise<void> => {
         req.headers.authorization.split('Bearer ')[1],
         'supersecretkey',
       ) as User;
-      return { jwtPayload: payload };
+      return { 
+        dataSource,
+        jwtPayload: payload
+       };
     },
   });
 
   const { url } = await server.listen();
   console.log(`🚀  Server ready at ${url}`);
-  console.log('hello hot reload ?');
 };
 
 void start();

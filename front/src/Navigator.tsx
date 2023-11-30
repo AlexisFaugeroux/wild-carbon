@@ -17,7 +17,7 @@ export const routes = {
 
 const Navigator: FC = () => {
   const { isLoggedIn } = useContext(LoginContext);
-  console.log('isLoggedIn', isLoggedIn);
+
   return (
     <Routes>
       <Route path={routes.landingPage} element={<LandingPage />} />
@@ -25,8 +25,14 @@ const Navigator: FC = () => {
 
       {isLoggedIn ? (
         <Route path={routes.canvas} element={<CanvasPage />} />
-      ) : null}
-      {isLoggedIn ? <Route path={routes.home} element={<HomePage />} /> : null}
+      ) : (
+        <Route path={routes.login} element={<LoginPage />} />
+      )}
+      {isLoggedIn ? (
+        <Route path={routes.home} element={<HomePage />} />
+      ) : (
+        <Route path={routes.login} element={<LoginPage />} />
+      )}
 
       <Route path={routes.dashboard} element={<Dashboard />} />
       <Route path="*" element={<Navigate to="/" />} />

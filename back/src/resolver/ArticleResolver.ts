@@ -2,6 +2,7 @@ import { Arg, Mutation, Query, Resolver } from 'type-graphql';
 import dataSource from '../utils';
 import { Article } from '../entity/Article';
 import { EntityNotFoundError } from 'typeorm';
+import { User } from '../entity/User';
 
 @Resolver()
 class ArticleResolver {
@@ -24,7 +25,16 @@ class ArticleResolver {
       article.description = description;
       article.url = url;
       article.createdAt = new Date();
-      article.user.id = userId;
+
+      const user = await dataSource
+        .getRepository(User)
+        .findOne({ where: { id: userId } });
+      if (!user) {
+        throw new Error(`User with ID ${userId} not found`);
+      }
+
+      article.user = user;
+
       const createdArticle = await dataSource
         .getRepository(Article)
         .save(article);
@@ -41,16 +51,34 @@ class ArticleResolver {
     @Arg('title') title: string,
     @Arg('description') description: string,
     @Arg('url') url: string,
-    @Arg('articleId') id: string,
+    @Arg('articleId') articleId: string,
     @Arg('userId') userId: string,
   ): Promise<Article> {
     try {
-      const targetedArticle = await dataSource
-        .getRepository(Article)
-        .findOneByOrFail({ id });
+      const targetedArticle = await dataSource.getRepository(Article).findOne({
+        where: {
+          id: articleId,
+        },
+        relations: {
+          user: true,
+        },
+      });
 
-      if (targetedArticle.user.id !== userId) {
+      if (!targetedArticle) throw new Error('Article not found');
+
+      const user = await dataSource
+        .getRepository(User)
+        .findOne({ where: { id: userId } });
+      if (!user) {
+        throw new Error(`User with ID ${userId} not found`);
+      }
+
+      if (!user) {
         throw new Error('your not a owner to this article');
+      }
+
+      if (!targetedArticle) {
+        throw new Error('Article not found');
       }
 
       targetedArticle.title = title;
@@ -84,9 +112,16 @@ class ArticleResolver {
 
   @Query(() => Article)
   async getArticle(@Arg('articleId') id: string): Promise<Article> {
-    const article = await dataSource
-      .getRepository(Article)
-      .findOneByOrFail({ id });
+    const article = await dataSource.getRepository(Article).findOne({
+      where: {
+        id,
+      },
+      relations: {
+        user: true,
+      },
+    });
+
+    if (!article) throw new Error('Article not found');
 
     return article;
   }
@@ -94,7 +129,11 @@ class ArticleResolver {
   @Query(() => [Article])
   async getAllArticle(): Promise<Article[]> {
     try {
-      const articles = await dataSource.getRepository(Article).find();
+      const articles = await dataSource.getRepository(Article).find({
+        relations: {
+          user: true,
+        },
+      });
 
       return articles;
     } catch (error) {

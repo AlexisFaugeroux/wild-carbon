@@ -1,16 +1,23 @@
-import { Box, Typography, useMediaQuery } from "@mui/material";
+import { Box, Theme, Typography, useMediaQuery } from "@mui/material";
 
 import CarbonCard from "../CarbonCard";
 import ExpensesListItem from "../ExpensesListItem";
-import {
-  DirectionsCar,
-  DirectionsRun,
-  Restaurant,
-  Train,
-} from "@mui/icons-material";
+import { DirectionsCar, Restaurant, Train } from "@mui/icons-material";
 
 export default function ExpensesCard() {
+  const isLg = useMediaQuery((theme: Theme) => theme.breakpoints.up("lg"));
   const isPortrait = useMediaQuery("(orientation: portrait)");
+  const isLandscape = useMediaQuery("(orientation: landscape)");
+
+  const calculateHeight = () => {
+    if (isLg) {
+      return "30vh";
+    } else if (isPortrait) {
+      return "25vh";
+    } else if (isLandscape) {
+      return "45vh";
+    }
+  };
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -18,15 +25,8 @@ export default function ExpensesCard() {
         style={{
           backgroundColor: "white",
           border: "2px solid #3C8962",
-          height: isPortrait ? "30vh" : "50vh",
-          overflow: "scroll",
-        }}
-        sx={{
-          width: {
-            xs: "100%",
-            sm: "50%",
-            md: "50%",
-          },
+          margin: 0,
+          height: calculateHeight(),
         }}
       >
         <Typography
@@ -47,7 +47,7 @@ export default function ExpensesCard() {
           Mes dépenses carbones récentes:
         </Typography>
         <CarbonCard.Content
-          sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
+          sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
           <ExpensesListItem
             IconExpense={DirectionsCar}
@@ -66,18 +66,6 @@ export default function ExpensesCard() {
             name="Train Lille-Paris"
             date="05 septembre"
             expenseNumber="10"
-          />
-          <ExpensesListItem
-            IconExpense={DirectionsRun}
-            name="Course à pied"
-            date="04 septembre"
-            expenseNumber="0"
-          />
-          <ExpensesListItem
-            IconExpense={DirectionsCar}
-            name="Trajet voiture"
-            date=" 01 septembre"
-            expenseNumber="50"
           />
         </CarbonCard.Content>
       </CarbonCard>

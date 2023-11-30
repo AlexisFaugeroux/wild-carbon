@@ -40,10 +40,12 @@ export class Item {
   updatedAt: Date;
 
   @Field(() => Category)
-  @ManyToOne(() => Category, (category) => category.items)
+  @ManyToOne(() => Category, (category) => category.items, {
+    onDelete: 'CASCADE',
+  })
   category: Category;
 
-  @Field(() => Expense)
+  @Field(() => [Expense])
   @OneToMany(() => Expense, (expense) => expense.item)
   expenses: Expense[];
 }

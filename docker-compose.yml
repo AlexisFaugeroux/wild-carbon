@@ -3,6 +3,8 @@ services:
     build: ./back
     env_file:
       - ./.env
+    volumes:
+      - ./back/src:/app/src
     depends_on:
       - db
     ports:

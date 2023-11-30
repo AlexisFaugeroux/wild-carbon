@@ -11,6 +11,7 @@ class ExpenseResolver {
     @Arg('itemId') itemId: string,
     @Arg('title') title: string,
     @Arg('quantity') quantity: number,
+    @Arg('date') date: string,
     @Ctx() contextValue: Context,
   ): Promise<string> {
     const expense = new Expense();
@@ -23,7 +24,7 @@ class ExpenseResolver {
       throw new Error('Item introuvable dans la base de données');
     }
 
-    if (quantity < 0 || quantity >= 500000 || quantity != null) {
+    if (quantity < 0 || quantity >= 500000 || quantity == null) {
       throw new Error('error quantity value');
     }
 
@@ -32,7 +33,7 @@ class ExpenseResolver {
     expense.title = title;
     expense.emissionTotal = item.emissionFactor * quantity;
     expense.quantity = quantity;
-    expense.createdAt = new Date();
+    expense.createdAt = new Date(date);
 
     await dataSource.getRepository(Expense).save(expense);
 
@@ -45,22 +46,29 @@ class ExpenseResolver {
     @Arg('itemId') itemId: string,
     @Arg('title') title: string,
     @Arg('quantity') quantity: number,
+    @Arg('date') date: string,
     @Ctx() contextValue: Context,
   ): Promise<Expense> {
     const targetedExpense = await dataSource
       .getRepository(Expense)
-      .findOneByOrFail({ id });
+      .findOne({ where: { id }, relations: { user: true } });
+
+    if (!targetedExpense) throw new Error('Expense not found');
+
+    if (targetedExpense.user.id !== contextValue.jwtPayload.id) {
+      throw new Error("You're not the owner of this expense");
+    }
 
     const item = await dataSource
       .getRepository(Item)
       .findOneByOrFail({ id: itemId });
 
     if (!item) {
-      throw new Error('Item introuvable dans la base de données');
+      throw new Error('Item not found');
     }
 
-    if (quantity < 0 || quantity >= 500000 || quantity != null) {
-      throw new Error('error quantity value');
+    if (quantity < 0 || quantity >= 500000 || quantity === null) {
+      throw new Error('Quantity value is not valid');
     }
 
     targetedExpense.item = item;
@@ -68,7 +76,7 @@ class ExpenseResolver {
     targetedExpense.title = title;
     targetedExpense.emissionTotal = item.emissionFactor * quantity;
     targetedExpense.quantity = quantity;
-    targetedExpense.updatedAt = new Date();
+    targetedExpense.updatedAt = new Date(date);
 
     const updateExpense = await dataSource
       .getRepository(Expense)
@@ -89,16 +97,36 @@ class ExpenseResolver {
 
   @Query(() => Expense)
   async getExpense(@Arg('expenseId') id: string): Promise<Expense> {
-    const expense = await dataSource
-      .getRepository(Expense)
-      .findOneByOrFail({ id });
-    return expense;
+    try {
+      const expense = await dataSource.getRepository(Expense).findOne({
+        where: {
+          id,
+        },
+        relations: {
+          item: true,
+          user: true,
+        },
+      });
+
+      if (!expense) throw new Error('Expense not found');
+
+      return expense;
+    } catch (error) {
+      console.log(error);
+      throw new Error();
+    }
   }
 
   @Query(() => [Expense])
   async getAllExpenses(): Promise<Expense[]> {
     try {
-      const expenses = await dataSource.getRepository(Expense).find();
+      const expenses = await dataSource.getRepository(Expense).find({
+        relations: {
+          item: true,
+          user: true,
+        },
+      });
+
       return expenses;
     } catch (error) {
       console.error(error);
