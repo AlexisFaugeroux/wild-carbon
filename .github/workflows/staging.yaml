@@ -28,7 +28,7 @@ jobs:
         with:
           push: true
           context: '{{defaultContext}}:front'
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/Wild-Carbon-staging-frontend:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/wild-carbon-staging-frontend:latest
 
   docker-staging-backend:
     if: github.ref == 'refs/heads/develop'
@@ -48,4 +48,4 @@ jobs:
         with:
           push: true
           context: '{{defaultContext}}:back'
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/Wild-Carbon-staging-backend:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/wild-carbon-staging-backend:latest
