@@ -1,16 +1,16 @@
+import { useMutation } from '@apollo/client';
+import { Box, CircularProgress, FormControl } from '@mui/material';
+import { Form, Formik } from 'formik';
 import { FC, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMutation } from '@apollo/client';
-import { Formik, Form } from 'formik';
-import { Box, CircularProgress, FormControl } from '@mui/material';
-import CarbonInputBase from '../CarbonInputBase';
-import CarbonButton from '../CarbonButton';
-import ErrorMessage from './components/ErrorMessage';
-import { LOGIN } from './loginMutation';
-import { loginValidationSchema } from './loginValidationSchema';
-import { saveUserTokenInLocalStorage } from '../../hooks/useLoginContext/localStorage';
 import { routes } from '../../Navigator';
+import { LOGIN } from '../../gql/UserGql';
 import { LoginContext } from '../../hooks/useLoginContext';
+import { saveUserTokenInLocalStorage } from '../../hooks/useLoginContext/localStorage';
+import CarbonButton from '../CarbonButton';
+import CarbonInputBase from '../CarbonInputBase';
+import ErrorMessage from './components/ErrorMessage';
+import { loginValidationSchema } from './loginValidationSchema';
 
 interface ILoginForm {
   handleClosingPopover?: () => void;
