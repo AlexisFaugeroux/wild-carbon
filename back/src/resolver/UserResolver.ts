@@ -85,14 +85,7 @@ class UserResolver {
   }
 
   @Query(() => User)
-  async getUser(
-    @Arg('userId') id: string,
-    @Ctx() contextValue: Context,
-  ): Promise<User> {
-    const jwtId = contextValue.jwtPayload?.id;
-
-    if (!jwtId) throw new Error('User not logged in');
-
+  async getUser(@Arg('userId') id: string): Promise<User> {
     try {
       const user = await dataSource.getRepository(User).findOne({
         where: {

@@ -3,7 +3,6 @@ import { FC } from 'react';
 import CarbonCardContent from './components/Content';
 import CarbonCardActions from './components/Actions';
 import CarboneCardMedia from './components/Media';
-import { lightGreen } from '@mui/material/colors';
 
 interface CardParts {
   Media: typeof CarboneCardMedia;
@@ -24,9 +23,10 @@ const CarbonCard: FC<CarbonCardProps> & CardParts = ({
   return (
     <Card
       sx={{
-        backgroundColor: lightGreen[50],
         marginBottom: '12px',
         padding: '12px',
+        backgroundColor: 'white',
+        border: '2px solid #3C8962',
       }}
       {...CardProps}
     >
