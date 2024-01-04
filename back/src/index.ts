@@ -46,31 +46,27 @@ const start = async (): Promise<void> => {
       ) {
         return { message: 'No authorization headers set' };
       }
-  
-      try {
-        const token = req.headers.authorization.split('Bearer ')[1];
-        if (!token) {
-          return { message: 'Invalid authorization token' };
-        }
-        const key = process.env.KEY;
-        if (!key) {
-          return { message: 'Invalid key' };
-        }
-  
-        const payload = jwt.verify(token, key);
-        
-        const userPayload = payload as User;
-        if (!userPayload.id || !userPayload.pseudo || !userPayload.email) {
-          return { message: 'Invalid user payload' };
-        }
-  
-        return {
-          dataSource,
-          jwtPayload: userPayload,
-        };
-      } catch (error) {
-        return { message: 'Error decoding authorization token', error };
+
+      const token = req.headers.authorization.split('Bearer ')[1];
+      if (!token) {
+        return { message: 'Invalid authorization token' };
       }
+
+      const jwtKey = process.env.JWT_KEY;
+      if (!jwtKey) {
+        return { message: 'Invalid key' };
+      }
+
+      const payload = jwt.verify(token, jwtKey) as User;
+
+      if (!payload.id || !payload.pseudo || !payload.email) {
+        return { message: 'Invalid user payload' };
+      }
+
+      return {
+        dataSource,
+        jwtPayload: payload,
+      }; 
     },
   });
 
