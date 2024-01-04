@@ -4,13 +4,14 @@ import ExpensesCard from "../../components/ExpensesCard";
 
 import GraphicTracking from "../../components/GraphicTracking";
 import AddExpenseModal from "../../components/AddExpenseModal/AddExpenseModal";
+import GoodDeals from "../../components/GoodDeals";
 
 export default function Dashboard() {
   const isLg = useMediaQuery((theme: Theme) => theme.breakpoints.down("lg"));
   const isPortrait = useMediaQuery("(orientation: portrait)");
 
   return (
-    <Box sx={{ height: "85vh" }}>
+    <Box sx={{ height: "85vh", overflow: "scroll" }}>
       <Typography
         variant="body1"
         sx={{
@@ -51,13 +52,18 @@ export default function Dashboard() {
 
       <AddExpenseModal />
 
-      <Stack
-        spacing={1}
-        direction={isLg && isPortrait ? "column" : "row"}
-        sx={{ padding: "0 0.5rem" }}
-      >
-        <ExpensesCard />
-        <GraphicTracking />
+      <Stack spacing={1}>
+        <Stack
+          spacing={1}
+          direction={isLg && isPortrait ? "column" : "row"}
+          sx={{ padding: "0 0.5rem" }}
+        >
+          <ExpensesCard />
+          <GraphicTracking />
+        </Stack>
+        <Box sx={{ padding: "0 0.5rem" }}>
+          <GoodDeals />
+        </Box>
       </Stack>
     </Box>
   );
