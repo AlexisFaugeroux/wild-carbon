@@ -43,16 +43,30 @@ const start = async (): Promise<void> => {
       if (
         req.headers.authorization === undefined ||
         req.headers.authorization === ''
-      )
+      ) {
         return { message: 'No authorization headers set' };
-      const payload = jwt.verify(
-        req.headers.authorization.split('Bearer ')[1],
-        'supersecretkey',
-      ) as User;
-      return { 
+      }
+
+      const token = req.headers.authorization.split('Bearer ')[1];
+      if (!token) {
+        return { message: 'Invalid authorization token' };
+      }
+
+      const jwtKey = process.env.JWT_KEY;
+      if (!jwtKey) {
+        return { message: 'Invalid key' };
+      }
+
+      const payload = jwt.verify(token, jwtKey) as User;
+
+      if (!payload.id || !payload.pseudo || !payload.email) {
+        return { message: 'Invalid user payload' };
+      }
+
+      return {
         dataSource,
-        jwtPayload: payload
-       };
+        jwtPayload: payload,
+      }; 
     },
   });
 
