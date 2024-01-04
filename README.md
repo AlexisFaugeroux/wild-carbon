@@ -22,3 +22,5 @@ C O 2là du réel ce projet
 - When on the Stripe Checkout page, use `4242 4242 4242 4242` for credit card number. Fill the rest with anything (Exp. date must be a valid date).
 - For now, refresh the web-app page to see the amount updated
 
+### Add .env file 
+- JWT_KEY = "votreCodeSuperSecret"
