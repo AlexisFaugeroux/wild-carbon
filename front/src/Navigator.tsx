@@ -1,11 +1,12 @@
 import { FC, useContext } from 'react';
-import { LoginContext } from './hooks/useLoginContext';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
+import { LoginContext } from './hooks/useLoginContext';
 import CanvasPage from './pages/CanvasPage';
 import Dashboard from './pages/Dashboard';
+import HomePage from './pages/HomePage';
 import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
+import ProfilePage from './pages/ProfilePage';
 
 export const routes = {
   home: '/home',
@@ -13,6 +14,7 @@ export const routes = {
   login: '/login',
   landingPage: '/',
   canvas: '/canvas',
+  profile: '/profil',
 };
 
 const Navigator: FC = () => {
@@ -32,6 +34,11 @@ const Navigator: FC = () => {
         <Route path={routes.home} element={<HomePage />} />
       ) : (
         <Route path={routes.login} element={<LoginPage />} />
+      )}
+      {isLoggedIn ? (
+        <Route path={routes.profile} element={<ProfilePage />}></Route>
+      ) : (
+        <Route path={routes.login} element={<LoginPage />}></Route>
       )}
 
       <Route path={routes.dashboard} element={<Dashboard />} />
