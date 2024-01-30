@@ -6,11 +6,16 @@ import dataSource from '../utils';
 @Resolver()
 class CategoryResolver {
   @Mutation(() => Category)
-  async createCategory(@Arg('name') name: string): Promise<Category> {
+  async createCategory(
+    @Arg('name') name: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    @Ctx() context: any,
+  ): Promise<Category> {
     try {
+      const source = context.dataSource ?? dataSource;
       const category = new Category();
       category.name = name;
-      const createdCategory = await dataSource
+      const createdCategory = await source
         .getRepository(Category)
         .save(category);
       return createdCategory;
@@ -66,9 +71,14 @@ class CategoryResolver {
   }
 
   @Query(() => Category)
-  async getCategory(@Arg('categoryId') id: string): Promise<Category> {
+  async getCategory(
+    @Arg('categoryId') id: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    @Ctx() context: any,
+  ): Promise<Category> {
+    const source = context.dataSource ?? dataSource;
     try {
-      const category = await dataSource.getRepository(Category).findOne({
+      const category = await source.getRepository(Category).findOne({
         where: { id },
         relations: {
           items: true,

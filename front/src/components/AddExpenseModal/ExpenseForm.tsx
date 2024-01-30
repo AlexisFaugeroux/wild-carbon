@@ -7,14 +7,10 @@ import {
   Restaurant,
   Train,
 } from '@mui/icons-material';
-import CloseIcon from '@mui/icons-material/Close';
 import {
-  Alert,
   Autocomplete,
   Box,
-  Collapse,
   FormControl,
-  IconButton,
   Stack,
   TextField,
   Typography,
@@ -53,7 +49,6 @@ export default function ExpenseForm({
 }: ExpenseFormProps) {
   const [openInputLabel, setOpenInputLabel] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [showAlert, setshowAlert] = useState(true);
   const { userId } = useContext(LoginContext);
   // Fetch
   const [fetchCategories, { data: dataCategory }] = useLazyQuery<{
