@@ -22,10 +22,11 @@ export const FriendsContextProvider: FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { userId } = useContext(LoginContext);
+  console.log('userId', userId);
   const { data, error, loading, refetch } = useQuery<UserQuery>(GET_USER, {
-    variables: { userId },
+    variables: { id: userId },
   });
-
+  console.log('data', data);
   const value = useMemo(
     () => ({
       data,
