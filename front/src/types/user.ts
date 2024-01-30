@@ -7,7 +7,7 @@ export interface User {
 }
 
 export interface UserQuery {
-  getUser: User;
+  userData: User;
 }
 
 export interface UserListQuery {

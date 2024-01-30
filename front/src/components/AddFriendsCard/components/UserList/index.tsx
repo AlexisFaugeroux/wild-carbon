@@ -32,7 +32,7 @@ const UserList: FC<UserListProps> = ({ list }) => {
     .slice(indexOfFirstUser, indexOfLastUser)
     .filter(
       (user) =>
-        !currentUser?.getUser.users.some(
+        !currentUser?.userData.users.some(
           (currentUserFriend) => currentUserFriend.id === user.id,
         ),
     );

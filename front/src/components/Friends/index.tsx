@@ -19,8 +19,8 @@ const FriendsCard: FC = () => {
 
   return (
     <CarbonCard title="Mes émetteurs de carbone préférés">
-      {data.getUser.users.length ? (
-        <FriendsList list={data.getUser.users} refetchList={refetch} />
+      {data.userData.users.length ? (
+        <FriendsList list={data.userData.users} refetchList={refetch} />
       ) : (
         <Typography>
           Vous n&apos;avez pas encore de pollueurs préférés !
