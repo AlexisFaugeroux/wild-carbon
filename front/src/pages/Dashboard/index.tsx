@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
-import { Box, Grid, Theme, Typography, useMediaQuery } from '@mui/material';
+import { Box, Theme, Typography, useMediaQuery } from '@mui/material';
 import ExpensesCard from '../../components/ExpensesCard';
 
 import GraphicTracking from '../../components/GraphicTracking';
