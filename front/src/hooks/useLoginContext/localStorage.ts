@@ -1,5 +1,5 @@
-import localStorageObjectSchema from '../../helpers/localStorageObjectSchema';
 import { z } from 'zod';
+import localStorageObjectSchema from '../../helpers/localStorageObjectSchema';
 
 interface LocalStorageUserToken {
   userToken: string;
@@ -18,6 +18,7 @@ export const getUserTokenFromLocalStorage =
     const userTokenData = localStorageObjectSchema
       .pipe(LocalStorageUserTokenSchema)
       .safeParse(window.localStorage.getItem(USER_TOKEN_LOCAL_STORAGE_KEY));
+
     if (userTokenData.success) {
       return userTokenData.data;
     }
