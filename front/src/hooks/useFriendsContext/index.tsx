@@ -1,6 +1,6 @@
 import { ApolloError, ApolloQueryResult, useQuery } from '@apollo/client';
 import { FC, createContext, useContext, useMemo } from 'react';
-import { GET_USER } from '../../gql/UsersGql';
+import { GET_USER } from '../../gql/UserGql';
 import { LoginContext } from '../useLoginContext';
 import { UserQuery } from '../../types/user';
 
