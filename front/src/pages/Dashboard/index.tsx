@@ -1,31 +1,31 @@
 /* eslint-disable react/no-unescaped-entities */
-import { Box, Stack, Theme, Typography, useMediaQuery } from "@mui/material";
-import ExpensesCard from "../../components/ExpensesCard";
+import { Box, Grid, Typography } from '@mui/material';
+import ExpensesCard from '../../components/ExpensesCard';
 
-import GraphicTracking from "../../components/GraphicTracking";
-import AddExpenseModal from "../../components/AddExpenseModal/AddExpenseModal";
-import GoodDeals from "../../components/GoodDeals";
+import GraphicTracking from '../../components/GraphicTracking';
+import AddExpenseModal from '../../components/AddExpenseModal/AddExpenseModal';
+import GoodDeals from '../../components/GoodDeals';
+import FriendsCard from '../../components/Friends';
+import AddFriendsCard from '../../components/AddFriendsCard';
+import { FriendsContextProvider } from '../../hooks/useFriendsContext';
 
 export default function Dashboard() {
-  const isLg = useMediaQuery((theme: Theme) => theme.breakpoints.down("lg"));
-  const isPortrait = useMediaQuery("(orientation: portrait)");
-
   return (
-    <Box sx={{ height: "85vh", overflow: "scroll" }}>
+    <Box sx={{ height: '85vh', overflow: 'scroll' }}>
       <Typography
         variant="body1"
         sx={{
-          marginTop: "0.5rem",
-          marginRight: "0.5rem",
-          fontFamily: "Roboto",
-          textAlign: "right",
-          fontStyle: "italic",
+          marginTop: '0.5rem',
+          marginRight: '0.5rem',
+          fontFamily: 'Roboto',
+          textAlign: 'right',
+          fontStyle: 'italic',
           fontSize: {
-            xs: "1.1rem",
-            sm: "1.2rem",
-            md: "1.3rem",
-            lg: "1.4rem",
-            xl: "1.5rem",
+            xs: '1.1rem',
+            sm: '1.2rem',
+            md: '1.3rem',
+            lg: '1.4rem',
+            xl: '1.5rem',
           },
         }}
       >
@@ -35,36 +35,42 @@ export default function Dashboard() {
       <Typography
         variant="subtitle1"
         sx={{
-          fontFamily: "Roboto",
+          fontFamily: 'Roboto',
           fontSize: {
-            xs: "1rem",
-            sm: "1.1rem",
-            md: "1.2rem",
-            lg: "1.3rem",
-            xl: "1.5rem",
+            xs: '1rem',
+            sm: '1.1rem',
+            md: '1.2rem',
+            lg: '1.3rem',
+            xl: '1.5rem',
           },
         }}
       >
-        Aujourd'hui j'ai dépensé:
-        <span style={{ color: "green", fontWeight: "bolder" }}> 30 kg CO²</span>
+        Aujourd'hui j'ai dépensé:{' '}
+        <span style={{ color: 'green', fontWeight: 'bolder' }}> 30 kg CO²</span>
         {/*changement de la couleur du nombre à partir d'un certain seuil ? (vert orange rouge ?)*/}
       </Typography>
 
       <AddExpenseModal />
 
-      <Stack spacing={1}>
-        <Stack
-          spacing={1}
-          direction={isLg && isPortrait ? "column" : "row"}
-          sx={{ padding: "0 0.5rem" }}
-        >
+      <Grid container spacing={1}>
+        <Grid item xs={12} md={6}>
           <ExpensesCard />
+        </Grid>
+        <Grid item xs={12} md={6}>
           <GraphicTracking />
-        </Stack>
-        <Box sx={{ padding: "0 0.5rem" }}>
+        </Grid>
+        <FriendsContextProvider>
+          <Grid item xs={12} md={6}>
+            <FriendsCard />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <AddFriendsCard />
+          </Grid>
+        </FriendsContextProvider>
+        <Grid item xs={12} md={6}>
           <GoodDeals />
-        </Box>
-      </Stack>
+        </Grid>
+      </Grid>
     </Box>
   );
 }

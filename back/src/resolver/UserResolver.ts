@@ -144,8 +144,8 @@ class UserResolver {
       // we just need the user object without password
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, articles, expenses, users, ...userData } = user;
-      const jwtKey =  process.env.JWT_KEY as string;
-      const token = jwt.sign(userData, jwtKey, { expiresIn: '24h' }); 
+      const jwtKey = process.env.JWT_KEY as string;
+      const token = jwt.sign(userData, jwtKey, { expiresIn: '24h' });
       const response: LoginResponse = { user, token, success: true };
       return response;
     } else {
