@@ -3,25 +3,23 @@ import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { faker } from '@faker-js/faker';
 import { Article } from '../entity/Article';
 import { Category } from '../entity/Category';
-import { Expense } from '../entity/Expense';
 import { Item } from '../entity/Item';
 import { User } from '../entity/User';
 import { Categories } from '../enum/categoriesEnum';
+import { itemsFixture } from './fixtures/items';
 
 export class MainSeeder implements Seeder {
   public async run(
     dataSource: DataSource,
     factoryManager: SeederFactoryManager,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
     const userRepository = dataSource.getRepository(User);
     const articleRepository = dataSource.getRepository(Article);
     const itemRepository = dataSource.getRepository(Item);
-    const expenseRepository = dataSource.getRepository(Expense);
     const categoryRespository = dataSource.getRepository(Category);
 
     const articleFactory = factoryManager.get(Article);
-    const expenseFactory = factoryManager.get(Expense);
-    const itemFactory = factoryManager.get(Item);
     const userFactory = factoryManager.get(User);
 
     console.log('Seeding: Processing Users...');
@@ -46,6 +44,7 @@ export class MainSeeder implements Seeder {
         return category;
       });
     await categoryRespository.save(categories);
+    const categoriesFromDb = await categoryRespository.find();
 
     console.log('Seeding: Processing Articles...');
     const articles = await Promise.all(
@@ -61,30 +60,16 @@ export class MainSeeder implements Seeder {
     await articleRepository.save(articles);
 
     console.log('Seeding: Processing Items...');
-    const items = await Promise.all(
-      Array(50)
-        .fill('')
-        .map(async () => {
-          const item = await itemFactory.make({
-            category: faker.helpers.arrayElement(categories),
-          });
-          return item;
-        }),
-    );
+    const items = itemsFixture.map((itemFixture) => {
+      const item = new Item();
+      item.label = itemFixture.label;
+      item.unit = itemFixture.unit;
+      item.emissionFactor = itemFixture.emissionFactor;
+      item.category = categoriesFromDb.find(
+        (category) => category.name === itemFixture.category,
+      )!;
+      return item;
+    });
     await itemRepository.save(items);
-
-    console.log('Seeding: Processing Expenses...');
-    const expenses = await Promise.all(
-      Array(30)
-        .fill('')
-        .map(async () => {
-          const expense = await expenseFactory.make({
-            user: faker.helpers.arrayElement(users),
-            item: faker.helpers.arrayElement(items),
-          });
-          return expense;
-        }),
-    );
-    await expenseRepository.save(expenses);
   }
 }

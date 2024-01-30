@@ -100,6 +100,7 @@ const AuthenticationForm: FC<ILoginForm> = ({ handleClosingPopover }) => {
 
               <CarbonInputBase
                 placeholder="Mot de passe"
+                type="password"
                 id="password"
                 name="password"
                 onChange={handleChange}

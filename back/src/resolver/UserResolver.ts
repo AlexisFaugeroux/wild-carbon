@@ -1,9 +1,8 @@
 import * as argon2 from 'argon2';
 import * as jwt from 'jsonwebtoken';
 
-import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Mutation, Query, Resolver } from 'type-graphql';
 import { EntityNotFoundError } from 'typeorm';
-import { Context } from '..';
 import { User } from '../entity/User';
 import LoginResponse from '../helpers/LoginResponse';
 import dataSource from '../utils';
@@ -85,9 +84,7 @@ class UserResolver {
   }
 
   @Query(() => User)
-  async userData(
-    @Arg('userId') id: string,
-  ): Promise<User> {
+  async userData(@Arg('userId') id: string): Promise<User> {
     try {
       const user = await dataSource.getRepository(User).findOne({
         where: {
@@ -159,10 +156,9 @@ class UserResolver {
   async addFriend(
     @Arg('userId', { nullable: true }) userId: string,
     @Arg('userIdToAdd') userIdToAdd: string,
-    @Ctx() contextValue: Context,
   ): Promise<string> {
     const userRepo = dataSource.getRepository(User);
-    const currentUserId = contextValue.jwtPayload?.id ?? userId;
+    const currentUserId = userId;
     const currentUser = await userRepo.findOne({
       where: { id: currentUserId },
       relations: { users: true },
@@ -182,12 +178,9 @@ class UserResolver {
   async removeFriend(
     @Arg('userId') userId: string,
     @Arg('userIdToRemove') userIdToRemove: string,
-    @Ctx() contextValue: Context,
   ): Promise<string> {
     const userRepo = dataSource.getRepository(User);
-    const currentUserId = contextValue.jwtPayload?.id ?? userId;
-
-    console.log(contextValue.jwtPayload);
+    const currentUserId = userId;
 
     const currentUser = await dataSource.getRepository(User).findOne({
       where: {
