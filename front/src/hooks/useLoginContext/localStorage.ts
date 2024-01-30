@@ -18,7 +18,6 @@ export const getUserTokenFromLocalStorage =
     const userTokenData = localStorageObjectSchema
       .pipe(LocalStorageUserTokenSchema)
       .safeParse(window.localStorage.getItem(USER_TOKEN_LOCAL_STORAGE_KEY));
-    console.log('userTokenData', userTokenData);
     if (userTokenData.success) {
       return userTokenData.data;
     }

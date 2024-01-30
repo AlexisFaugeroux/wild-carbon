@@ -13,3 +13,11 @@ export interface UserQuery {
 export interface UserListQuery {
   getAllUsers: User[];
 }
+
+export interface UserType {
+  [key: string]: string;
+  userId: string;
+  pseudo: string;
+  email: string;
+  passord: string;
+}

@@ -53,7 +53,6 @@ export const LoginContextProvider: FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     if (userTokenData) {
-      console.log('late setting up context:', userTokenData);
       setIsLoggedIn(!!userTokenData.userToken);
       setUserToken(userTokenData.userToken);
       setUserId(userTokenData.userId);
