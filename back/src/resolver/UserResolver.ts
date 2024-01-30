@@ -2,11 +2,11 @@ import * as argon2 from 'argon2';
 import * as jwt from 'jsonwebtoken';
 
 import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
-import dataSource from '../utils';
-import { User } from '../entity/User';
 import { EntityNotFoundError } from 'typeorm';
 import { Context } from '..';
+import { User } from '../entity/User';
 import LoginResponse from '../helpers/LoginResponse';
+import dataSource from '../utils';
 
 @Resolver()
 class UserResolver {
@@ -85,7 +85,7 @@ class UserResolver {
   }
 
   @Query(() => User)
-  async getUser(
+  async userData(
     @Arg('userId') id: string,
   ): Promise<User> {
     try {
