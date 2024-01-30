@@ -14,13 +14,17 @@ const FriendsCard: FC = () => {
   }
 
   if (loading || !data) {
-    return <CircularProgress />;
+    return <CircularProgress data-testid="loading" />;
   }
 
   return (
     <CarbonCard title="Mes émetteurs de carbone préférés">
       {data.userData.users.length ? (
-        <FriendsList list={data.userData.users} refetchList={refetch} />
+        <FriendsList
+          data-testid="friendsList"
+          list={data.userData.users}
+          refetchList={refetch}
+        />
       ) : (
         <Typography>
           Vous n&apos;avez pas encore de pollueurs préférés !
