@@ -37,20 +37,6 @@ export const DELETE_USER = gql`
   }
 `;
 
-export const GET_USER = gql`
-  query GetUser($userId: String!) {
-    getUser(userId: $userId) {
-      id
-      pseudo
-      email
-      users {
-        id
-        pseudo
-      }
-    }
-  }
-`;
-
 export const GET_USER_ARTICLE = gql`
   query GetUser($userId: String!) {
     getUser(userId: $userId) {

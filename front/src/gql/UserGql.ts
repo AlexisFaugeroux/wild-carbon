@@ -18,6 +18,10 @@ export const GET_USER = gql`
       id
       pseudo
       email
+      users {
+        id
+        pseudo
+      }
     }
   }
 `;
