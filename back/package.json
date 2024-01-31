@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "start": "ts-node-dev --poll src/index.ts",
-    "seedDB": "if [$NODE_ENV -ne 'PRODUCTION'] then ts-node-dev src/seeding/seed.ts else echo '$NODE_ENV environment, seedDB is skipped' fi"
+    "seedDB": "if [ $NODE_ENV != \"production\" ]; then echo ${NODE_ENV} environment, start seeding database... && ts-node-dev src/seeding/seed.ts; exit; else echo ${NODE_ENV} environment, seeding DB is skipped; exit; fi"
   },
   "author": "",
   "license": "ISC",
