@@ -5,25 +5,26 @@ import {
   Theme,
   Typography,
   useMediaQuery,
-} from "@mui/material";
-import { GET_ALL_ARTICLES } from "../../gql/ArticleGql";
-import { useLazyQuery } from "@apollo/client";
-import { ArticleType } from "../../types/article";
-import { useEffect } from "react";
-import Carousel from "react-material-ui-carousel";
+} from '@mui/material';
+import { GET_ALL_ARTICLES } from '../../gql/ArticleGql';
+import { useLazyQuery } from '@apollo/client';
+import { ArticleType } from '../../types/article';
+import { useEffect } from 'react';
+import Carousel from 'react-material-ui-carousel';
+import CarbonCard from '../CarbonCard';
 
 export default function GoodDeals() {
-  const isLg = useMediaQuery((theme: Theme) => theme.breakpoints.up("lg"));
-  const isPortrait = useMediaQuery("(orientation: portrait)");
-  const isLandscape = useMediaQuery("(orientation: landscape)");
+  const isLg = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
+  const isPortrait = useMediaQuery('(orientation: portrait)');
+  const isLandscape = useMediaQuery('(orientation: landscape)');
 
   const calculateHeight = () => {
     if (isLg) {
-      return "25vh";
+      return '25vh';
     } else if (isPortrait) {
-      return "25vh";
+      return '25vh';
     } else if (isLandscape) {
-      return "35vh";
+      return '35vh';
     }
   };
   const [fetchArticles, { data: dataArticles }] = useLazyQuery<{
@@ -35,46 +36,42 @@ export default function GoodDeals() {
   }, [fetchArticles]);
 
   return (
-    <Box
+    <CarbonCard
       sx={{
-        width: "100%",
-        // height: "auto",
+        border: '2px solid #3C8962',
+        width: '100%',
       }}
     >
       <Carousel
         animation="slide"
         sx={{
-          border: "2px solid #3C8962",
           margin: 0,
           height: calculateHeight(),
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
         }}
       >
         {dataArticles?.getAllArticle?.map((art) => {
           return (
-            <Paper key={art.id} sx={{ height: "100%" }} elevation={0}>
+            <Paper key={art.id} sx={{ height: '100%' }} elevation={0}>
               <Box
                 sx={{
-                  width: "80%",
-                  margin: "auto",
-                  // height: {
-                  //   lg: "23vh",
-                  // },
+                  width: '80%',
+                  margin: 'auto',
                 }}
               >
                 <Typography
                   sx={{
-                    textAlign: "center",
-                    fontFamily: "Roboto",
-                    fontWeight: "bold",
+                    textAlign: 'center',
+                    fontFamily: 'Roboto',
+                    fontWeight: 'bold',
                     fontSize: {
-                      xs: "1.1rem",
-                      sm: "1.1rem",
-                      md: "1.3rem",
-                      lg: "1.4rem",
-                      xl: "1.5rem",
+                      xs: '1.1rem',
+                      sm: '1.1rem',
+                      md: '1.3rem',
+                      lg: '1.4rem',
+                      xl: '1.5rem',
                     },
                   }}
                 >
@@ -82,17 +79,17 @@ export default function GoodDeals() {
                 </Typography>
                 <Typography
                   sx={{
-                    fontFamily: "Roboto",
+                    fontFamily: 'Roboto',
                     fontSize: {
-                      xs: "1rem",
-                      sm: "1.1rem",
-                      md: "1.3rem",
-                      lg: "1.4rem",
-                      xl: "1.5rem",
+                      xs: '1rem',
+                      sm: '1.1rem',
+                      md: '1.3rem',
+                      lg: '1.4rem',
+                      xl: '1.5rem',
                     },
-                    display: "-webkit-box",
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
+                    display: '-webkit-box',
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
                     WebkitLineClamp: 4,
                   }}
                 >
@@ -100,9 +97,9 @@ export default function GoodDeals() {
                 </Typography>
                 <Button
                   sx={{
-                    width: "100%",
-                    marginTop: "0.25rem",
-                    fontSize: "0.75rem",
+                    width: '100%',
+                    marginTop: '0.25rem',
+                    fontSize: '0.75rem',
                   }}
                   onClick={() => art.url}
                 >
@@ -113,6 +110,6 @@ export default function GoodDeals() {
           );
         })}
       </Carousel>
-    </Box>
+    </CarbonCard>
   );
 }
