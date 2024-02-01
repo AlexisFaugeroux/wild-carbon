@@ -1,8 +1,8 @@
-import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
-import { Context } from '../index';
+import { Arg, Mutation, Query, Resolver } from 'type-graphql';
 import dataSource from '../utils';
 import { Expense } from '../entity/Expense';
 import { Item } from '../entity/Item';
+import { User } from '../entity/User';
 
 @Resolver()
 class ExpenseResolver {
@@ -12,13 +12,17 @@ class ExpenseResolver {
     @Arg('title') title: string,
     @Arg('quantity') quantity: number,
     @Arg('date') date: string,
-    @Ctx() contextValue: Context,
+    @Arg('userId') userId: string,
   ): Promise<string> {
     const expense = new Expense();
 
     const item = await dataSource
       .getRepository(Item)
       .findOneByOrFail({ id: itemId });
+
+    const user = await dataSource
+      .getRepository(User)
+      .findOneByOrFail({ id: userId });
 
     if (!item) {
       throw new Error('Item introuvable dans la base de données');
@@ -29,7 +33,7 @@ class ExpenseResolver {
     }
 
     expense.item = item;
-    expense.user = contextValue.jwtPayload;
+    expense.user = user;
     expense.title = title;
     expense.emissionTotal = item.emissionFactor * quantity;
     expense.quantity = quantity;
@@ -47,15 +51,19 @@ class ExpenseResolver {
     @Arg('title') title: string,
     @Arg('quantity') quantity: number,
     @Arg('date') date: string,
-    @Ctx() contextValue: Context,
+    @Arg('userId') userId: string,
   ): Promise<Expense> {
     const targetedExpense = await dataSource
       .getRepository(Expense)
       .findOne({ where: { id }, relations: { user: true } });
 
+    const user = await dataSource
+      .getRepository(User)
+      .findOneByOrFail({ id: userId });
+
     if (!targetedExpense) throw new Error('Expense not found');
 
-    if (targetedExpense.user.id !== contextValue.jwtPayload.id) {
+    if (targetedExpense.user.id !== userId) {
       throw new Error("You're not the owner of this expense");
     }
 
@@ -72,7 +80,7 @@ class ExpenseResolver {
     }
 
     targetedExpense.item = item;
-    targetedExpense.user = contextValue.jwtPayload;
+    targetedExpense.user = user;
     targetedExpense.title = title;
     targetedExpense.emissionTotal = item.emissionFactor * quantity;
     targetedExpense.quantity = quantity;

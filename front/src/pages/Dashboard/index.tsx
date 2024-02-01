@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Theme, Typography, useMediaQuery } from '@mui/material';
 import ExpensesCard from '../../components/ExpensesCard';
 
 import GraphicTracking from '../../components/GraphicTracking';
@@ -8,10 +8,13 @@ import GoodDeals from '../../components/GoodDeals';
 import FriendsCard from '../../components/Friends';
 import AddFriendsCard from '../../components/AddFriendsCard';
 import { FriendsContextProvider } from '../../hooks/useFriendsContext';
+import { Masonry } from '@mui/lab';
 
 export default function Dashboard() {
+  const isLg = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
+
   return (
-    <Box sx={{ height: '85vh', overflow: 'scroll' }}>
+    <Box sx={{ height: '85vh', overflow: 'scroll', padding: '12px' }}>
       <Typography
         variant="body1"
         sx={{
@@ -52,25 +55,15 @@ export default function Dashboard() {
 
       <AddExpenseModal />
 
-      <Grid container spacing={1}>
-        <Grid item xs={12} md={6}>
-          <ExpensesCard />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <GraphicTracking />
-        </Grid>
+      <Masonry columns={isLg ? 2 : 1} spacing={2}>
+        <ExpensesCard />
+        <GraphicTracking />
+        <GoodDeals />
         <FriendsContextProvider>
-          <Grid item xs={12} md={6}>
-            <FriendsCard />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <AddFriendsCard />
-          </Grid>
+          <FriendsCard />
+          <AddFriendsCard />
         </FriendsContextProvider>
-        <Grid item xs={12} md={6}>
-          <GoodDeals />
-        </Grid>
-      </Grid>
+      </Masonry>
     </Box>
   );
 }
