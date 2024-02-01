@@ -2,7 +2,7 @@ export interface User {
   id: string;
   pseudo: string;
   email: string;
-  passord: string;
+  password: string;
   users: User[];
 }
 
