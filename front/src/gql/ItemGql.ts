@@ -59,8 +59,8 @@ export const GET_ALL_ITEMS = gql`
 `;
 
 export const GET_ITEMS_BY_CATEGORY = gql`
-query GetItemsByCategory($categoryId: string) {
-  getAllItemsByCategory(categoryId: $categoryId) {
+query GetItemByIdCategory($categoryId: String!) {
+  getItemByIdCategory(categoryId: $categoryId) {
     id
     label
     emissionFactor

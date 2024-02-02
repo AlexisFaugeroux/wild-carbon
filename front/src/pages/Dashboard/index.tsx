@@ -1,31 +1,31 @@
 /* eslint-disable react/no-unescaped-entities */
-import { Box, Grid, Typography } from '@mui/material';
-import ExpensesCard from '../../components/ExpensesCard';
+import { Box, Grid, Typography } from "@mui/material";
+import ExpensesCard from "../../components/ExpensesCard";
 
-import GraphicTracking from '../../components/GraphicTracking';
-import AddExpenseModal from '../../components/AddExpenseModal/AddExpenseModal';
-import GoodDeals from '../../components/GoodDeals';
-import FriendsCard from '../../components/Friends';
-import AddFriendsCard from '../../components/AddFriendsCard';
-import { FriendsContextProvider } from '../../hooks/useFriendsContext';
+import GraphicTracking from "../../components/GraphicTracking";
+import AddExpenseModal from "../../components/AddExpenseModal/AddExpenseModal";
+import { FriendsContextProvider } from "../../hooks/useFriendsContext";
+import FriendsCard from "../../components/Friends";
+import AddFriendsCard from "../../components/AddFriendsCard";
+import GoodDeals from "../../components/GoodDeals";
 
 export default function Dashboard() {
   return (
-    <Box sx={{ height: '85vh', overflow: 'scroll' }}>
+    <Box sx={{ height: "85vh" }}>
       <Typography
         variant="body1"
         sx={{
-          marginTop: '0.5rem',
-          marginRight: '0.5rem',
-          fontFamily: 'Roboto',
-          textAlign: 'right',
-          fontStyle: 'italic',
+          marginTop: "0.5rem",
+          marginRight: "0.5rem",
+          fontFamily: "Roboto",
+          textAlign: "right",
+          fontStyle: "italic",
           fontSize: {
-            xs: '1.1rem',
-            sm: '1.2rem',
-            md: '1.3rem',
-            lg: '1.4rem',
-            xl: '1.5rem',
+            xs: "1.1rem",
+            sm: "1.2rem",
+            md: "1.3rem",
+            lg: "1.4rem",
+            xl: "1.5rem",
           },
         }}
       >
@@ -35,18 +35,18 @@ export default function Dashboard() {
       <Typography
         variant="subtitle1"
         sx={{
-          fontFamily: 'Roboto',
+          fontFamily: "Roboto",
           fontSize: {
-            xs: '1rem',
-            sm: '1.1rem',
-            md: '1.2rem',
-            lg: '1.3rem',
-            xl: '1.5rem',
+            xs: "1rem",
+            sm: "1.1rem",
+            md: "1.2rem",
+            lg: "1.3rem",
+            xl: "1.5rem",
           },
         }}
       >
-        Aujourd'hui j'ai dépensé:{' '}
-        <span style={{ color: 'green', fontWeight: 'bolder' }}> 30 kg CO²</span>
+        Aujourd'hui j'ai dépensé:{" "}
+        <span style={{ color: "green", fontWeight: "bolder" }}> 30 kg CO²</span>
         {/*changement de la couleur du nombre à partir d'un certain seuil ? (vert orange rouge ?)*/}
       </Typography>
 

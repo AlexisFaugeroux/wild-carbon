@@ -79,7 +79,7 @@ class CategoryResolver {
     try {
       const { dataSource } = context;
       const category = await dataSource.getRepository(Category).findOne({
-        where: { id },
+        where: { id: id },
         relations: {
           items: true,
         },

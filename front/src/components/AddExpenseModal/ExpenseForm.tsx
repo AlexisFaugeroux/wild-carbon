@@ -1,13 +1,13 @@
 /* eslint-disable react/no-unescaped-entities */
-import { useLazyQuery, useMutation } from '@apollo/client';
+import { useLazyQuery, useMutation } from "@apollo/client";
 import {
   Bolt,
   House,
   QuestionAnswer,
   Restaurant,
   Train,
-} from '@mui/icons-material';
-import CloseIcon from '@mui/icons-material/Close';
+} from "@mui/icons-material";
+import CloseIcon from "@mui/icons-material/Close";
 import {
   Alert,
   Autocomplete,
@@ -18,21 +18,20 @@ import {
   Stack,
   TextField,
   Typography,
-} from '@mui/material';
-import MenuItem from '@mui/material/MenuItem';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { Form, Formik } from 'formik';
-import { useEffect, useState } from 'react';
-import * as Yup from 'yup';
-import {
-  GET_ALL_CATEGORIES,
-  GET_CATEGORY_AND_ITEM,
-} from '../../gql/CategoryGql';
-import { CREATE_EXPENSE } from '../../gql/ExpenseGql';
-import { CategoryItemType, CategoryType } from '../../types/category';
-import variables from '../../variables';
-import CarbonButton from '../CarbonButton';
+} from "@mui/material";
+import MenuItem from "@mui/material/MenuItem";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { Form, Formik } from "formik";
+import { useEffect, useState } from "react";
+import * as Yup from "yup";
+import { GET_ALL_CATEGORIES } from "../../gql/CategoryGql";
+import { CREATE_EXPENSE } from "../../gql/ExpenseGql";
+import { CategoryType } from "../../types/category";
+import variables from "../../variables";
+import CarbonButton from "../CarbonButton";
+import { GET_ITEMS_BY_CATEGORY } from "../../gql/ItemGql";
+import { ItemType } from "../../types/item";
 
 interface ExpenseFormProps {
   handleShowSuccessAlert: () => void;
@@ -50,7 +49,7 @@ export default function ExpenseForm({
   handleClose,
 }: ExpenseFormProps) {
   const [openInputLabel, setOpenInputLabel] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [showAlert, setshowAlert] = useState(true);
 
   // Fetch
@@ -59,8 +58,8 @@ export default function ExpenseForm({
   }>(GET_ALL_CATEGORIES);
 
   const [fetchItems, { data: dataItems }] = useLazyQuery<{
-    getCategory: CategoryItemType;
-  }>(GET_CATEGORY_AND_ITEM);
+    getItemByIdCategory: ItemType[];
+  }>(GET_ITEMS_BY_CATEGORY);
 
   const [createExpense] = useMutation(CREATE_EXPENSE, {
     onCompleted: () => {
@@ -89,24 +88,24 @@ export default function ExpenseForm({
         variables: { categoryId },
       });
     } catch (error) {
-      throw new Error('Something went wrong');
+      throw new Error("Something went wrong");
     }
   };
 
   const inputStyle = {
-    fontFamily: 'Roboto',
-    fontSize: '1rem',
+    fontFamily: "Roboto",
+    fontSize: "1rem",
   };
 
   const validationSchema = Yup.object({
-    title: Yup.string().required('Tu nous as pas dit ce que tu as fait.'),
+    title: Yup.string().required("Tu nous as pas dit ce que tu as fait."),
     date: Yup.string().required("Tu nous as pas dit quand c'était."),
-    quantity: Yup.number().required('Tu as oublié le principal.'),
+    quantity: Yup.number().required("Tu as oublié le principal."),
     itemId: Yup.string().required("Tu as oublié l'item."),
   });
 
   return (
-    <Box sx={{ position: 'relative' }}>
+    <Box sx={{ position: "relative" }}>
       <TextField
         fullWidth
         sx={{ mt: 3 }}
@@ -123,8 +122,8 @@ export default function ExpenseForm({
         InputLabelProps={{
           shrink: true,
           style: {
-            fontFamily: 'Roboto',
-            fontSize: '1rem',
+            fontFamily: "Roboto",
+            fontSize: "1rem",
             color: variables.thirdColor,
           },
         }}
@@ -132,46 +131,46 @@ export default function ExpenseForm({
         {dataCategory?.getAllCategory.map((cat) => {
           let icon;
           switch (cat.name) {
-            case 'Food':
+            case "Food":
               icon = (
                 <Restaurant
                   fontSize="medium"
                   sx={{
                     color: variables.thirdColor,
-                    marginRight: '0.5rem',
+                    marginRight: "0.5rem",
                   }}
                 />
               );
               break;
-            case 'Transport':
+            case "Transport":
               icon = (
                 <Train
                   fontSize="medium"
                   sx={{
                     color: variables.thirdColor,
-                    marginRight: '0.5rem',
+                    marginRight: "0.5rem",
                   }}
                 />
               );
               break;
-            case 'Housing':
+            case "Housing":
               icon = (
                 <House
                   fontSize="medium"
                   sx={{
                     color: variables.thirdColor,
-                    marginRight: '0.5rem',
+                    marginRight: "0.5rem",
                   }}
                 />
               );
               break;
-            case 'Energy':
+            case "Energy":
               icon = (
                 <Bolt
                   fontSize="medium"
                   sx={{
                     color: variables.thirdColor,
-                    marginRight: '0.5rem',
+                    marginRight: "0.5rem",
                   }}
                 />
               );
@@ -182,7 +181,7 @@ export default function ExpenseForm({
                   fontSize="medium"
                   sx={{
                     color: variables.thirdColor,
-                    marginRight: '0.5rem',
+                    marginRight: "0.5rem",
                   }}
                 />
               );
@@ -203,9 +202,9 @@ export default function ExpenseForm({
 
       <Formik
         initialValues={{
-          title: '',
+          title: "",
           quantity: 0,
-          itemId: '',
+          itemId: "",
           date: new Date(),
         }}
         onSubmit={(values, { setSubmitting, resetForm }) => {
@@ -238,13 +237,13 @@ export default function ExpenseForm({
                 <Alert
                   severity="error"
                   sx={{
-                    position: 'absolute',
-                    top: '25%',
-                    left: '50%',
-                    width: '100%',
-                    transform: 'translate(-50%, -50%)',
+                    position: "absolute",
+                    top: "25%",
+                    left: "50%",
+                    width: "100%",
+                    transform: "translate(-50%, -50%)",
                     zIndex: 10,
-                    border: '2px solid red',
+                    border: "2px solid red",
                   }}
                   action={
                     <IconButton
@@ -253,15 +252,15 @@ export default function ExpenseForm({
                       size="small"
                       onClick={() => {
                         setshowAlert(false),
-                          console.log('showAlert', showAlert);
+                          console.log("showAlert", showAlert);
                       }}
                     >
                       <CloseIcon fontSize="inherit" />
                     </IconButton>
                   }
                 >
-                  <Stack direction={'column'} alignItems={'center'} spacing={1}>
-                    <Typography sx={{ fontFamily: 'Roboto' }}>
+                  <Stack direction={"column"} alignItems={"center"} spacing={1}>
+                    <Typography sx={{ fontFamily: "Roboto" }}>
                       Aïe! Mais Qu'est ce que t'as fait ? Il faut remplir tous
                       les champs.
                     </Typography>
@@ -272,10 +271,10 @@ export default function ExpenseForm({
             <Form
               onSubmit={handleSubmit}
               style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '1rem',
-                marginTop: '1rem',
+                display: "flex",
+                flexDirection: "column",
+                gap: "1rem",
+                marginTop: "1rem",
               }}
             >
               {openInputLabel && (
@@ -295,8 +294,8 @@ export default function ExpenseForm({
                       InputLabelProps={{
                         shrink: true,
                         style: {
-                          fontFamily: 'Roboto',
-                          fontSize: '1rem',
+                          fontFamily: "Roboto",
+                          fontSize: "1rem",
                           color: variables.thirdColor,
                         },
                       }}
@@ -307,10 +306,10 @@ export default function ExpenseForm({
                     <Autocomplete
                       id="itemId"
                       disableClearable
-                      options={dataItems ? dataItems.getCategory.items : []}
+                      options={dataItems ? dataItems.getItemByIdCategory : []}
                       getOptionLabel={(option) => option.label}
                       onChange={(e, values) => {
-                        setFieldValue('itemId', values.id);
+                        setFieldValue("itemId", values.id);
                       }}
                       renderInput={(params) => (
                         <TextField
@@ -320,21 +319,21 @@ export default function ExpenseForm({
                           label="Choisis ce qui correspond à ton activité ?"
                           InputProps={{
                             ...params.InputProps,
-                            type: 'search',
+                            type: "search",
                             style: inputStyle,
                           }}
                           InputLabelProps={{
                             shrink: true,
                             style: {
-                              fontFamily: 'Roboto',
-                              fontSize: '1rem',
+                              fontFamily: "Roboto",
+                              fontSize: "1rem",
                               color: variables.thirdColor,
                             },
                           }}
                         />
                       )}
                       renderOption={(props, option) => (
-                        <li {...props} key={option.id}>
+                        <li style={inputStyle} {...props} key={option.id}>
                           {option.label}
                         </li>
                       )}
@@ -351,14 +350,14 @@ export default function ExpenseForm({
                     onChange={() => handleChange}
                     format="dd/MM/yyyy"
                     sx={{
-                      '.css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input':
+                      ".css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input":
                         {
-                          fontFamily: 'Roboto',
-                          fontSize: '1rem',
+                          fontFamily: "Roboto",
+                          fontSize: "1rem",
                         },
-                      '.css-1pq332w-MuiFormLabel-root-MuiInputLabel-root': {
-                        fontFamily: 'Roboto',
-                        fontSize: '1rem',
+                      ".css-1pq332w-MuiFormLabel-root-MuiInputLabel-root": {
+                        fontFamily: "Roboto",
+                        fontSize: "1rem",
                         color: variables.thirdColor,
                       },
                     }}
@@ -382,8 +381,8 @@ export default function ExpenseForm({
                   InputLabelProps={{
                     shrink: true,
                     style: {
-                      fontFamily: 'Roboto',
-                      fontSize: '1rem',
+                      fontFamily: "Roboto",
+                      fontSize: "1rem",
                       color: variables.thirdColor,
                     },
                   }}
@@ -395,10 +394,10 @@ export default function ExpenseForm({
               <CarbonButton
                 type="submit"
                 variant="contained"
-                style={{ marginTop: '1rem' }}
+                style={{ marginTop: "1rem" }}
                 sx={{
                   backgroundColor: variables.primaryColor,
-                  fontFamily: 'Roboto',
+                  fontFamily: "Roboto",
                 }}
               >
                 Soumettre
