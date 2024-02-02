@@ -3,6 +3,7 @@ import dataSource from '../utils';
 import { Item } from '../entity/Item';
 import { EntityNotFoundError } from 'typeorm';
 import UnitEnum from '../enum/unitEnum';
+import { Category } from '../entity/Category';
 
 @Resolver()
 class ItemResolver {
@@ -119,9 +120,13 @@ class ItemResolver {
   @Query(() => [Item])
   async getItemByIdCategory(@Arg('categoryId') categoryId: string): Promise<Item[]> {
     try{
+      const category = await dataSource
+      .getRepository(Category)
+      .findOneByOrFail( {id: categoryId})
+      
       const items = await dataSource
       .getRepository(Item)
-      .find( {where : {id: categoryId}})
+      .find( {where : {category}})
 
       return items;
     } catch (error) {

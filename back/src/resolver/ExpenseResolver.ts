@@ -141,5 +141,29 @@ class ExpenseResolver {
       throw error;
     }
   }
-}
+
+  @Query(() => [Expense])
+  async getAllExpensesByUserId(@Arg('userId') id: string): Promise<Expense[]> {
+    try {
+      const expensesByUserId = await dataSource.getRepository(Expense).find({
+        where: {
+          user: { id: id},
+        },
+        relations: {
+          item: {
+            category: true
+          },
+          user: true
+        },
+      });
+
+      if (!expensesByUserId) throw new Error('Expenses not found for this user');
+      return expensesByUserId;
+    } catch (error) {
+      console.error(error)
+      throw new Error;
+      
+    }
+  }
+} 
 export default ExpenseResolver;
