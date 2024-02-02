@@ -1,8 +1,8 @@
 import { Arg, Mutation, Query, Resolver } from 'type-graphql';
-import dataSource from '../utils';
-import { Article } from '../entity/Article';
 import { EntityNotFoundError } from 'typeorm';
+import { Article } from '../entity/Article';
 import { User } from '../entity/User';
+import dataSource from '../utils';
 
 @Resolver()
 class ArticleResolver {
@@ -75,10 +75,6 @@ class ArticleResolver {
 
       if (!user) {
         throw new Error('your not a owner to this article');
-      }
-
-      if (!targetedArticle) {
-        throw new Error('Article not found');
       }
 
       targetedArticle.title = title;
