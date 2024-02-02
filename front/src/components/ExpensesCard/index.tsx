@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 export default function ExpensesCard() {
   return (
-    <Link to="/my-expenses" style={{ textDecoration: "none", width: "100%" }}>
+    <Link to="/my-expenses" style={{ textDecoration: "none" }}>
       <CarbonCard
         title="Mes dépenses carbones récentes"
         style={{

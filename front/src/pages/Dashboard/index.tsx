@@ -32,7 +32,7 @@ export default function Dashboard() {
           },
         }}
       >
-        Bienvenue sur ton dashboard //NOM//
+        Bienvenue sur ton dashboard Alexis
       </Typography>
 
       <Typography

@@ -26,6 +26,7 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { UPDATE_EXPENSE_BY_ID } from "../../../gql/ExpenseGql";
 import { GET_ITEMS_BY_CATEGORY } from "../../../gql/ItemGql";
+import { Categories } from "../../../types/categoriesEnum";
 
 interface EditFormProps {
   handleClose: () => void;
@@ -147,7 +148,7 @@ export default function EditForm({
         {dataCategory?.getAllCategory.map((cat) => {
           let icon;
           switch (cat.name) {
-            case "Food":
+            case Categories.FOOD:
               icon = (
                 <Restaurant
                   fontSize="medium"
@@ -158,7 +159,7 @@ export default function EditForm({
                 />
               );
               break;
-            case "Transport":
+            case Categories.TRANSPORT:
               icon = (
                 <Train
                   fontSize="medium"
@@ -169,7 +170,7 @@ export default function EditForm({
                 />
               );
               break;
-            case "Housing":
+            case Categories.HOUSING:
               icon = (
                 <House
                   fontSize="medium"
@@ -180,7 +181,7 @@ export default function EditForm({
                 />
               );
               break;
-            case "Energy":
+            case Categories.ENERGY:
               icon = (
                 <Bolt
                   fontSize="medium"

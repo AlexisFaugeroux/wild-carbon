@@ -20,15 +20,17 @@ import {
   DELETE_EXPENSE_BY_ID,
   GET_EXPENSE_BY_USER_ID,
 } from "../../gql/ExpenseGql";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ExpenseType } from "../../types/expense";
 import { Delete } from "@mui/icons-material";
 import { format } from "date-fns";
 import AddExpenseModal from "../../components/AddExpenseModal/AddExpenseModal";
 import CategoryBar from "./utils/CategoryBar";
 import EditExpenseModal from "./utils/EditExpenseModal";
+import { LoginContext } from "../../hooks/useLoginContext";
 
 export default function ExpensesPage() {
+  const { userId } = useContext(LoginContext);
   const isLg = useMediaQuery((theme: Theme) => theme.breakpoints.up("lg"));
   // const isPortrait = useMediaQuery("(orientation: portrait)");
   // const isLandscape = useMediaQuery("(orientation: landscape)");
@@ -68,7 +70,7 @@ export default function ExpensesPage() {
 
   useEffect(() => {
     fetchExpensesByUserId({
-      variables: { userId: "6ddbb8bf-1059-4174-b738-0c2baf467b47" },
+      variables: { userId },
     });
   }, [fetchExpensesByUserId]);
 

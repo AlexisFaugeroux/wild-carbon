@@ -21,6 +21,7 @@ import leafImg from "../../../assets/leaf.png";
 import { useLazyQuery } from "@apollo/client";
 import { useEffect } from "react";
 import CarbonIconButton from "../../../components/CarbonIconButton";
+import { Categories } from "../../../types/categoriesEnum";
 
 export default function CategoryBar() {
   const isLg = useMediaQuery((theme: Theme) => theme.breakpoints.up("lg"));
@@ -72,7 +73,7 @@ export default function CategoryBar() {
       {dataCategory?.getAllCategory.map((el) => {
         let icon;
         switch (el.name) {
-          case "Food":
+          case Categories.FOOD:
             icon = (
               <Restaurant
                 fontSize={isLg ? "large" : "small"}
@@ -88,7 +89,7 @@ export default function CategoryBar() {
               />
             );
             break;
-          case "Transport":
+          case Categories.TRANSPORT:
             icon = (
               <Train
                 fontSize={isLg ? "large" : "small"}
@@ -99,7 +100,7 @@ export default function CategoryBar() {
               />
             );
             break;
-          case "Housing":
+          case Categories.HOUSING:
             icon = (
               <House
                 fontSize={isLg ? "large" : "small"}
@@ -110,7 +111,7 @@ export default function CategoryBar() {
               />
             );
             break;
-          case "Energy":
+          case Categories.ENERGY:
             icon = (
               <Bolt
                 fontSize={isLg ? "large" : "small"}
