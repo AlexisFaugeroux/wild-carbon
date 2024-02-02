@@ -6,13 +6,11 @@ import dataSource from '../utils';
 @Resolver()
 class CategoryResolver {
   @Mutation(() => Category)
-  async createCategory(
-    @Arg('name') name: string,
-  ): Promise<Category> {
+  async createCategory(@Arg('name') name: string): Promise<Category> {
     try {
       const category = new Category();
       category.name = name;
-      const createdCategory = await source
+      const createdCategory = await dataSource
         .getRepository(Category)
         .save(category);
       return createdCategory;
@@ -50,9 +48,7 @@ class CategoryResolver {
   }
 
   @Mutation(() => String)
-  async deleteCategory(
-    @Arg('categoryId') id: string,
-  ): Promise<string> {
+  async deleteCategory(@Arg('categoryId') id: string): Promise<string> {
     const targetedCategory = await dataSource
       .getRepository(Category)
       .findOneByOrFail({ id });
@@ -62,10 +58,7 @@ class CategoryResolver {
   }
 
   @Query(() => Category)
-  async getCategory(
-    @Arg('categoryId') id: string,
-  ): Promise<Category> {
-    const source = context.dataSource ?? dataSource;
+  async getCategory(@Arg('categoryId') id: string): Promise<Category> {
     try {
       const category = await dataSource.getRepository(Category).findOne({
         where: { id },

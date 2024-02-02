@@ -3,7 +3,7 @@ import { Article } from '../../entity/Article';
 import { User } from '../../entity/User';
 import ArticleResolver from '../ArticleResolver';
 
-// Tests unitaires pour le resolver Article
+// Tests unitaires pour les resolvers Article
 
 const resolver = new ArticleResolver();
 
@@ -82,7 +82,7 @@ const MOCKED_QUERIES = {
         resolve(MOCKED_ARTICLES[2]);
       });
     }),
-    save: jest.fn().mockResolvedValue(MOCKED_ARTICLES[1]),
+    save: jest.fn().mockResolvedValue(MOCKED_ARTICLES[0]),
     remove: jest.fn().mockResolvedValue(MOCKED_ARTICLES[2]),
   },
   // Mock des méthodes de CRUD pour l'entité User
@@ -94,7 +94,7 @@ const MOCKED_QUERIES = {
       if (!id || id !== MOCKED_USERS[0].id) {
         return null;
       }
-      return MOCKED_USERS[0];
+      return MOCKED_USERS[0].id;
     }),
   },
 };
@@ -196,7 +196,7 @@ describe('getAllArticles', () => {
 
 describe('createArticle', () => {
   it('should call findOne method for User repository and return an Article object', async () => {
-    const data = MOCKED_ARTICLES[1];
+    const data = MOCKED_ARTICLES[0];
     const createdArticle = await resolver.createArticle(
       data.title,
       data.description,
@@ -209,6 +209,18 @@ describe('createArticle', () => {
         id: MOCKED_USERS[0].id,
       },
     });
+    // toHaveBeenCalledWith(expect.objectContaining({})) permet de vérifier
+    // que certaines propriétés sont présentes parmi celles réellement passées à la fonction
+    // A cause de problèmes de synchro des timestamp, ici on ne vérifie pas que updatedAt
+    // est passée à la fonction, alors que si en réalité
+    expect(MOCKED_QUERIES.ARTICLE_ENTITY.save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: data.title,
+        description: data.description,
+        url: data.url,
+        user: MOCKED_USERS[0].id,
+      }),
+    );
     expect(createdArticle).toEqual(data);
   });
 
@@ -225,19 +237,19 @@ describe('createArticle', () => {
         id: userId,
       },
     });
+    expect(MOCKED_QUERIES.ARTICLE_ENTITY.save).not.toHaveBeenCalled();
   });
 });
 
 describe('updateArticle', () => {
   it('should call findOne methods for Article and User repositories and return an Article object', async () => {
-    const userId = MOCKED_USERS[0].id;
-    const { title, description, url, id } = MOCKED_ARTICLES[0];
+    const { title, description, url, id, createdAt, user } = MOCKED_ARTICLES[0];
     const updatedArticle = await resolver.updateArticle(
       title,
       description,
       url,
       id,
-      userId,
+      user.id,
     );
 
     expect(MOCKED_QUERIES.ARTICLE_ENTITY.findOne).toHaveBeenCalledWith({
@@ -250,18 +262,27 @@ describe('updateArticle', () => {
     });
     expect(MOCKED_QUERIES.USER_ENTITY.findOne).toHaveBeenCalledWith({
       where: {
-        id: userId,
+        id: user.id,
       },
     });
+    expect(MOCKED_QUERIES.ARTICLE_ENTITY.save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id,
+        title,
+        description,
+        url,
+        user,
+        createdAt,
+      }),
+    );
     expect(updatedArticle).toEqual(updatedArticle);
   });
   it('should throw an Article not found error (incorrect or missing id)', async () => {
-    const userId = MOCKED_ARTICLES[0].id;
-    const { title, description, url } = MOCKED_ARTICLES[1];
+    const { title, description, url, user } = MOCKED_ARTICLES[1];
     const articleId = 'Incorrect id';
 
     await expect(
-      resolver.updateArticle(title, description, url, articleId, userId),
+      resolver.updateArticle(title, description, url, articleId, user.id),
     ).rejects.toThrow(Error('Article not found'));
 
     expect(MOCKED_QUERIES.ARTICLE_ENTITY.findOne).toHaveBeenCalledWith({
@@ -272,9 +293,11 @@ describe('updateArticle', () => {
         user: true,
       },
     });
+    expect(MOCKED_QUERIES.USER_ENTITY.findOne).not.toHaveBeenCalled();
+    expect(MOCKED_QUERIES.ARTICLE_ENTITY.save).not.toHaveBeenCalled();
   });
   it('should throw an User not found error (incorrect or missing id)', async () => {
-    const userId = '';
+    const userId = 'unknown';
     const { title, description, url, id } = MOCKED_ARTICLES[0];
 
     await expect(
@@ -286,6 +309,7 @@ describe('updateArticle', () => {
         id: userId,
       },
     });
+    expect(MOCKED_QUERIES.ARTICLE_ENTITY.save).not.toHaveBeenCalled();
   });
 });
 
@@ -297,6 +321,9 @@ describe('deleteArticle', () => {
     expect(MOCKED_QUERIES.ARTICLE_ENTITY.findOneByOrFail).toHaveBeenCalledWith({
       id,
     });
+    expect(MOCKED_QUERIES.ARTICLE_ENTITY.remove).toHaveBeenCalledWith(
+      MOCKED_ARTICLES[2],
+    );
     expect(response).toEqual('Article deleted');
   });
 
@@ -304,5 +331,6 @@ describe('deleteArticle', () => {
     const id = 'Incorrect id';
 
     await expect(resolver.deleteArticle(id)).rejects.toThrow(Error);
+    expect(MOCKED_QUERIES.ARTICLE_ENTITY.remove).not.toHaveBeenCalled();
   });
 });
