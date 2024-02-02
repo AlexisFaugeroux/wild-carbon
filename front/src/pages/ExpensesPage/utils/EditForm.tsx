@@ -39,12 +39,10 @@ interface EditFormProps {
 
 export default function EditForm({
   handleClose,
-  id,
   title,
   quantity,
   date,
   item,
-  itemId,
 }: EditFormProps) {
   const [openInputLabel, setOpenInputLabel] = useState(false);
   const [restoredDate, setRestoredDate] = useState<Date | undefined>();
@@ -135,6 +133,7 @@ export default function EditForm({
         onChange={(e) => {
           handleSelectCategory(e.target.value);
           setOpenInputLabel(true);
+          console.log("openInputLabel", openInputLabel);
         }}
         InputLabelProps={{
           shrink: true,
