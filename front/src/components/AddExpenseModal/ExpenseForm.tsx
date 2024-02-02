@@ -7,7 +7,6 @@ import {
   Restaurant,
   Train,
 } from "@mui/icons-material";
-import CloseIcon from "@mui/icons-material/Close";
 import {
   Autocomplete,
   Box,
