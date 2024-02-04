@@ -52,3 +52,15 @@ export const DELETE_USER = gql`
     }
   }
 `;
+
+export const REGISTER = gql`
+    mutation Register($pseudo: String!, $email: String!, $password: String!) {
+        register(pseudo: $pseudo, email: $email, password: $password) {
+            token
+            user {
+                id
+            }
+            success
+        }
+    }
+`;

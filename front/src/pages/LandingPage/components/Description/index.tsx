@@ -1,5 +1,3 @@
-import { FC } from 'react';
-import CarbonCard from '../../../../components/CarbonCard';
 import {
   Button,
   Stack,
@@ -7,11 +5,14 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
+
+import CarbonCard from '../../../../components/CarbonCard';
+import { FC } from 'react';
 import LeafImg from '../../../../assets/leaf.png';
 import { lightGreen } from '@mui/material/colors';
-import variables from '../../../../variables';
-import { useNavigate } from 'react-router-dom';
 import { routes } from '../../../../Navigator';
+import { useNavigate } from 'react-router-dom';
+import variables from '../../../../variables';
 
 const Description: FC = () => {
   const theme = useTheme();
@@ -52,7 +53,7 @@ const Description: FC = () => {
         <Button variant="outlined" onClick={() => navigate(routes.login)}>
           Se connecter
         </Button>
-        <Button color="success" variant="contained">
+        <Button color="success" variant="contained" onClick={() => navigate(routes.register)}>
           Créer un compte
         </Button>
       </CarbonCard.Actions>
