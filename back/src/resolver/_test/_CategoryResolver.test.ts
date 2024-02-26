@@ -24,7 +24,7 @@ const MOCKED_ITEMS: Pick<Item, 'id'>[] = [
 ];
 
 const MOCKED_CATEGORIES: (TestCategory & {
-  items: Record<string, string>[];
+  items: typeof MOCKED_ITEMS;
 })[] = [
   {
     id: faker.string.uuid(),

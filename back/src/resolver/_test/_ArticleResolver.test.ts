@@ -23,9 +23,7 @@ const MOCKED_USERS: Pick<User, 'id'>[] = [
 
 // On mock 3 articles
 const MOCKED_ARTICLES: (TestArticle & {
-  user: {
-    id: string;
-  };
+  user: (typeof MOCKED_USERS)[number];
 })[] = [
   {
     id: faker.string.uuid(),
@@ -113,10 +111,10 @@ jest.mock('typeorm', () => {
         // idem on spread le contenu normal de Datasource
         ...datasource,
         // mais on surcharge getRepository pour le mocker
-        getRepository: jest.fn().mockImplementation((repoClass) => {
-          if (repoClass === Article) {
+        getRepository: jest.fn().mockImplementation((entity) => {
+          if (entity === Article) {
             return MOCKED_QUERIES.ARTICLE_ENTITY;
-          } else if (repoClass === User) {
+          } else if (entity === User) {
             return MOCKED_QUERIES.USER_ENTITY;
           }
         }),
@@ -275,7 +273,7 @@ describe('updateArticle', () => {
         createdAt,
       }),
     );
-    expect(updatedArticle).toEqual(updatedArticle);
+    expect(updatedArticle).toEqual(MOCKED_ARTICLES[0]);
   });
   it('should throw an Article not found error (incorrect or missing id)', async () => {
     const { title, description, url, user } = MOCKED_ARTICLES[1];
