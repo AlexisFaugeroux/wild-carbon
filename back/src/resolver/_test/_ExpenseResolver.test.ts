@@ -99,7 +99,7 @@ const MOCKED_QUERIES = {
     findOneByOrFail: jest.fn().mockImplementation(({ id }) => {
       return new Promise((resolve, rejects) => {
         if (!id || id !== MOCKED_USERS[1].id) {
-          rejects(new Error("You're not the owner of this expense"));
+          rejects(new Error());
         }
         resolve(MOCKED_USERS[1]);
       });
@@ -221,6 +221,20 @@ describe('createExpense', () => {
     });
     expect(createdExpense).toEqual('Expense created');
   });
+  it('should console log and throw an Error because user is not found', async () => {
+    const userId = 'Incorrect id';
+    const { item, title, quantity } = MOCKED_EXPENSES[1];
+    const date = '2024-03-02';
+
+    await expect(
+      resolver.createExpense(item.id, title, quantity, date, userId),
+    ).rejects.toThrow(Error());
+
+    expect(MOCKED_QUERIES.USER_ENTITY.findOneByOrFail).toHaveBeenCalledWith({
+      id: userId,
+    });
+    expect(MOCKED_QUERIES.EXPENSE_ENTITY.save).not.toHaveBeenCalled();
+  });
 });
 
 describe('updateExpense', () => {
@@ -305,7 +319,7 @@ describe('updateExpense', () => {
         date,
         MOCKED_USERS[0].id,
       ),
-    ).rejects.toThrow(Error("You're not the owner of this expense"));
+    ).rejects.toThrow(Error());
 
     expect(MOCKED_QUERIES.EXPENSE_ENTITY.findOne).toHaveBeenCalledWith({
       where: {

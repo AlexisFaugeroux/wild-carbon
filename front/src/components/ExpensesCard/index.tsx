@@ -1,6 +1,6 @@
+import { DirectionsCar, Restaurant, Train } from '@mui/icons-material';
 import CarbonCard from '../CarbonCard';
 import ExpensesListItem from '../ExpensesListItem';
-import { DirectionsCar, Restaurant, Train } from '@mui/icons-material';
 
 export default function ExpensesCard() {
   return (

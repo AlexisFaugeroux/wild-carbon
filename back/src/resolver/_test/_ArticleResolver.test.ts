@@ -3,7 +3,7 @@ import { Article } from '../../entity/Article';
 import { User } from '../../entity/User';
 import ArticleResolver from '../ArticleResolver';
 
-// Tests unitaires pour les resolvers Article
+// Tests d'intégration pour les resolvers Article
 
 const resolver = new ArticleResolver();
 
@@ -51,11 +51,11 @@ const MOCKED_ARTICLES: (TestArticle & {
   },
 ];
 
-// Le but c'est de faire des tests unitaires, on ne veut pas réellement chercher les données en base
+// Le but c'est de faire des tests d'intégration, on ne veut pas réellement chercher les données en base
 // Donc on va vouloir mocker les requêtes vers la BDD et les réponses
 // Pour faire ça :
-// 1- il faut mocker l'objet Datasource de typeorm et sa méthode getRepository (ligne 103 à 126)
-// 2- il faut mocker les méthodes de CRUD liées à chaque repository ("entité" chez nous) (ligne 62 à 100)
+// 1- il faut mocker l'objet Datasource de typeorm et sa méthode getRepository (ligne 100 à 126)
+// 2- il faut mocker les méthodes de CRUD liées à chaque repository ("entité" chez nous) (ligne 60 à 98)
 
 const MOCKED_QUERIES = {
   // Mock des méthodes de CRUD pour l'entité Article
@@ -122,7 +122,7 @@ jest.mock('typeorm', () => {
     }),
   };
 });
-// Maintenant dès qu'un resolver appelera datasource.getRepository().find()/save()/ ...etc
+// Maintenant dès qu'un resolver appelera datasource.getRepository().find()/save()/findOne() ...etc
 // nos fonctions mockées seront jouées à la place des fonctions originelles
 
 beforeEach(() => {

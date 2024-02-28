@@ -26,11 +26,11 @@ import {
   GET_CATEGORY_AND_ITEM,
 } from '../../gql/CategoryGql';
 import { CREATE_EXPENSE } from '../../gql/ExpenseGql';
+import { LoginContext } from '../../hooks/useLoginContext';
+import { Categories } from '../../types/categoriesEnum';
 import { CategoryItemType, CategoryType } from '../../types/category';
 import variables from '../../variables';
 import CarbonButton from '../CarbonButton';
-import { Categories } from '../../types/categoriesEnum';
-import { LoginContext } from '../../hooks/useLoginContext';
 
 interface ExpenseFormProps {
   handleShowSuccessAlert: () => void;
