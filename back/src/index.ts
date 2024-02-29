@@ -1,4 +1,4 @@
-// import 'reflect-metadata';
+import 'reflect-metadata';
 import * as jwt from 'jsonwebtoken';
 import dataSource from './utils';
 import { buildSchema } from 'type-graphql';
