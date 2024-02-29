@@ -1,8 +1,8 @@
+import dataSource from '../utils';
 import { Arg, Mutation, Query, Resolver } from 'type-graphql';
 import { Expense } from '../entity/Expense';
 import { Item } from '../entity/Item';
 import { User } from '../entity/User';
-import dataSource from '../utils';
 
 @Resolver()
 class ExpenseResolver {
