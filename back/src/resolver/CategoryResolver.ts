@@ -1,21 +1,16 @@
-import { Query, Resolver, Mutation, Arg, Ctx } from 'type-graphql';
-import { Category } from '../entity/Category';
+import { Arg, Mutation, Query, Resolver } from 'type-graphql';
 import { EntityNotFoundError } from 'typeorm';
+import { Category } from '../entity/Category';
 import dataSource from '../utils';
 
 @Resolver()
 class CategoryResolver {
   @Mutation(() => Category)
-  async createCategory(
-    @Arg('name') name: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    @Ctx() context: any,
-  ): Promise<Category> {
+  async createCategory(@Arg('name') name: string): Promise<Category> {
     try {
-      const source = context.dataSource ?? dataSource;
       const category = new Category();
       category.name = name;
-      const createdCategory = await source
+      const createdCategory = await dataSource
         .getRepository(Category)
         .save(category);
       return createdCategory;
@@ -29,11 +24,8 @@ class CategoryResolver {
   async updateCategory(
     @Arg('categoryId') id: string,
     @Arg('name') name: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    @Ctx() context: any,
   ): Promise<Category> {
     try {
-      const { dataSource } = context;
       const targetedCategory = await dataSource
         .getRepository(Category)
         .findOneByOrFail({ id });
@@ -56,12 +48,7 @@ class CategoryResolver {
   }
 
   @Mutation(() => String)
-  async deleteCategory(
-    @Arg('categoryId') id: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    @Ctx() context: any,
-  ): Promise<string> {
-    const { dataSource } = context;
+  async deleteCategory(@Arg('categoryId') id: string): Promise<string> {
     const targetedCategory = await dataSource
       .getRepository(Category)
       .findOneByOrFail({ id });
@@ -71,14 +58,9 @@ class CategoryResolver {
   }
 
   @Query(() => Category)
-  async getCategory(
-    @Arg('categoryId') id: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    @Ctx() context: any,
-  ): Promise<Category> {
-    const source = context.dataSource ?? dataSource;
+  async getCategory(@Arg('categoryId') id: string): Promise<Category> {
     try {
-      const category = await source.getRepository(Category).findOne({
+      const category = await dataSource.getRepository(Category).findOne({
         where: { id },
         relations: {
           items: true,

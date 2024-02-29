@@ -143,7 +143,7 @@ class UserResolver {
       const { password, articles, expenses, users, ...userData } = user;
       const jwtKey = process.env.JWT_KEY as string;
       const token = jwt.sign(userData, jwtKey, { expiresIn: '24h' });
-      const response: LoginResponse = { user, token, success: true };
+      const response: LoginResponse = { user: userData, token, success: true };
       return response;
     } else {
       console.log('invalid credentials sir');

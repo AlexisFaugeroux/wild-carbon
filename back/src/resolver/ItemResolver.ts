@@ -1,9 +1,9 @@
 import { Arg, Mutation, Query, Resolver } from 'type-graphql';
-import dataSource from '../utils';
-import { Item } from '../entity/Item';
 import { EntityNotFoundError } from 'typeorm';
-import UnitEnum from '../enum/unitEnum';
 import { Category } from '../entity/Category';
+import { Item } from '../entity/Item';
+import UnitEnum from '../enum/unitEnum';
+import dataSource from '../utils';
 
 @Resolver()
 class ItemResolver {
@@ -12,18 +12,25 @@ class ItemResolver {
     @Arg('label') label: string,
     @Arg('emissionFactor') emissionFactor: number,
     @Arg('unit') unit: UnitEnum,
-    @Arg('category') category: string,
+    @Arg('categoryId') categoryId: string,
   ): Promise<Item> {
     try {
-      if (!label || !emissionFactor || !unit || !category) {
+      if (!label || !emissionFactor || !unit || !categoryId) {
         throw new Error('One of the fields is missing');
       }
+
+      const category = await dataSource
+        .getRepository(Category)
+        .findOneByOrFail({ id: categoryId });
+
+      if (!category) throw new Error('Category not found');
+
       const item = new Item();
       item.label = label;
       item.emissionFactor = emissionFactor;
       item.unit = unit;
       item.createdAt = new Date();
-      item.category.id = category;
+      item.category = category;
 
       const createdItem = await dataSource.getRepository(Item).save(item);
 
@@ -43,9 +50,13 @@ class ItemResolver {
     @Arg('category') category: string,
   ): Promise<Item> {
     try {
-      const targetedItem = await dataSource
-        .getRepository(Item)
-        .findOneByOrFail({ id });
+      const targetedItem = await dataSource.getRepository(Item).findOne({
+        where: {
+          id,
+        },
+      });
+
+      if (!targetedItem) throw new Error('Item not found');
 
       targetedItem.label = label;
       targetedItem.emissionFactor = emissionFactor;

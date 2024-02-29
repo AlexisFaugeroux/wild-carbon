@@ -1,8 +1,8 @@
 import { Arg, Mutation, Query, Resolver } from 'type-graphql';
-import dataSource from '../utils';
 import { Expense } from '../entity/Expense';
 import { Item } from '../entity/Item';
 import { User } from '../entity/User';
+import dataSource from '../utils';
 
 @Resolver()
 class ExpenseResolver {
@@ -23,10 +23,6 @@ class ExpenseResolver {
     const user = await dataSource
       .getRepository(User)
       .findOneByOrFail({ id: userId });
-
-    if (!item) {
-      throw new Error('Item introuvable dans la base de données');
-    }
 
     if (quantity < 0 || quantity >= 500000 || quantity == null) {
       throw new Error('error quantity value');

@@ -1,3 +1,7 @@
 {
-  "eslint.workingDirectories": ["front", "back"]
+  "eslint.workingDirectories": [
+    "front",
+    "back"
+  ],
+  "prettier.prettierPath": "./back/node_modules/prettier"
 }
