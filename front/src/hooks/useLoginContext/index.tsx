@@ -6,8 +6,8 @@ import {
   useEffect,
   useMemo,
   useState,
-} from 'react';
-import { getUserTokenFromLocalStorage } from './localStorage';
+} from "react";
+import { getUserTokenFromLocalStorage } from "./localStorage";
 
 interface LoginContextType {
   isLoggedIn: boolean;
@@ -21,9 +21,9 @@ interface LoginContextType {
 export const LoginContext = createContext<LoginContextType>({
   isLoggedIn: false,
   setIsLoggedIn: () => {},
-  userToken: '',
+  userToken: "",
   setUserToken: () => {},
-  userId: '',
+  userId: "",
   setUserId: () => {},
 });
 
@@ -33,10 +33,10 @@ export const LoginContextProvider: FC<{ children: React.ReactNode }> = ({
   const userTokenData = useMemo(() => getUserTokenFromLocalStorage(), []);
   const [isLoggedIn, setIsLoggedIn] = useState(!!userTokenData?.userToken);
   const [userToken, setUserToken] = useState<string | undefined>(
-    userTokenData?.userToken,
+    userTokenData?.userToken
   );
   const [userId, setUserId] = useState<string | undefined>(
-    userTokenData?.userId,
+    userTokenData?.userId
   );
 
   const providerValue = useMemo(
@@ -48,7 +48,7 @@ export const LoginContextProvider: FC<{ children: React.ReactNode }> = ({
       userId,
       setUserId,
     }),
-    [isLoggedIn, setIsLoggedIn],
+    [isLoggedIn, setIsLoggedIn]
   );
 
   useEffect(() => {

@@ -1,3 +1,5 @@
+import { CategoryType } from "./category";
+
 export interface ItemType {
     // items: ItemType[];
     id: string,
@@ -6,5 +8,5 @@ export interface ItemType {
     unit: string,
     // createAt: Date,
     // updateAt: Date,
-    // categoryId: string
+    category: CategoryType
 }

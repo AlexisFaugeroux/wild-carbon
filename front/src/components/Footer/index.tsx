@@ -8,7 +8,7 @@ const Footer: FC = () => {
     <Box>
       <Box
         bgcolor={variables.bgHeaderFooter}
-        height="auto"
+        height={variables.heightFooter}
         width="100%"
         display="flex"
         alignItems="center"

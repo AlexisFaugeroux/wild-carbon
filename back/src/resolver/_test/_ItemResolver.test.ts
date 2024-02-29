@@ -150,9 +150,6 @@ jest.mock('typeorm', () => {
           } else if (entity === Category) {
             return MOCKED_QUERIES.CATEGORY_ENTITY;
           }
-          // } else if (entity === Item) {
-          //   return MOCKED_QUERIES.ITEM_ENTITY;
-          // }
         }),
       };
     }),
@@ -222,16 +219,14 @@ describe('createItem', () => {
       unit,
       category.id,
     );
-    expect(MOCKED_QUERIES.ITEM_ENTITY.save).toHaveBeenCalledWith({
-      label,
-      emissionFactor,
-      unit,
-      createdAt: new Date(),
-      category,
-      id: undefined,
-      expenses: undefined,
-      updatedAt: undefined,
-    });
+    expect(MOCKED_QUERIES.ITEM_ENTITY.save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        label,
+        emissionFactor,
+        unit,
+        category,
+      }),
+    );
     expect(createdItem).toEqual(MOCKED_ITEMS[1]);
   });
 

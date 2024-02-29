@@ -31,6 +31,10 @@ export class Expense {
 
   @Field()
   @CreateDateColumn()
+  expenseDate: string;
+
+  @Field()
+  @CreateDateColumn()
   createdAt: Date;
 
   @Field()
