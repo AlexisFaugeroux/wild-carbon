@@ -4,7 +4,7 @@ import { User } from '../entity/User';
 @ObjectType()
 export default class LoginResponse {
   @Field(() => User, { nullable: true })
-  user: User | null;
+  user: Pick<User, 'id' | 'email' | 'pseudo'> | null;
 
   @Field()
   token: string;

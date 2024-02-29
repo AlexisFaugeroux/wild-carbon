@@ -2,13 +2,13 @@
 import { Box, Theme, Typography, useMediaQuery } from '@mui/material';
 import ExpensesCard from '../../components/ExpensesCard';
 
-import GraphicTracking from '../../components/GraphicTracking';
-import AddExpenseModal from '../../components/AddExpenseModal/AddExpenseModal';
-import GoodDeals from '../../components/GoodDeals';
-import FriendsCard from '../../components/Friends';
-import AddFriendsCard from '../../components/AddFriendsCard';
-import { FriendsContextProvider } from '../../hooks/useFriendsContext';
 import { Masonry } from '@mui/lab';
+import AddExpenseModal from '../../components/AddExpenseModal/AddExpenseModal';
+import AddFriendsCard from '../../components/AddFriendsCard';
+import FriendsCard from '../../components/Friends';
+import GoodDeals from '../../components/GoodDeals';
+import GraphicTracking from '../../components/GraphicTracking';
+import { FriendsContextProvider } from '../../hooks/useFriendsContext';
 
 export default function Dashboard() {
   const isLg = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
