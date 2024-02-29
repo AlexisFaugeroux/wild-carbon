@@ -40,6 +40,7 @@ const MOCKED_EXPENSES: (TestExpense & {
     user: MOCKED_USERS[0],
     item: MOCKED_ITEMS[0],
     createdAt: faker.date.past(),
+    expenseDate: faker.date.past().toISOString()
   },
   {
     id: faker.string.uuid(),
@@ -49,6 +50,7 @@ const MOCKED_EXPENSES: (TestExpense & {
     user: MOCKED_USERS[1],
     item: MOCKED_ITEMS[0],
     createdAt: faker.date.past(),
+    expenseDate: faker.date.past().toISOString()
   },
   {
     id: faker.string.uuid(),
@@ -58,6 +60,7 @@ const MOCKED_EXPENSES: (TestExpense & {
     user: MOCKED_USERS[0],
     item: MOCKED_ITEMS[1],
     createdAt: faker.date.past(),
+    expenseDate: faker.date.past().toISOString()
   },
 ];
 
@@ -192,15 +195,15 @@ describe('getAllExpenses', () => {
 
 describe('createExpense', () => {
   it('should call findOneByOrFail method for User, Item repositories and return an Expense object', async () => {
-    const { item, title, quantity, user } = MOCKED_EXPENSES[1];
+    const { item, title, quantity, user , expenseDate} = MOCKED_EXPENSES[1];
     const emissionTotal = item.emissionFactor * quantity;
-    const date = '2024-03-02';
+    const createdAt = '2024-03-02';
 
     const createdExpense = await resolver.createExpense(
       item.id,
       title,
       quantity,
-      date,
+      expenseDate,
       user.id,
     );
     expect(MOCKED_QUERIES.ITEM_ENTITY.findOneByOrFail).toHaveBeenCalledWith({
@@ -215,19 +218,19 @@ describe('createExpense', () => {
       title,
       emissionTotal,
       quantity,
-      createdAt: new Date(date),
+      createdAt: new Date(createdAt),
       id: undefined,
       updatedAt: undefined,
+      expenseDate,
     });
     expect(createdExpense).toEqual('Expense created');
   });
   it('should console log and throw an Error because user is not found', async () => {
     const userId = 'Incorrect id';
-    const { item, title, quantity } = MOCKED_EXPENSES[1];
-    const date = '2024-03-02';
+    const { item, title, quantity, expenseDate } = MOCKED_EXPENSES[1];
 
     await expect(
-      resolver.createExpense(item.id, title, quantity, date, userId),
+      resolver.createExpense(item.id, title, quantity, expenseDate, userId),
     ).rejects.toThrow(Error());
 
     expect(MOCKED_QUERIES.USER_ENTITY.findOneByOrFail).toHaveBeenCalledWith({
@@ -239,8 +242,8 @@ describe('createExpense', () => {
 
 describe('updateExpense', () => {
   it('should call findOne and findOneByOrFail methods for Expense, Item, User repositories and return an Expense object', async () => {
-    const { id, item, title, quantity, user } = MOCKED_EXPENSES[1];
-    const date = '2024-03-02';
+    const { id, item, title, quantity, user,expenseDate } = MOCKED_EXPENSES[1];
+    const updatedAt = '2024-03-02';
 
     const emissionTotal = item.emissionFactor * quantity;
 
@@ -249,7 +252,7 @@ describe('updateExpense', () => {
       item.id,
       title,
       quantity,
-      date,
+      expenseDate,
       user.id,
     );
 
@@ -274,15 +277,14 @@ describe('updateExpense', () => {
         title,
         emissionTotal,
         quantity,
-        updatedAt: new Date(date),
+        updatedAt: new Date(updatedAt),
       }),
     );
     expect(updatedExpense).toEqual(MOCKED_EXPENSES[1]);
   });
   it('should throw an Expense not found error (incorrect or missing id)', async () => {
-    const { item, title, quantity, user } = MOCKED_EXPENSES[1];
+    const { item, title, quantity, user, expenseDate } = MOCKED_EXPENSES[1];
     const expenseId = 'Incorrect id';
-    const date = '2024-03-02';
 
     await expect(
       resolver.updateExpense(
@@ -290,7 +292,7 @@ describe('updateExpense', () => {
         item.id,
         title,
         quantity,
-        date,
+        expenseDate,
         user.id,
       ),
     ).rejects.toThrow(Error('Expense not found'));
@@ -307,8 +309,7 @@ describe('updateExpense', () => {
     expect(MOCKED_QUERIES.EXPENSE_ENTITY.save).not.toHaveBeenCalled();
   });
   it('should throw an error if the user is not the owner of the expense', async () => {
-    const { id, item, title, quantity } = MOCKED_EXPENSES[1];
-    const date = '2024-03-02';
+    const { id, item, title, quantity, expenseDate } = MOCKED_EXPENSES[1];
 
     await expect(
       resolver.updateExpense(
@@ -316,7 +317,7 @@ describe('updateExpense', () => {
         item.id,
         title,
         quantity,
-        date,
+        expenseDate,
         MOCKED_USERS[0].id,
       ),
     ).rejects.toThrow(Error());
@@ -334,11 +335,10 @@ describe('updateExpense', () => {
   });
   it('should throw an Item not found error (incorrect or missing id)', async () => {
     const itemId = 'unknown';
-    const { id, title, quantity, user } = MOCKED_EXPENSES[1];
-    const date = '2024-03-02';
+    const { id, title, quantity, user, expenseDate } = MOCKED_EXPENSES[1];
 
     await expect(
-      resolver.updateExpense(id, itemId, title, quantity, date, user.id),
+      resolver.updateExpense(id, itemId, title, quantity, expenseDate, user.id),
     ).rejects.toThrow(Error(`Item not found`));
 
     expect(MOCKED_QUERIES.ITEM_ENTITY.findOneByOrFail).toHaveBeenCalledWith({
@@ -347,11 +347,10 @@ describe('updateExpense', () => {
     expect(MOCKED_QUERIES.EXPENSE_ENTITY.save).not.toHaveBeenCalled();
   });
   it('should throw an error if quantity is not valid', async () => {
-    const { id, item, title, user } = MOCKED_EXPENSES[1];
-    const date = '2024-03-02';
+    const { id, item, title, user, expenseDate} = MOCKED_EXPENSES[1];
 
     await expect(
-      resolver.updateExpense(id, item.id, title, -5, date, user.id),
+      resolver.updateExpense(id, item.id, title, -5, expenseDate, user.id),
     ).rejects.toThrow(Error(`Quantity value is not valid`));
 
     expect(MOCKED_QUERIES.EXPENSE_ENTITY.save).not.toHaveBeenCalled();
