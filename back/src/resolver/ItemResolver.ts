@@ -129,15 +129,13 @@ class ItemResolver {
   }
 
   @Query(() => [Item])
-  async getItemByIdCategory(@Arg('categoryId') categoryId: string): Promise<Item[]> {
-    try{
-      const category = await dataSource
-      .getRepository(Category)
-      .findOneByOrFail( {id: categoryId})
-      
+  async getItemByIdCategory(
+    @Arg('categoryId') categoryId: string,
+  ): Promise<Item[]> {
+    try {
       const items = await dataSource
-      .getRepository(Item)
-      .find( {where : {category}})
+        .getRepository(Item)
+        .find({ where: { category: { id: categoryId } } });
 
       return items;
     } catch (error) {

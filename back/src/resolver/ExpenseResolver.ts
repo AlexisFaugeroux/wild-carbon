@@ -1,8 +1,8 @@
-import dataSource from '../utils';
 import { Arg, Mutation, Query, Resolver } from 'type-graphql';
 import { Expense } from '../entity/Expense';
 import { Item } from '../entity/Item';
 import { User } from '../entity/User';
+import dataSource from '../utils';
 
 @Resolver()
 class ExpenseResolver {
@@ -81,7 +81,7 @@ class ExpenseResolver {
     targetedExpense.title = title;
     targetedExpense.emissionTotal = item.emissionFactor * quantity;
     targetedExpense.quantity = quantity;
-    targetedExpense.expenseDate = expenseDate
+    targetedExpense.expenseDate = expenseDate;
     targetedExpense.updatedAt = new Date();
 
     const updateExpense = await dataSource
@@ -145,23 +145,23 @@ class ExpenseResolver {
     try {
       const expensesByUserId = await dataSource.getRepository(Expense).find({
         where: {
-          user: { id: id},
+          user: { id: id },
         },
         relations: {
           item: {
-            category: true
+            category: true,
           },
-          user: true
+          user: true,
         },
       });
 
-      if (!expensesByUserId) throw new Error('Expenses not found for this user');
+      if (!expensesByUserId)
+        throw new Error('Expenses not found for this user');
       return expensesByUserId;
     } catch (error) {
-      console.error(error)
-      throw new Error;
-      
+      console.error(error);
+      throw new Error();
     }
   }
-} 
+}
 export default ExpenseResolver;
