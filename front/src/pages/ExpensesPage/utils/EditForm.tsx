@@ -7,7 +7,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { CategoryType } from "../../../types/category";
 import { GET_ALL_CATEGORIES } from "../../../gql/CategoryGql";
 import { useLazyQuery, useMutation } from "@apollo/client";
@@ -21,19 +21,18 @@ import {
 } from "@mui/icons-material";
 import { ItemType } from "../../../types/item";
 import { Form, Formik } from "formik";
+import * as Yup from "yup";
 import CarbonButton from "../../../components/CarbonButton";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { UPDATE_EXPENSE_BY_ID } from "../../../gql/ExpenseGql";
 import { GET_ITEMS_BY_CATEGORY } from "../../../gql/ItemGql";
 import { Categories } from "../../../types/categoriesEnum";
+import { LoginContext } from "../../../hooks/useLoginContext";
 
 interface EditFormProps {
   handleClose: () => void;
   id: string;
   title: string;
   quantity: number;
-  date?: string;
   item: ItemType;
   itemId: string;
 }
@@ -42,32 +41,14 @@ export default function EditForm({
   handleClose,
   title,
   quantity,
-  date,
   item,
+  id,
 }: EditFormProps) {
-  const [openInputLabel, setOpenInputLabel] = useState(false);
-  const [restoredDate, setRestoredDate] = useState<Date | undefined>();
-
-  function restoreDateStringToDate(date: string | undefined): Date | undefined {
-    if (date) {
-      const [day, month, year] = date.split("/");
-
-      const monthIndex = parseInt(month, 10) - 1;
-      const yearIndex = parseInt(year, 10);
-      const newYearIndex =
-        yearIndex >= 0 && yearIndex <= 99 ? yearIndex + 2000 : yearIndex;
-      const dayIndex = parseInt(day, 10);
-
-      if (!isNaN(dayIndex) && !isNaN(monthIndex) && !isNaN(newYearIndex)) {
-        const newDate = new Date(newYearIndex, monthIndex, dayIndex);
-        return newDate;
-      }
-    }
-
-    return undefined;
-  }
+  const [, setOpenInputLabel] = useState(false);
+  const { userId } = useContext(LoginContext);
 
   // Fetch
+
   const [fetchCategories, { data: dataCategory }] = useLazyQuery<{
     getAllCategory: CategoryType[];
   }>(GET_ALL_CATEGORIES);
@@ -89,11 +70,9 @@ export default function EditForm({
 
   const [updateExpense] = useMutation(UPDATE_EXPENSE_BY_ID, {
     onCompleted: () => {
-      console.log("it's working !");
       handleClose();
     },
     onError: () => {
-      console.log("it's not working got damit !");
       handleClose();
     },
   });
@@ -106,9 +85,6 @@ export default function EditForm({
     (async () => {
       try {
         await handleSelectCategory(item.category.id);
-        const newDate = restoreDateStringToDate(date);
-        setRestoredDate(newDate);
-        console.log("restoredDate", restoredDate);
       } catch (error) {
         throw new Error(`un problème est survenu lors du montage: ${error}`);
       }
@@ -119,6 +95,10 @@ export default function EditForm({
     fontFamily: "Roboto",
     fontSize: "1rem",
   };
+
+  const validationSchema = Yup.object({
+    title: Yup.string().matches(/^[a-zA-Z0-9\s]+$/, "Caractères non autorisés"),
+  });
 
   return (
     <Box sx={{ position: "relative" }}>
@@ -134,7 +114,6 @@ export default function EditForm({
         onChange={(e) => {
           handleSelectCategory(e.target.value);
           setOpenInputLabel(true);
-          console.log("openInputLabel", openInputLabel);
         }}
         InputLabelProps={{
           shrink: true,
@@ -222,21 +201,26 @@ export default function EditForm({
           title: title,
           quantity: quantity,
           itemId: item.id,
-          date: new Date(),
         }}
-        onSubmit={(values, { setSubmitting, resetForm }) => {
-          setSubmitting(true);
-          updateExpense({
-            variables: {
-              date: values.date,
-              quantity: values.quantity,
-              title: values.title,
-              itemId: values.itemId,
-            },
-          });
-          setSubmitting(false);
-          resetForm();
+        onSubmit={async (values, { setSubmitting, resetForm }) => {
+          try {
+            setSubmitting(true);
+            updateExpense({
+              variables: {
+                id,
+                quantity: values.quantity,
+                title: values.title,
+                itemId: values.itemId,
+                userId,
+              },
+            });
+            setSubmitting(false);
+            resetForm();
+          } catch (error) {
+            setSubmitting(false);
+          }
         }}
+        validationSchema={validationSchema}
       >
         {({
           errors,
@@ -280,6 +264,7 @@ export default function EditForm({
 
                 <FormControl>
                   <Autocomplete
+                    id="itemId"
                     disableClearable
                     options={dataItems ? dataItems.getItemByIdCategory : []}
                     getOptionLabel={(option) => option.label}
@@ -288,8 +273,6 @@ export default function EditForm({
                     }}
                     renderInput={(params) => (
                       <TextField
-                        // defaultValue={item.id}
-                        // required
                         {...params}
                         label="Choisis ce qui correspond à cette nouvelle dépense"
                         InputProps={{
@@ -315,34 +298,11 @@ export default function EditForm({
                   />
                 </FormControl>
               </>
-
-              <FormControl>
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DatePicker
-                    // label="Modifie la nouvelle date"
-                    defaultValue={restoredDate}
-                    onChange={() => handleChange}
-                    format="dd/MM/yyyy"
-                    sx={{
-                      ".css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input":
-                        {
-                          fontFamily: "Roboto",
-                          fontSize: "1rem",
-                        },
-                      ".css-1pq332w-MuiFormLabel-root-MuiInputLabel-root": {
-                        fontFamily: "Roboto",
-                        fontSize: "1rem",
-                        color: variables.thirdColor,
-                      },
-                    }}
-                  />
-                </LocalizationProvider>
-              </FormControl>
-
               <FormControl>
                 <TextField
                   InputProps={{ style: inputStyle }}
                   fullWidth
+                  type="number"
                   id="quantity"
                   name="quantity"
                   label="Nouvelle quantité"

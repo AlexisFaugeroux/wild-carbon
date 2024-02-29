@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
-import { useLazyQuery, useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import {
   Bolt,
   House,
@@ -15,7 +15,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { Categories } from "../../types/categoriesEnum";
 import { LoginContext } from "../../hooks/useLoginContext";
 import MenuItem from "@mui/material/MenuItem";
@@ -50,7 +50,7 @@ export default function ExpenseForm({
   const [selectedCategory, setSelectedCategory] = useState("");
   const { userId } = useContext(LoginContext);
   // Fetch
-  const [fetchCategories, { data: dataCategory }] = useLazyQuery<{
+  const { data: dataCategory } = useQuery<{
     getAllCategory: CategoryType[];
   }>(GET_ALL_CATEGORIES);
 
@@ -74,10 +74,6 @@ export default function ExpenseForm({
     },
   });
 
-  useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
-
   // handle
   const handleSelectCategory = async (categoryId: string) => {
     try {
@@ -96,8 +92,10 @@ export default function ExpenseForm({
   };
 
   const validationSchema = Yup.object({
-    title: Yup.string().required("Tu nous as pas dit ce que tu as fait."),
-    date: Yup.string().required("Tu nous as pas dit quand c'était."),
+    title: Yup.string()
+      .matches(/^[a-zA-Z0-9\s]+$/, "Caractères non autorisés")
+      .required("Tu nous as pas dit ce que tu as fait."),
+    expenseDate: Yup.string().required("Tu nous as pas dit quand c'était."),
     quantity: Yup.number().required("Tu as oublié le principal."),
     itemId: Yup.string().required("Tu as oublié l'item."),
   });
@@ -203,21 +201,29 @@ export default function ExpenseForm({
           title: "",
           quantity: 0,
           itemId: "",
-          date: new Date(),
+          expenseDate: new Date(),
         }}
-        onSubmit={(values, { setSubmitting, resetForm }) => {
-          setSubmitting(true);
-          createExpense({
-            variables: {
-              date: values.date,
-              quantity: values.quantity,
-              title: values.title,
-              itemId: values.itemId,
-              userId,
-            },
-          });
-          setSubmitting(false);
-          resetForm();
+        onSubmit={async (values, { setSubmitting, resetForm }) => {
+          try {
+            setSubmitting(true);
+            await createExpense({
+              variables: {
+                expenseDate: values.expenseDate,
+                quantity: values.quantity,
+                title: values.title,
+                itemId: values.itemId,
+                userId,
+              },
+            });
+            setSubmitting(false);
+            resetForm();
+            handleShowSuccessAlert();
+            handleClose();
+          } catch (error) {
+            console.error("Error submitting form: ", error);
+            setSubmitting(false);
+            handleShowErrorAlert();
+          }
         }}
         validationSchema={validationSchema}
       >
@@ -248,6 +254,8 @@ export default function ExpenseForm({
                     required
                     fullWidth
                     onChange={handleChange}
+                    error={touched.title && Boolean(errors.title)}
+                    helperText={touched.title && errors.title}
                     label="Qu'est ce que tu as fait de beau ?"
                     InputProps={{
                       style: inputStyle,
@@ -294,7 +302,7 @@ export default function ExpenseForm({
                       />
                     )}
                     renderOption={(props, option) => (
-                      <li {...props} key={option.id}>
+                      <li style={inputStyle} {...props} key={option.id}>
                         {option.label}
                       </li>
                     )}
@@ -307,8 +315,8 @@ export default function ExpenseForm({
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
                   label="Mais non ?! Quand ça ?"
-                  value={values.date}
-                  onChange={() => handleChange}
+                  value={values.expenseDate}
+                  onChange={(newDate) => setFieldValue("expenseDate", newDate)}
                   format="dd/MM/yyyy"
                   sx={{
                     ".css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input": {
@@ -332,7 +340,7 @@ export default function ExpenseForm({
                 type="number"
                 id="quantity"
                 name="quantity"
-                label="Combien ?? (en km, g, L)"
+                label="Combien ?? (km, L, kW, m³)"
                 variant="outlined"
                 placeholder="55 pour un trajet voiture de 55km"
                 required

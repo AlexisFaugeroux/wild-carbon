@@ -10,7 +10,6 @@ export default function EditExpenseModal({
   id,
   title,
   quantity,
-  date,
   item,
   itemId,
 }: ExpenseType) {
@@ -18,14 +17,6 @@ export default function EditExpenseModal({
 
   const handleOpenModal = () => {
     setOpen(true);
-    console.log("id", id);
-    console.log("title", title);
-
-    console.log("quantity", quantity);
-
-    console.log("date", date);
-    console.log("item", item);
-    console.log("itemId", itemId);
   };
 
   const handleClose = () => {
@@ -85,7 +76,6 @@ export default function EditExpenseModal({
             id={id}
             title={title}
             quantity={quantity}
-            date={date}
             item={item}
             itemId={itemId}
             handleClose={handleClose}

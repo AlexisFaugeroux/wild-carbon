@@ -4,7 +4,7 @@ export interface ExpenseType {
     id: string
     title: string,
     quantity: number
-    date?: string,
+    expenseDate?: string,
     emissionTotal?: number
     createdAt?: string,
     itemId: string 

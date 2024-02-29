@@ -2,14 +2,14 @@ import { gql } from '@apollo/client';
 
 export const CREATE_EXPENSE = gql`
   mutation Mutation(
-    $date: String!
+    $expenseDate: String!
     $quantity: Float!
     $title: String!
     $itemId: String!
     $userId: String!
   ) {
     createExpense(
-      date: $date
+      expenseDate: $expenseDate
       quantity: $quantity
       title: $title
       itemId: $itemId
@@ -25,7 +25,7 @@ query getExpensesByUserId($userId: String!) {
     title
     quantity
     emissionTotal
-    createdAt
+    expenseDate
     item {
       id
       label
@@ -44,11 +44,17 @@ mutation DeleteExpense($expenseId: String!) {
 }`
 
 export const UPDATE_EXPENSE_BY_ID = gql `
-mutation Mutation($date: String!, $quantity: Float!, $title: String!, $itemId: String!, $updateExpenseId: String!) {
-  updateExpense(date: $date, quantity: $quantity, title: $title, itemId: $itemId, id: $updateExpenseId){
-    date
-    itemId
+mutation Mutation($userId: String!, $quantity: Float!, $title: String!, $itemId: String!, $id: String!) {
+  updateExpense(userId: $userId, quantity: $quantity, title: $title, itemId: $itemId, id: $id){
+    id
+    item {
+      id
+    }
     quantity
     title
+    user {
+      id
+    }
   }
-}`
+}
+`

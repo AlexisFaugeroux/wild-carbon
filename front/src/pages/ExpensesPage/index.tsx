@@ -23,7 +23,6 @@ import {
 import { useContext, useEffect, useState } from "react";
 import { ExpenseType } from "../../types/expense";
 import { Delete } from "@mui/icons-material";
-import { format } from "date-fns";
 import AddExpenseModal from "../../components/AddExpenseModal/AddExpenseModal";
 import CategoryBar from "./utils/CategoryBar";
 import EditExpenseModal from "./utils/EditExpenseModal";
@@ -32,8 +31,6 @@ import { LoginContext } from "../../hooks/useLoginContext";
 export default function ExpensesPage() {
   const { userId } = useContext(LoginContext);
   const isLg = useMediaQuery((theme: Theme) => theme.breakpoints.up("lg"));
-  // const isPortrait = useMediaQuery("(orientation: portrait)");
-  // const isLandscape = useMediaQuery("(orientation: landscape)");
 
   const inputStyle = {
     fontFamily: "Roboto",
@@ -49,7 +46,6 @@ export default function ExpensesPage() {
   }>(GET_EXPENSE_BY_USER_ID);
 
   const [formattedExpenses, setFormattedExpenses] = useState<ExpenseType[]>([]);
-
   const [deleteExpense] = useMutation(DELETE_EXPENSE_BY_ID);
 
   const handleDeleteExpense = async (id: string) => {
@@ -70,19 +66,25 @@ export default function ExpensesPage() {
 
   useEffect(() => {
     fetchExpensesByUserId({
+      fetchPolicy: "network-only",
       variables: { userId },
     });
-  }, [fetchExpensesByUserId]);
+  }, [dataExpenses]);
 
   useEffect(() => {
     if (dataExpenses && dataExpenses.getAllExpensesByUserId) {
       const formattedData = dataExpenses.getAllExpensesByUserId.map(
-        (expense) => ({
-          ...expense,
-          createdAt: expense.createdAt
-            ? format(new Date(expense.createdAt), "dd/MM/yy")
-            : undefined,
-        })
+        (expense) => {
+          const date = expense.expenseDate;
+          if (!date) return expense;
+          const newDate = new Date(Number(date));
+          const formatted = newDate.toLocaleDateString("fr-FR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "2-digit",
+          });
+          return { ...expense, expenseDate: formatted };
+        }
       );
       setFormattedExpenses(formattedData);
     }
@@ -147,6 +149,12 @@ export default function ExpensesPage() {
                   style={inputStyle.title}
                   sx={{ fontSize: isLg ? "1rem" : "0.8rem" }}
                 >
+                  Emission Totale
+                </TableCell>
+                <TableCell
+                  style={inputStyle.title}
+                  sx={{ fontSize: isLg ? "1rem" : "0.8rem" }}
+                >
                   Date
                 </TableCell>
                 <TableCell
@@ -167,7 +175,10 @@ export default function ExpensesPage() {
                     {row.quantity} {row.item?.unit}
                   </TableCell>
                   <TableCell style={inputStyle} sx={{ width: "75px" }}>
-                    {row.createdAt}
+                    {row.emissionTotal}g de Co²
+                  </TableCell>
+                  <TableCell style={inputStyle} sx={{ width: "75px" }}>
+                    {row.expenseDate}
                   </TableCell>
                   <TableCell sx={{ width: "50px" }}>
                     <ButtonGroup>
@@ -177,14 +188,11 @@ export default function ExpensesPage() {
                       >
                         <Delete fontSize="small" sx={{ color: "red" }} />
                       </IconButton>
-                      {/* <IconButton sx={{ padding: "0" }}>
-                        <Edit fontSize="small" sx={{ color: "orange" }} />
-                      </IconButton> */}
                       <EditExpenseModal
                         id={row.id}
                         title={row.title}
                         quantity={row.quantity}
-                        date={row.createdAt}
+                        expenseDate={row.expenseDate}
                         item={row.item}
                         itemId={row.itemId}
                       />
