@@ -7,7 +7,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { CategoryType } from "../../../types/category";
 import { GET_ALL_CATEGORIES } from "../../../gql/CategoryGql";
 import { useLazyQuery, useMutation } from "@apollo/client";
@@ -44,7 +44,6 @@ export default function EditForm({
   item,
   id,
 }: EditFormProps) {
-  const [, setOpenInputLabel] = useState(false);
   const { userId } = useContext(LoginContext);
 
   // Fetch
@@ -113,7 +112,6 @@ export default function EditForm({
         defaultValue={item.category.id}
         onChange={(e) => {
           handleSelectCategory(e.target.value);
-          setOpenInputLabel(true);
         }}
         InputLabelProps={{
           shrink: true,

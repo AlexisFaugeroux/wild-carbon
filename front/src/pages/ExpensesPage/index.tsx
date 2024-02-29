@@ -24,7 +24,6 @@ import { useContext, useEffect, useState } from "react";
 import { ExpenseType } from "../../types/expense";
 import { Delete } from "@mui/icons-material";
 import AddExpenseModal from "../../components/AddExpenseModal/AddExpenseModal";
-import CategoryBar from "./utils/CategoryBar";
 import EditExpenseModal from "./utils/EditExpenseModal";
 import { LoginContext } from "../../hooks/useLoginContext";
 
@@ -118,8 +117,6 @@ export default function ExpensesPage() {
       <AddExpenseModal />
 
       <Box width={isLg ? "60%" : "100%"} margin={isLg ? "auto" : "0"}>
-        <CategoryBar />
-
         <TableContainer component={Paper}>
           <Table
             sx={{

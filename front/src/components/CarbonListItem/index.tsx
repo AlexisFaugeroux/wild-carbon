@@ -31,9 +31,3 @@ const CarbonListItem: FC<CarbonListItemProps> = ({
 };
 
 export default CarbonListItem;
-
-// exemple d'import (pour la liste d'amis)
-
-// <Box sx={{width:'300px'}}>
-//     <CarbonListItem leftPart="Alexos" rightPartMain={"105kg"} rightPartSecond={<Spa color="primary"/>} rightPartThird={<PersonRemove color="primary"/>} />
-// </Box>
