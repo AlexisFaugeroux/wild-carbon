@@ -24,7 +24,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { GET_ALL_CATEGORIES } from "../../gql/CategoryGql";
-import { CREATE_EXPENSE } from "../../gql/ExpenseGql";
+import { CREATE_EXPENSE, GET_EXPENSE_BY_USER_ID } from "../../gql/ExpenseGql";
 import { CategoryType } from "../../types/category";
 import variables from "../../variables";
 import CarbonButton from "../CarbonButton";
@@ -59,6 +59,7 @@ export default function ExpenseForm({
   }>(GET_ITEMS_BY_CATEGORY);
 
   const [createExpense] = useMutation(CREATE_EXPENSE, {
+    refetchQueries: [{ query: GET_EXPENSE_BY_USER_ID, variables: { userId } }],
     onCompleted: () => {
       if (!showSuccessAlert) {
         handleShowSuccessAlert();
@@ -93,7 +94,7 @@ export default function ExpenseForm({
 
   const validationSchema = Yup.object({
     title: Yup.string()
-      .matches(/^[a-zA-Z0-9\s]+$/, "Caractères non autorisés")
+      .matches(/^[a-zA-Z0-9À-ÿ\s-]+$/, "Caractères non autorisés")
       .required("Tu ne nous as pas dit ce que tu as fait."),
     expenseDate: Yup.string().required("Tu ne nous as pas dit quand c'était."),
     quantity: Yup.number().required("Tu as oublié le principal."),

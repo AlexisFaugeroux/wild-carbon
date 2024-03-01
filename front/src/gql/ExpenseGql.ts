@@ -33,6 +33,7 @@ query getExpensesByUserId($userId: String!) {
       emissionFactor
       category {
         id
+        name
       }
     }
   }

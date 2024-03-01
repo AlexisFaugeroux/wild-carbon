@@ -9,6 +9,7 @@ import simplifiedLogo from "../../assets/leaf.png";
 import variables from "../../variables";
 import { LoginContext } from "../../hooks/useLoginContext";
 import LogoutForm from "../LogoutForm";
+import { Link } from "react-router-dom";
 
 const HeaderBar = () => {
   const [isOpenPopover, setIsOpenPopover] = useState(false);
@@ -102,11 +103,13 @@ const HeaderBar = () => {
             height: `calc(${variables.heightHeader} - 1vh)`,
           }}
         >
-          <img
-            src={isMobile ? simplifiedLogo : logo}
-            alt="Logo BalanceTonCarbone"
-            height={isMobile ? "30rem" : "50rem"}
-          />
+          <Link to="/dashboard" style={{ textDecoration: "none" }}>
+            <img
+              src={isMobile ? simplifiedLogo : logo}
+              alt="Logo BalanceTonCarbone"
+              height={isMobile ? "30rem" : "50rem"}
+            />
+          </Link>
         </Box>
         <CarbonIconButton
           sx={{
