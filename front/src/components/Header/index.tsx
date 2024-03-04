@@ -103,13 +103,21 @@ const HeaderBar = () => {
             height: `calc(${variables.heightHeader} - 1vh)`,
           }}
         >
-          <Link to="/dashboard" style={{ textDecoration: "none" }}>
+          {isLoggedIn ? (
+            <Link to="/dashboard" style={{ textDecoration: "none" }}>
+              <img
+                src={isMobile ? simplifiedLogo : logo}
+                alt="Logo BalanceTonCarbone"
+                height={isMobile ? "30rem" : "50rem"}
+              />
+            </Link>
+          ) : (
             <img
               src={isMobile ? simplifiedLogo : logo}
               alt="Logo BalanceTonCarbone"
               height={isMobile ? "30rem" : "50rem"}
             />
-          </Link>
+          )}
         </Box>
         <CarbonIconButton
           sx={{

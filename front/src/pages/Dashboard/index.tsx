@@ -192,7 +192,7 @@ export default function Dashboard() {
       </Stack>
 
       <Masonry columns={isLg ? 2 : 1} spacing={2}>
-        <ExpensesCard />
+        <ExpensesCard expensesList={dataExpenses?.getAllExpensesByUserId} />
         <GraphicTracking />
         <GoodDeals />
         <FriendsContextProvider>

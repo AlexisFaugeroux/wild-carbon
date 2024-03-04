@@ -94,7 +94,7 @@ export default function ExpenseForm({
 
   const validationSchema = Yup.object({
     title: Yup.string()
-      .matches(/^[a-zA-Z0-9À-ÿ\s-]+$/, "Caractères non autorisés")
+      .matches(/^[a-zA-Z0-9À-ÿ\s-']+$/, "Caractères non autorisés")
       .required("Tu ne nous as pas dit ce que tu as fait."),
     expenseDate: Yup.string().required("Tu ne nous as pas dit quand c'était."),
     quantity: Yup.number().required("Tu as oublié le principal."),

@@ -1,4 +1,3 @@
-import { useContext, useEffect, useState } from "react";
 import CarbonCard from "../CarbonCard";
 import ExpensesListItem from "../ExpensesListItem";
 import {
@@ -9,31 +8,20 @@ import {
   Train,
 } from "@mui/icons-material";
 import { Link } from "react-router-dom";
-import { LoginContext } from "../../hooks/useLoginContext";
-import { useQuery } from "@apollo/client";
 import { ExpenseType } from "../../types/expense";
-import { GET_EXPENSE_BY_USER_ID } from "../../gql/ExpenseGql";
 import { Categories } from "../../types/categoriesEnum";
 import variables from "../../variables";
 
-export default function ExpensesCard() {
-  const { userId } = useContext(LoginContext);
-  const [latestExpenses, setLatestExpenses] = useState<ExpenseType[]>([]);
+interface ExpenseCardProps {
+  expensesList?: ExpenseType[];
+}
 
-  const { data: dataExpenses } = useQuery<{
-    getAllExpensesByUserId: ExpenseType[];
-  }>(GET_EXPENSE_BY_USER_ID, {
-    variables: {
-      userId,
-    },
-  });
-
-  const handleLatestExpense = () => {
-    const expenses = dataExpenses?.getAllExpensesByUserId;
+export default function ExpensesCard({ expensesList }: ExpenseCardProps) {
+  const handleLatestExpense = (expenses: ExpenseType[] | undefined) => {
     if (expenses) {
       const sortedData = expenses.slice().sort((a, b) => {
-        const timestampA = a && a.expenseDate ? parseInt(a.expenseDate) : 0;
-        const timestampB = b && b.expenseDate ? parseInt(b.expenseDate) : 0;
+        const timestampA = a.expenseDate ? parseInt(a.expenseDate) : 0;
+        const timestampB = b.expenseDate ? parseInt(b.expenseDate) : 0;
         return timestampB - timestampA;
       });
       const filteredData = sortedData.slice(0, 3);
@@ -56,11 +44,7 @@ export default function ExpensesCard() {
       return formattedDate;
     }
   };
-
-  useEffect(() => {
-    const filteredData = handleLatestExpense();
-    setLatestExpenses(filteredData);
-  }, [dataExpenses]);
+  const latestExpenses = handleLatestExpense(expensesList);
 
   return (
     <Link to="/my-expenses" style={{ textDecoration: "none" }}>
