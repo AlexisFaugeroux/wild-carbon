@@ -1,10 +1,10 @@
 import * as dotenv from 'dotenv';
 import { DataSource } from 'typeorm';
-import { Item } from './entity/Item';
 import { Article } from './entity/Article';
-import { User } from './entity/User';
-import { Expense } from './entity/Expense';
 import { Category } from './entity/Category';
+import { Expense } from './entity/Expense';
+import { Item } from './entity/Item';
+import { User } from './entity/User';
 
 dotenv.config();
 if (!process.env.POSTGRES_PASSWORD || !process.env.POSTGRES_USER) {

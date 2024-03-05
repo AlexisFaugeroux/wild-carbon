@@ -1,6 +1,6 @@
-import { Query, Resolver, Mutation, Arg } from 'type-graphql';
-import { Category } from '../entity/Category';
+import { Arg, Mutation, Query, Resolver } from 'type-graphql';
 import { EntityNotFoundError } from 'typeorm';
+import { Category } from '../entity/Category';
 import dataSource from '../utils';
 
 @Resolver()
@@ -59,17 +59,32 @@ class CategoryResolver {
 
   @Query(() => Category)
   async getCategory(@Arg('categoryId') id: string): Promise<Category> {
-    const category = await dataSource
-      .getRepository(Category)
-      .findOneByOrFail({ id });
+    try {
+      const category = await dataSource.getRepository(Category).findOne({
+        where: { id },
+        relations: {
+          items: true,
+        },
+      });
 
-    return category;
+      if (!category) throw new Error('Category not found');
+
+      return category;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
 
   @Query(() => [Category])
   async getAllCategory(): Promise<Category[]> {
     try {
-      const categories = await dataSource.getRepository(Category).find();
+      const categories = await dataSource.getRepository(Category).find({
+        relations: {
+          items: true,
+        },
+      });
+
       return categories;
     } catch (error) {
       console.error(error);

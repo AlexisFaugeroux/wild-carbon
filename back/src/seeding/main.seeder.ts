@@ -1,90 +1,73 @@
-import { DataSource } from 'typeorm';
-import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { faker } from '@faker-js/faker';
+import * as argon2 from 'argon2';
+import { DataSource } from 'typeorm';
+import { Seeder } from 'typeorm-extension';
 import { Article } from '../entity/Article';
 import { Category } from '../entity/Category';
-import { Expense } from '../entity/Expense';
 import { Item } from '../entity/Item';
 import { User } from '../entity/User';
-import { Categories } from '../enum/categoriesEnum';
+import { articlesFixture } from './fixtures/articles';
+import { categoriesFixture } from './fixtures/categories';
+import { itemsFixture } from './fixtures/items';
+import { usersFixture } from './fixtures/users';
 
 export class MainSeeder implements Seeder {
-  public async run(
-    dataSource: DataSource,
-    factoryManager: SeederFactoryManager,
-  ): Promise<any> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public async run(dataSource: DataSource): Promise<any> {
     const userRepository = dataSource.getRepository(User);
     const articleRepository = dataSource.getRepository(Article);
     const itemRepository = dataSource.getRepository(Item);
-    const expenseRepository = dataSource.getRepository(Expense);
     const categoryRespository = dataSource.getRepository(Category);
 
-    const articleFactory = factoryManager.get(Article);
-    const expenseFactory = factoryManager.get(Expense);
-    const itemFactory = factoryManager.get(Item);
-    const userFactory = factoryManager.get(User);
-
     console.log('Seeding: Processing Users...');
-    const users = await userFactory.saveMany(10);
+    const hashedPassword = await Promise.all(
+      usersFixture.map((userFixture) => argon2.hash(userFixture.password)),
+    );
+    const users = usersFixture.map((userFixture, index) => {
+      const user = new User();
+      user.pseudo = userFixture.pseudo;
+      user.email = userFixture.email;
+      user.password = hashedPassword[index];
+
+      return user;
+    });
     users.forEach((user) => {
       const friends = faker.helpers.arrayElements(users, {
         min: 0,
-        max: 8,
+        max: 2,
       });
       user.users = friends;
     });
     await userRepository.save(users);
 
-    console.log('Processing Categories...');
-    const categoriesArray: Categories[] = [];
-    Object.values(Categories).forEach((cat) => categoriesArray.push(cat));
-    const categories = Array(4)
-      .fill('')
-      .map((_, index) => {
-        const category = new Category();
-        category.name = categoriesArray[index];
-        return category;
-      });
-    await categoryRespository.save(categories);
+    console.log('Seeding: Processing Categories...');
+    await categoryRespository.save(categoriesFixture);
+    const categoriesFromDb = await categoryRespository.find();
 
     console.log('Seeding: Processing Articles...');
-    const articles = await Promise.all(
-      Array(6)
-        .fill('')
-        .map(async () => {
-          const article = await articleFactory.make({
-            user: faker.helpers.arrayElement(users),
-          });
-          return article;
-        }),
-    );
+    const articles = articlesFixture.map((articleFixture, index) => {
+      const article = new Article();
+      article.title = articleFixture.title;
+      article.description = articleFixture.description;
+      article.url = articleFixture.url;
+      article.createdAt = new Date();
+      article.user = users[index];
+
+      return article;
+    });
     await articleRepository.save(articles);
 
     console.log('Seeding: Processing Items...');
-    const items = await Promise.all(
-      Array(50)
-        .fill('')
-        .map(async () => {
-          const item = await itemFactory.make({
-            category: faker.helpers.arrayElement(categories),
-          });
-          return item;
-        }),
-    );
+    const items = itemsFixture.map((itemFixture) => {
+      const item = new Item();
+      item.label = itemFixture.label;
+      item.unit = itemFixture.unit;
+      item.emissionFactor = itemFixture.emissionFactor;
+      item.category = categoriesFromDb.find(
+        (category) => category.name === itemFixture.category,
+      )!;
+      return item;
+    });
     await itemRepository.save(items);
-
-    console.log('Seeding: Processing Expenses...');
-    const expenses = await Promise.all(
-      Array(30)
-        .fill('')
-        .map(async () => {
-          const expense = await expenseFactory.make({
-            user: faker.helpers.arrayElement(users),
-            item: faker.helpers.arrayElement(items),
-          });
-          return expense;
-        }),
-    );
-    await expenseRepository.save(expenses);
   }
 }

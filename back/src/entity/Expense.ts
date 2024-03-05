@@ -31,6 +31,10 @@ export class Expense {
 
   @Field()
   @CreateDateColumn()
+  expenseDate: string;
+
+  @Field()
+  @CreateDateColumn()
   createdAt: Date;
 
   @Field()
@@ -38,10 +42,14 @@ export class Expense {
   updatedAt: Date;
 
   @Field(() => User)
-  @ManyToOne(() => User, (user) => user.expenses)
+  @ManyToOne(() => User, (user) => user.expenses, {
+    onDelete: 'CASCADE',
+  })
   user: User;
 
   @Field(() => Item)
-  @ManyToOne(() => Item, (item) => item.expenses)
+  @ManyToOne(() => Item, (item) => item.expenses, {
+    onDelete: 'CASCADE'
+  })
   item: Item;
 }

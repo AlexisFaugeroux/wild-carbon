@@ -1,86 +1,141 @@
-import { Box, Typography, useMediaQuery } from "@mui/material";
-
 import CarbonCard from "../CarbonCard";
 import ExpensesListItem from "../ExpensesListItem";
 import {
-  DirectionsCar,
-  DirectionsRun,
+  Bolt,
+  House,
+  QuestionMark,
   Restaurant,
   Train,
 } from "@mui/icons-material";
+import { Link } from "react-router-dom";
+import { ExpenseType } from "../../types/expense";
+import { Categories } from "../../types/categoriesEnum";
+import variables from "../../variables";
 
-export default function ExpensesCard() {
-  const isPortrait = useMediaQuery("(orientation: portrait)");
+interface ExpenseCardProps {
+  expensesList?: ExpenseType[];
+}
+
+export default function ExpensesCard({ expensesList }: ExpenseCardProps) {
+  const handleLatestExpense = (expenses: ExpenseType[] | undefined) => {
+    if (expenses) {
+      const sortedData = expenses.slice().sort((a, b) => {
+        const timestampA = a.expenseDate ? parseInt(a.expenseDate) : 0;
+        const timestampB = b.expenseDate ? parseInt(b.expenseDate) : 0;
+        return timestampB - timestampA;
+      });
+      const filteredData = sortedData.slice(0, 3);
+
+      return filteredData;
+    }
+    return [];
+  };
+
+  const formattedDate = (date: string | undefined) => {
+    const timestamp = date;
+    if (timestamp) {
+      const formattedDate = new Date(Number(timestamp)).toLocaleDateString(
+        "fr-FR",
+        {
+          day: "2-digit",
+          month: "long",
+        }
+      );
+      return formattedDate;
+    }
+  };
+  const latestExpenses = handleLatestExpense(expensesList);
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Link to="/my-expenses" style={{ textDecoration: "none" }}>
       <CarbonCard
+        title="Mes dépenses carbones récentes"
         style={{
           backgroundColor: "white",
           border: "2px solid #3C8962",
-          height: isPortrait ? "30vh" : "50vh",
-          overflow: "scroll",
         }}
         sx={{
-          width: {
-            xs: "100%",
-            sm: "50%",
-            md: "50%",
+          padding: 2,
+          transition: "transform 0.3s, box-shadow 0.3s",
+          "&:hover": {
+            boxShadow: "0px 0px 20px rgba(0,0,0,0.5)",
           },
         }}
       >
-        <Typography
-          variant="body1"
-          sx={{
-            fontWeight: "bold",
-            fontStyle: "italic",
-            fontFamily: "Roboto",
-            fontSize: {
-              xs: "0.85rem",
-              sm: "0.95rem",
-              md: "1.1rem",
-              lg: "1.3rem",
-              xl: "1.5rem",
-            },
-          }}
-        >
-          Mes dépenses carbones récentes:
-        </Typography>
         <CarbonCard.Content
-          sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
+          sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
-          <ExpensesListItem
-            IconExpense={DirectionsCar}
-            name="Trajet voiture"
-            date="20 septembre"
-            expenseNumber="30"
-          />
-          <ExpensesListItem
-            IconExpense={Restaurant}
-            name="Mcdo"
-            date="10 septembre"
-            expenseNumber="2"
-          />
-          <ExpensesListItem
-            IconExpense={Train}
-            name="Train Lille-Paris"
-            date="05 septembre"
-            expenseNumber="10"
-          />
-          <ExpensesListItem
-            IconExpense={DirectionsRun}
-            name="Course à pied"
-            date="04 septembre"
-            expenseNumber="0"
-          />
-          <ExpensesListItem
-            IconExpense={DirectionsCar}
-            name="Trajet voiture"
-            date=" 01 septembre"
-            expenseNumber="50"
-          />
+          {latestExpenses?.map((cat) => {
+            let icon;
+            switch (cat.item.category.name) {
+              case Categories.FOOD:
+                icon = (
+                  <Restaurant
+                    fontSize="large"
+                    sx={{
+                      color: variables.thirdColor,
+                      marginRight: "0.5rem",
+                    }}
+                  />
+                );
+                break;
+              case Categories.TRANSPORT:
+                icon = (
+                  <Train
+                    fontSize="large"
+                    sx={{
+                      color: variables.thirdColor,
+                      marginRight: "0.5rem",
+                    }}
+                  />
+                );
+                break;
+              case Categories.HOUSING:
+                icon = (
+                  <House
+                    fontSize="large"
+                    sx={{
+                      color: variables.thirdColor,
+                      marginRight: "0.5rem",
+                    }}
+                  />
+                );
+                break;
+              case Categories.ENERGY:
+                icon = (
+                  <Bolt
+                    fontSize="large"
+                    sx={{
+                      color: variables.thirdColor,
+                      marginRight: "0.5rem",
+                    }}
+                  />
+                );
+                break;
+              default:
+                icon = (
+                  <QuestionMark
+                    fontSize="large"
+                    sx={{
+                      color: variables.thirdColor,
+                      marginRight: "0.5rem",
+                    }}
+                  />
+                );
+                break;
+            }
+            return (
+              <ExpensesListItem
+                key={cat.id}
+                IconExpense={icon}
+                name={cat.title}
+                date={cat.expenseDate ? formattedDate(cat.expenseDate) : ""}
+                expenseNumber={cat.emissionTotal}
+              />
+            );
+          })}
         </CarbonCard.Content>
       </CarbonCard>
-    </Box>
+    </Link>
   );
 }

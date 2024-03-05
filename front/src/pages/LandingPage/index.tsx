@@ -2,7 +2,6 @@ import { Box, Grid, Stack } from '@mui/material';
 import { FC } from 'react';
 import Description from './components/Description';
 import FeaturesPresentation from './components/FeaturesPresentation';
-import variables from '../../variables';
 import { brown, lightGreen } from '@mui/material/colors';
 import ListImg from '../../assets/list.png';
 import GraphImg from '../../assets/graph.png';
@@ -47,11 +46,11 @@ const LandingPage: FC = () => {
                 key={title}
                 item
                 xs={12}
-                lg={6}
+                sm={6}
                 sx={{
                   bgcolor: {
                     xs: index % 2 ? bgColor[0] : bgColor[1],
-                    lg: index % 3 ? bgColor[0] : bgColor[1],
+                    sm: index % 3 ? bgColor[0] : bgColor[1],
                   },
                 }}
               >

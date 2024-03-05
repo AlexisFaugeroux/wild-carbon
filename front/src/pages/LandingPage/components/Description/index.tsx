@@ -10,10 +10,14 @@ import {
 import LeafImg from '../../../../assets/leaf.png';
 import { lightGreen } from '@mui/material/colors';
 import variables from '../../../../variables';
+import { useNavigate } from 'react-router-dom';
+import { routes } from '../../../../Navigator';
 
 const Description: FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const navigate = useNavigate();
+
   return (
     <CarbonCard
       sx={{
@@ -34,7 +38,7 @@ const Description: FC = () => {
           </Typography>
 
           <Typography>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            Le premier balanceur de carbone !
           </Typography>
         </Stack>
       </CarbonCard.Content>
@@ -45,7 +49,9 @@ const Description: FC = () => {
           justifyContent: 'center',
         }}
       >
-        <Button variant="outlined">Se connecter</Button>
+        <Button variant="outlined" onClick={() => navigate(routes.login)}>
+          Se connecter
+        </Button>
         <Button color="success" variant="contained">
           Créer un compte
         </Button>

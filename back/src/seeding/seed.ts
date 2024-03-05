@@ -2,19 +2,13 @@ import * as dotenv from 'dotenv';
 import 'reflect-metadata';
 
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { runSeeders, SeederOptions } from 'typeorm-extension';
+import { SeederOptions, runSeeders } from 'typeorm-extension';
 
 import { Article } from '../entity/Article';
 import { Category } from '../entity/Category';
 import { Expense } from '../entity/Expense';
 import { Item } from '../entity/Item';
 import { User } from '../entity/User';
-
-import { ArticleFactory } from './article.factory';
-import { CategoryFactory } from './category.factory';
-import { ExpenseFactory } from './expense.factory';
-import { ItemFactory } from './item.factory';
-import { UserFactory } from './user.factory';
 
 import { MainSeeder } from './main.seeder';
 
@@ -28,13 +22,6 @@ const options: DataSourceOptions & SeederOptions = {
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
   entities: [Article, Category, Expense, Item, User],
-  factories: [
-    ArticleFactory,
-    CategoryFactory,
-    ExpenseFactory,
-    ItemFactory,
-    UserFactory,
-  ],
   seeds: [MainSeeder],
   logging: ['schema', 'error'],
 };
