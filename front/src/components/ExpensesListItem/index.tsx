@@ -6,7 +6,7 @@ import carbonlogo from "../../assets/leaf.png";
 import variables from "../../variables";
 
 type ExpensesListItemProps = {
-  IconExpense: React.ElementType;
+  IconExpense: React.ReactElement;
   name: React.ReactNode;
   date: React.ReactNode;
   expenseNumber: React.ReactNode;
@@ -20,11 +20,9 @@ const ExpensesListItem: FC<ExpensesListItemProps> = ({
 }) => {
   return (
     <Stack direction="row" justifyContent="space-between" alignItems="center">
-      <Icon
-        component={IconExpense}
-        fontSize="large"
-        sx={{ color: variables.thirdColor }}
-      />
+      <Icon fontSize="large" sx={{ color: variables.thirdColor }}>
+        {IconExpense}
+      </Icon>
 
       <Stack direction="column" alignItems="center" justifyContent="center">
         <Typography
@@ -78,10 +76,9 @@ const ExpensesListItem: FC<ExpensesListItemProps> = ({
               fontWeight: "bold",
             }}
           >
-            {expenseNumber}{" "}
+            {expenseNumber} g
           </span>
-          kg
-          <span style={{ color: variables.secondaryColor }}> CO²</span>
+          <span style={{ color: variables.secondaryColor }}> de CO²</span>
         </Typography>
         <img src={carbonlogo} alt="carbon leaf" height="20" />
       </Stack>

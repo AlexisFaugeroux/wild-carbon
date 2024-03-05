@@ -1,11 +1,11 @@
-import { FC, useContext, useState } from 'react';
-import { Box, Pagination } from '@mui/material';
-import CarbonListItem from '../../../CarbonListItem';
-import { PersonRemove, Spa } from '@mui/icons-material';
-import { User, UserQuery } from '../../../../types/user';
-import { ApolloQueryResult, useMutation } from '@apollo/client';
-import { REMOVE_FRIEND } from '../../../../gql/UsersGql';
-import { LoginContext } from '../../../../hooks/useLoginContext';
+import { FC, useContext, useState } from "react";
+import { Box, Pagination } from "@mui/material";
+import CarbonListItem from "../../../CarbonListItem";
+import { PersonRemove, Spa } from "@mui/icons-material";
+import { User, UserQuery } from "../../../../types/user";
+import { ApolloQueryResult, useMutation } from "@apollo/client";
+import { REMOVE_FRIEND } from "../../../../gql/UserGql";
+import { LoginContext } from "../../../../hooks/useLoginContext";
 
 interface FriendsListProps {
   list: User[];
@@ -19,7 +19,7 @@ const FriendsList: FC<FriendsListProps> = ({ list, refetchList }) => {
 
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
-    newPage: number,
+    newPage: number
   ) => {
     setCurrentPage(newPage);
   };
@@ -48,8 +48,8 @@ const FriendsList: FC<FriendsListProps> = ({ list, refetchList }) => {
         <Box
           key={user.id}
           sx={{
-            '&:hover': {
-              backgroundColor: 'lightgray',
+            "&:hover": {
+              backgroundColor: "lightgray",
             },
           }}
         >

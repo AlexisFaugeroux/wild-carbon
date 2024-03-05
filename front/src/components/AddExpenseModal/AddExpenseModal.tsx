@@ -87,13 +87,17 @@ export default function AddExpenseModal() {
         marginTop: "1rem",
       }}
     >
-      <Box sx={{ display: "flex", width: "100%", justifyContent: "center" }}>
+      <Box
+        sx={{
+          display: "flex",
+          width: "100%",
+          justifyContent: "center",
+        }}
+      >
         <CarbonIconButton
           onClick={handleOpenModal}
           sx={{
-            transition: "transform 0.2s",
             "&:hover": {
-              transform: "scale(1.2)",
               backgroundColor: "transparent",
               color: "transparent",
             },

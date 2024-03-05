@@ -1,12 +1,12 @@
-import { FC, useContext, useState } from 'react';
-import { User } from '../../../../types/user';
-import { Box, Pagination } from '@mui/material';
-import CarbonListItem from '../../../CarbonListItem';
-import { PersonAdd, Spa } from '@mui/icons-material';
-import { useMutation } from '@apollo/client';
-import { ADD_FRIEND } from '../../../../gql/UsersGql';
-import { LoginContext } from '../../../../hooks/useLoginContext';
-import { useFriendsContext } from '../../../../hooks/useFriendsContext';
+import { FC, useContext, useState } from "react";
+import { User } from "../../../../types/user";
+import { Box, Pagination } from "@mui/material";
+import CarbonListItem from "../../../CarbonListItem";
+import { PersonAdd, Spa } from "@mui/icons-material";
+import { useMutation } from "@apollo/client";
+import { ADD_FRIEND } from "../../../../gql/UserGql";
+import { LoginContext } from "../../../../hooks/useLoginContext";
+import { useFriendsContext } from "../../../../hooks/useFriendsContext";
 
 interface UserListProps {
   list: User[];
@@ -33,8 +33,8 @@ const UserList: FC<UserListProps> = ({ list }) => {
     .filter(
       (user) =>
         !currentUser?.userData.users.some(
-          (currentUserFriend) => currentUserFriend.id === user.id,
-        ),
+          (currentUserFriend) => currentUserFriend.id === user.id
+        )
     );
 
   const handleAdd = async (userIdToAdd: string) => {
@@ -50,8 +50,8 @@ const UserList: FC<UserListProps> = ({ list }) => {
         <Box
           key={user.id}
           sx={{
-            '&:hover': {
-              backgroundColor: 'lightgray',
+            "&:hover": {
+              backgroundColor: "lightgray",
             },
           }}
         >
@@ -64,8 +64,8 @@ const UserList: FC<UserListProps> = ({ list }) => {
                 color="primary"
                 onClick={() => handleAdd(user.id)}
                 sx={{
-                  '&:hover': {
-                    cursor: 'pointer',
+                  "&:hover": {
+                    cursor: "pointer",
                   },
                 }}
               />

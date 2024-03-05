@@ -96,7 +96,10 @@ export default function EditForm({
   };
 
   const validationSchema = Yup.object({
-    title: Yup.string().matches(/^[a-zA-Z0-9\s]+$/, "Caractères non autorisés"),
+    title: Yup.string().matches(
+      /^[a-zA-Z0-9À-ÿ\s-']+$/,
+      "Caractères non autorisés"
+    ),
   });
 
   return (
